@@ -213,16 +213,6 @@ public class BackgroundService extends Service {
     }
 
     void connected() {
-        //Checking if the application has been given permission to draw over other apps in the phone
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (!Settings.canDrawOverlays(getApplicationContext())) {
-//                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-//                startActivity(intent);
-////                                        startActivityForResult(null, intent, 0, null);
-//            } else {
-
-
-                //Music change detector
                 spotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
                         new Subscription.EventCallback<PlayerState>() {
                             String SpotifyTrackID;

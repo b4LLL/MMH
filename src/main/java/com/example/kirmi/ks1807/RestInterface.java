@@ -14,12 +14,8 @@ import retrofit2.http.Path;
 
 public class RestInterface
 {
-    //static final String BASE_URL = "localhost:4567/";
     static final String BASE_URL = "http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/";
-    //static final String BASE_URL = "http://pe-ks1807.scem.uws.edu.au:8080/MMH_API/webresources/";
-
     OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
     public static Retrofit retrofit = null;
     public static Retrofit getClient()
     {

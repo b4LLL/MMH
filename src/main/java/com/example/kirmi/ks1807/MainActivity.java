@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,28 +48,21 @@ public class MainActivity extends AppCompatActivity
             {
                 String TextBoxString = PasswordTextBox.getText().toString();
                 if (hasFocus)
-                {
                     PasswordTextBox.setText("");
-                }
                 /*If user unfocuses the text box but hasn't typed anything yet, repopulate the
                 field. But if they have started typing just leave it as it is.*/
                 else if (!hasFocus && TextBoxString.equals(""))
-                {
                     PasswordTextBox.setText("password");
-                }
             }
         });
-
     }
 
     public void button_Login(View view)
     {
-        if(ValidateLogin())
+        if(ValidateLogin()) //if validation was successful
         {
             String EncryptedPassword = PasswordFunctions.EncryptPassword(ThePassword);
-
             Global.UserPassword = EncryptedPassword;
-
             Call<String> response = client.VerifyLogin(TheEmailAddress, EncryptedPassword);
             response.enqueue(new Callback<String>()
             {
@@ -78,7 +70,6 @@ public class MainActivity extends AppCompatActivity
                 public void onResponse(Call<String> call, Response<String> response)
                 {
                     Log.d("retrofitclick", "SUCCESS: " + response.raw());
-
                     if(response.code() == 404)
                     {
                         Toast.makeText(getApplicationContext(),
@@ -109,7 +100,6 @@ public class MainActivity extends AppCompatActivity
     void success_Login()
     {
         Intent intent = new Intent(MainActivity.this, NavBarMain.class);
-        
         startActivity(intent);
     }
 
@@ -119,14 +109,14 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Invalid Credentials");
         alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            .setCancelable(false)
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog,int id)
                 {
-                    public void onClick(DialogInterface dialog,int id)
-                    {
-                        //No action to be taken until login issue is resolved.
-                    }
-                });
+                    //No action to be taken until login issue is resolved.
+                }
+            });
         String InvalidMessage = "Your login was unsuccessful. Please check that your Email Address" +
                 " and Password have been typed in correctly.";
         alertDialogBuilder.setMessage(InvalidMessage);
@@ -139,13 +129,13 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            .setCancelable(false)
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog,int id)
                 {
-                    public void onClick(DialogInterface dialog,int id)
-                    {
-                    }
-                });
+                }
+            });
         String InvalidMessage = "The service is not available at this time, please try again later " +
                 "or contact support";
         alertDialogBuilder.setMessage(InvalidMessage);
@@ -163,11 +153,9 @@ public class MainActivity extends AppCompatActivity
     {
         boolean ValidationSuccessful = true;
         String InvalidMessage = "";
-
         //Convert the contents of the text boxes to strings
         TheEmailAddress = EmailAddress.getText().toString();
         ThePassword = Password.getText().toString();
-
         //Validation dialogue
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Invalid Credentials");
@@ -180,7 +168,6 @@ public class MainActivity extends AppCompatActivity
                         //No action to be taken until login issue is resolved.
                     }
                 });
-
         if (TheEmailAddress.equals(""))
         {
             ValidationSuccessful = false;
@@ -189,7 +176,6 @@ public class MainActivity extends AppCompatActivity
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         }
-
         if (ThePassword.equals("") && ValidationSuccessful)
         {
             ValidationSuccessful = false;
