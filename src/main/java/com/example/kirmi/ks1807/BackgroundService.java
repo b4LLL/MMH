@@ -53,14 +53,14 @@ import retrofit2.Retrofit;
 import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 public class BackgroundService extends Service {
-    private static final int NOTIFICATION_FOREGROUND_ID = 1; //ID for mandatory foreground notification
+    private static final int NOTIFICATION_FOREGROUND_ID = 1;                    //ID for mandatory foreground notification
     private static final String NOTIFICATION_CHANNEL_ID = "MandatoryChannelID"; //Channel ID for mandatory foreground notification
     private final IBinder binder = new LocalBinder();
     private Context t;
     public static final String CLIENT_ID = "9a7355bd24ff4544b4bdada73483aaa0";
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote spotifyAppRemote;
-    public static boolean isRunning = false; //used by activity to check if it should start the service
+    public static boolean isRunning = false;                                    //used by activity to check if it should start the service
     public static String lastSong = "First";
     public static Boolean SongStarted = false;
     Retrofit retrofit = RestInterface.getClient();
@@ -102,6 +102,7 @@ public class BackgroundService extends Service {
 
     @Override
     public void onCreate() {
+        //CHECK HERE IF THERE IS A SPOTIFY INSTANCE/SERVICE ALREADY RUNNING???
         client = retrofit.create(RestInterface.Ks1807Client.class);
         isRunning = true;
         //save context
@@ -248,14 +249,12 @@ public class BackgroundService extends Service {
                                         PromptUser = false;
                                 }
                             }
-
                             @Override
                             public void onFailure(Call<String> call, Throwable t) {
                                 fail_LoginNetwork();
                             }
                         });
                     }
-
                     if (PromptUser) {
                         Call<String> response = client.GetMoodList();
                         response.enqueue(new Callback<String>() {

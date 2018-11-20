@@ -33,13 +33,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);     // spotify API code
-        setContentView(R.layout.activity_main); // spotify API code
+        super.onCreate(savedInstanceState);     // spotify API code ?
+        setContentView(R.layout.activity_main); // spotify API code ?
         EmailAddress = (TextView)findViewById(R.id.EditText_UserName);
         Password = (TextView)findViewById(R.id.EditText_Password);
         client = retrofit.create(RestInterface.Ks1807Client.class);
 
-        //Ensures that password hint disappears when user focuses the text box.
         final EditText PasswordTextBox = (EditText) findViewById(R.id.EditText_Password);
         PasswordTextBox.setOnFocusChangeListener(new View.OnFocusChangeListener()
         {
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity
     private boolean ValidateLogin()
     {
         boolean ValidationSuccessful = true;
-        String InvalidMessage = "";
+        String InvalidMessage;
         //Convert the contents of the text boxes to strings
         TheEmailAddress = EmailAddress.getText().toString();
         ThePassword = Password.getText().toString();
@@ -160,26 +159,18 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Invalid Credentials");
         alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            .setCancelable(false)
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int id)
                 {
-                    public void onClick(DialogInterface dialog,int id)
-                    {
-                        //No action to be taken until login issue is resolved.
-                    }
-                });
-        if (TheEmailAddress.equals(""))
+                    //No action to be taken until login issue is resolved.
+                }
+            });
+        if (TheEmailAddress.equals("") || ThePassword.equals(("")))
         {
             ValidationSuccessful = false;
-            InvalidMessage = "You need to enter an Email Address to login.";
-            alertDialogBuilder.setMessage(InvalidMessage);
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
-        }
-        if (ThePassword.equals("") && ValidationSuccessful)
-        {
-            ValidationSuccessful = false;
-            InvalidMessage = "You need to enter your password to login.";
+            InvalidMessage = "Email or Password are missing...";
             alertDialogBuilder.setMessage(InvalidMessage);
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
