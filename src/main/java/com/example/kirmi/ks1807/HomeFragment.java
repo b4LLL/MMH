@@ -90,7 +90,6 @@ public class HomeFragment extends Fragment
                         } else {
                             String musicHistory = response.body();
                             String MusicDetails[] = musicHistory.split(System.getProperty("line.separator"));
-
                             listItems = new ArrayList<TrackDetails>();
                             int length = 0;
                             if (MusicDetails.length > 10) {
@@ -98,13 +97,11 @@ public class HomeFragment extends Fragment
                             } else if (MusicDetails.length <= 10) {
                                 length = MusicDetails.length;
                             }
-
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
                                 TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);
                                 listItems.add(list);
                             }
-
                             adapter = new RecyclerViewAdapter(listItems, getContext());
                             recyclerView.setAdapter(adapter);
                         }
@@ -125,13 +122,13 @@ public class HomeFragment extends Fragment
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            .setCancelable(false)
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog,int id)
                 {
-                    public void onClick(DialogInterface dialog,int id)
-                    {
-                    }
-                });
+                }
+            });
         String InvalidMessage = "The service is not available at this time, please try again later " +
                 "or contact support";
         alertDialogBuilder.setMessage(InvalidMessage);
