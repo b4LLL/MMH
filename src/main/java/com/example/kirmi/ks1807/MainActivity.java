@@ -33,10 +33,11 @@ public class MainActivity extends AppCompatActivity
     String TheEmailAddress;
     String ThePassword;
     String UserID = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);                                 // spotify API code ?
+        super.onCreate(savedInstanceState);                                 // onCreate code called
         setContentView(R.layout.activity_main);                             // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
@@ -46,27 +47,36 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onFocusChange(View v, boolean hasFocus)
                 {
-                    if (hasFocus){
+                    if (hasFocus && Password.getText().toString().isEmpty()){
                         Password.setHint("");
                         Password.setText("");
                     }
-                    else if (!hasFocus){
-                        Password.setText("Password");
-                        Log.d("Lost focus"," : " + Password.getText());
-                    }
                 }
             });
+        EmailAddress.setOnFocusChangeListener(new View.OnFocusChangeListener()
+        {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus)
+            {
+                if (hasFocus && EmailAddress.getText().toString().isEmpty()){
+                    EmailAddress.setHint("");
+                    EmailAddress.setText("");
+                }
+            }
+        });
     }
 
     protected void onPause(){
         super.onPause();
         Log.d("onPause Called", "Paused");
+        //onSaveInstanceState(Bundle) ??
     }
 
     protected void onResume(){
         super.onResume();
         Log.d("onResume Called", "We have resumed");
         //check here for if logged in or not
+        //View.onRestoreInstanceState(Bundle bundleThing) ??
     }
 
     public void button_Login(View view)
@@ -77,35 +87,49 @@ public class MainActivity extends AppCompatActivity
             Global.UserPassword = EncryptedPassword;
             Call<String> response = client.VerifyLogin(TheEmailAddress, EncryptedPassword);
             response.enqueue(new Callback<String>()
-            {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response)
                 {
-                    Log.d("retrofitclick", "SUCCESS: " + response.raw());
-                    if(response.code() == 404)  //is the code actually an integer and not a string?
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response)
                     {
-                        Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        if(response.body().equals("-1"))
-                        {
-                            fail_Login();
-                        }
+                        Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                        if(response.code() == 404)  //is the code actually an integer and not a string?
+                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                         else
                         {
-                            Global.UserID = response.body();
-                            success_Login();
+                            if(response.body().equals("-1"))
+                                showAlert(3);
+                            else{
+                                Global.UserID = response.body();
+                                success_Login();
+                            }
                         }
                     }
-                }
-                @Override
-                public void onFailure(Call<String> call, Throwable t)
-                {
-                    fail_LoginNetwork();
-                }
-            });
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t)
+                    {
+                        showAlert(4);
+                    }
+                });
         }
+    }
+
+    private boolean ValidateLogin()
+    {
+        TheEmailAddress = EmailAddress.getText().toString();
+        ThePassword = Password.getText().toString();
+        if(ThePassword.contentEquals("")) {
+            showAlert(0);
+            return false;
+        }
+        else if(TheEmailAddress.contentEquals("")) {
+            showAlert(1);
+            return false;
+        }
+        else if(TheEmailAddress.contentEquals("") && ThePassword.contentEquals("")){
+            showAlert(2);
+            return false;
+        }else
+            return true;
     }
 
     void success_Login()
@@ -114,77 +138,60 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    void fail_Login()   // print message for failed incorrect email/password
-    {
-        //Blank ID means either the email or password were incorrect.
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Invalid Credentials");
-        alertDialogBuilder
-            .setCancelable(false)
-            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog,int id)
-                {
-                    //No action to be taken until login issue is resolved.
-                }
-            });
-        String InvalidMessage = "Your login was unsuccessful. Please check that your Email Address and Password have been typed in correctly.";
-        alertDialogBuilder.setMessage(InvalidMessage);
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    void fail_LoginNetwork()    //print message about network error
-    {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Service Error");
-        alertDialogBuilder
-            .setCancelable(false)
-            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog,int id)
-                {
-                }
-            });
-        String InvalidMessage = "The service is not available at this time, please try again later or contact support";
-        alertDialogBuilder.setMessage(InvalidMessage);
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
     public void button_Register(View view)
     {
         Intent intent = new Intent(MainActivity.this, Register.class);
         startActivity(intent);
     }
 
-    private boolean ValidateLogin()
-    {
-        boolean ValidationSuccessful = true;
-        String InvalidMessage;
-        //Convert the contents of the text boxes to strings
-        TheEmailAddress = EmailAddress.getText().toString();
-        ThePassword = Password.getText().toString();
-        //Validation dialogue
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Invalid Credentials");
-        alertDialogBuilder
-            .setCancelable(false)
-            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    //No action to be taken until login issue is resolved.
-                }
-            });
-        if (TheEmailAddress.equals("") || ThePassword.equals(("")))
-        {
-            ValidationSuccessful = false;
-            InvalidMessage = "Email or Password are missing...";
-            alertDialogBuilder.setMessage(InvalidMessage);
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+    void showAlert(int i){
+        String Title;
+        String Message;
+        switch(i){
+            case 0:
+                //missing password
+                Title = "Missing Credential";
+                Message = "Password is missing.";
+                break;
+            case 1:
+                //missing email
+                Title = "Missing Credential";
+                Message = "Email is missing.";
+                break;
+            case 2:
+                //both missing
+                Title = "Missing Credentials";
+                Message = "Email and password have not been entered.";
+                break;
+            case 3:
+                //failed login
+                Title = "Invalid Credentials";
+                Message = "Your login was unsuccessful. Please check that your Email Address and Password have been typed in correctly.";
+                break;
+            case 4:
+                //network failure
+                Title = "Service Error";
+                Message = "The service is not available at this time, please try again later";
+                break;
+            default:
+                //success
+                Title = "Success";
+                Message = "Logging in now";
+                break;
         }
-        return ValidationSuccessful;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(Title);
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Ok",new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog,int id)
+                    {
+                    }
+                });
+        alertDialogBuilder.setMessage(Message);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
+
 }
