@@ -3,20 +3,13 @@ package com.example.kirmi.ks1807;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,8 +28,7 @@ public class MainActivity extends AppCompatActivity
     String UserID = "";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);                                 // onCreate code called
         setContentView(R.layout.activity_main);                             // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
         EmailAddress = findViewById(R.id.EditText_UserName);
@@ -79,10 +71,8 @@ public class MainActivity extends AppCompatActivity
         //View.onRestoreInstanceState(Bundle bundleThing) ??
     }
 
-    public void button_Login(View view)
-    {
-        if(ValidateLogin()) //if validation was successful
-        {
+    public void button_Login(View view){
+        if(ValidateLogin()){
             String EncryptedPassword = PasswordFunctions.EncryptPassword(ThePassword);
             Global.UserPassword = EncryptedPassword;
             Call<String> response = client.VerifyLogin(TheEmailAddress, EncryptedPassword);
@@ -94,8 +84,7 @@ public class MainActivity extends AppCompatActivity
                         Log.d("retrofitclick", "SUCCESS: " + response.raw());
                         if(response.code() == 404)  //is the code actually an integer and not a string?
                             Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                        else
-                        {
+                        else{
                             if(response.body().equals("-1"))
                                 showAlert(3);
                             else{
@@ -113,38 +102,33 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private boolean ValidateLogin()
-    {
+    private boolean ValidateLogin(){
         TheEmailAddress = EmailAddress.getText().toString();
         ThePassword = Password.getText().toString();
-        if(ThePassword.contentEquals("")) {
-            showAlert(0);
+        if(TheEmailAddress.contentEquals("") && ThePassword.contentEquals("")){
+            showAlert(2);
             return false;
-        }
-        else if(TheEmailAddress.contentEquals("")) {
+        }else if(TheEmailAddress.contentEquals("")) {
             showAlert(1);
             return false;
-        }
-        else if(TheEmailAddress.contentEquals("") && ThePassword.contentEquals("")){
-            showAlert(2);
+        }else if(ThePassword.contentEquals("")) {
+            showAlert(0);
             return false;
         }else
             return true;
     }
 
-    void success_Login()
-    {
+    void success_Login(){
         Intent intent = new Intent(MainActivity.this, NavBarMain.class);
         startActivity(intent);
     }
 
-    public void button_Register(View view)
-    {
+    public void button_Register(View view){
         Intent intent = new Intent(MainActivity.this, Register.class);
         startActivity(intent);
     }
 
-    void showAlert(int i){
+    private void showAlert(int i){
         String Title;
         String Message;
         switch(i){
