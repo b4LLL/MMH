@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,35 +28,45 @@ public class MainActivity extends AppCompatActivity
     final CommonFunctions PasswordFunctions = new CommonFunctions();
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
-    TextView EmailAddress;
-    TextView Password;
+    EditText EmailAddress;
+    EditText Password;
     String TheEmailAddress;
     String ThePassword;
     String UserID = "";
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);     // spotify API code ?
-        setContentView(R.layout.activity_main); // spotify API code ?
-        EmailAddress = (TextView)findViewById(R.id.EditText_UserName);
-        Password = (TextView)findViewById(R.id.EditText_Password);
+        super.onCreate(savedInstanceState);                                 // spotify API code ?
+        setContentView(R.layout.activity_main);                             // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
+        EmailAddress = findViewById(R.id.EditText_UserName);
+        Password = findViewById(R.id.EditText_Password);
         client = retrofit.create(RestInterface.Ks1807Client.class);
-
-        final EditText PasswordTextBox = (EditText) findViewById(R.id.EditText_Password);
-        PasswordTextBox.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus)
+        Password.setOnFocusChangeListener(new View.OnFocusChangeListener()
             {
-                String TextBoxString = PasswordTextBox.getText().toString();
-                if (hasFocus)
-                    PasswordTextBox.setText("");
-                /*If user unfocuses the text box but hasn't typed anything yet, repopulate the
-                field. But if they have started typing just leave it as it is.*/
-                else if (!hasFocus && TextBoxString.equals(""))
-                    PasswordTextBox.setText("password");
-            }
-        });
+                @Override
+                public void onFocusChange(View v, boolean hasFocus)
+                {
+                    if (hasFocus){
+                        Password.setHint("");
+                        Password.setText("");
+                    }
+                    else if (!hasFocus){
+                        Password.setText("Password");
+                        Log.d("Lost focus"," : " + Password.getText());
+                    }
+                }
+            });
+    }
+
+    protected void onPause(){
+        super.onPause();
+        Log.d("onPause Called", "Paused");
+    }
+
+    protected void onResume(){
+        super.onResume();
+        Log.d("onResume Called", "We have resumed");
+        //check here for if logged in or not
     }
 
     public void button_Login(View view)
@@ -69,10 +82,9 @@ public class MainActivity extends AppCompatActivity
                 public void onResponse(Call<String> call, Response<String> response)
                 {
                     Log.d("retrofitclick", "SUCCESS: " + response.raw());
-                    if(response.code() == 404)
+                    if(response.code() == 404)  //is the code actually an integer and not a string?
                     {
-                        Toast.makeText(getApplicationContext(),
-                                "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -102,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    void fail_Login()
+    void fail_Login()   // print message for failed incorrect email/password
     {
         //Blank ID means either the email or password were incorrect.
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -116,14 +128,13 @@ public class MainActivity extends AppCompatActivity
                     //No action to be taken until login issue is resolved.
                 }
             });
-        String InvalidMessage = "Your login was unsuccessful. Please check that your Email Address" +
-                " and Password have been typed in correctly.";
+        String InvalidMessage = "Your login was unsuccessful. Please check that your Email Address and Password have been typed in correctly.";
         alertDialogBuilder.setMessage(InvalidMessage);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
-    void fail_LoginNetwork()
+    void fail_LoginNetwork()    //print message about network error
     {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Service Error");
@@ -135,8 +146,7 @@ public class MainActivity extends AppCompatActivity
                 {
                 }
             });
-        String InvalidMessage = "The service is not available at this time, please try again later " +
-                "or contact support";
+        String InvalidMessage = "The service is not available at this time, please try again later or contact support";
         alertDialogBuilder.setMessage(InvalidMessage);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
