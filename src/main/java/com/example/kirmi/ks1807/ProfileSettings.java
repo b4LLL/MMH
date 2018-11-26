@@ -439,7 +439,7 @@ public class ProfileSettings extends Fragment
                             public void onClick(DialogInterface dialog,int id)
                             {
                                 Global.UserID = "";
-                                if(BackgroundService.isRunning)
+                                if(BackgroundService.isRunning) //confirm this
                                 {
                                     new BackgroundServiceStarter().onEnd(getContext(), new Intent());
                                 }

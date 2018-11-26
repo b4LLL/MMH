@@ -1,10 +1,5 @@
 package com.example.kirmi.ks1807;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -12,26 +7,24 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public class RestInterface
-{
-    static final String BASE_URL = "http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/";
-    OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-    public static Retrofit retrofit = null;
-    public static Retrofit getClient()
-    {
-        if (retrofit==null)
-        {
-            Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(ScalarsConverterFactory.create());
-            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-            retrofit = builder.client(httpClient.build()).build();
-        }
+public class RestInterface{
+    private static Retrofit retrofit = null;
+    static Retrofit getClient(){ //getClient definition
+        final String BASE_URL = "http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/"; // URL for the API endpoints -> glassfish
+            if (retrofit == null){                                              // simple straight forward instantiation of an object
+            Retrofit.Builder builder = new Retrofit.Builder()                   // Retrofit.Builder is a class -> Builder() is the constructor
+                .baseUrl(BASE_URL)                                              // sets the baseUrl (API base URL)
+                .addConverterFactory(ScalarsConverterFactory.create());         // adds a converter factory for serial/deserialization of objects
+                // OkHttp is used for all android HTTP calls
+                OkHttpClient.Builder httpClient = new OkHttpClient.Builder();   // Builders are like constructors, prepping object with default values,
+            retrofit = builder.client(httpClient.build()).build();              // Build simple executes the return from each builder/constructor
+        }                                                                       //retrofit uses OkHttp library for HTTP requests
         return retrofit;
     }
 
-    public interface Ks1807Client
-    {
+    //this interface talks to glassfish
+
+    public interface Ks1807Client{
         @GET("mmhpackage.useraccount/GetMusicHistory/{id}/{password}")
         Call<String> GetMusicHistory(@Path("id") String id, @Path("password") String password);
 
@@ -126,8 +119,7 @@ public class RestInterface
     }
 
     //Data Structures
-    public class User
-    {
+    public class User{
         String firstName;
         String lastName;
         String email;
@@ -135,15 +127,13 @@ public class RestInterface
         String gender;
     }
 
-    public class Settings
-    {
+    public class Settings{
         String makeRecommendations;
         String moodFrequency;
         String rememberLogin;
     }
 
-    public static User getUserFromResult(String body)
-    {
+    public static User getUserFromResult(String body){
         User item = new RestInterface().new User();
         String temp[] = body.split(",");
         item.firstName = temp[0];
@@ -154,8 +144,7 @@ public class RestInterface
         return item;
     }
 
-    public static Settings getSettingsFromResult(String body)
-    {
+    public static Settings getSettingsFromResult(String body){
         Settings item = new RestInterface().new Settings();
         String temp[] = body.split(",");
         item.makeRecommendations = temp[0];
@@ -163,24 +152,4 @@ public class RestInterface
         item.rememberLogin = temp[2];
         return item;
     }
-
-    //Use on GetMusicHistory, GetRecommendedTracksUser and GetRecommendedTracksSystem return values
-    // Separating the results into different columns
-//    public static List<TrackDetails> getTrackFromResult(String body)
-//    {
-//        ArrayList<TrackDetails> list = new ArrayList<>();
-//        String result[] = body.split(System.getProperty("line.separator"));
-//        for(int i = 0; i < result.length; i++)
-//        {
-//            TrackDetails item = new RestInterface().new TrackDetails();
-//            String temp[] = result[i].split(",");
-//            item.aftermood = temp[0];
-//            item.title = temp[1];
-//            item.genre = temp[2];
-//            item.artist = temp[3];
-//            item.length = temp[4];
-//            list.add(item);
-//        }
-//        return list;
-//    }
 }

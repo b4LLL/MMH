@@ -14,11 +14,9 @@ import android.view.MenuItem;
 public class NavBarMain extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener
 {
-
     String UserID = "";
-
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate(Bundle savedInstanceState)  //when NavBarMain loads: it loads the new HomeFragment
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navbarmain);
@@ -56,7 +54,6 @@ public class NavBarMain extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
-
         Fragment fragment = null;
 
         /*On selection of the navigation menu, the fragment content is displayed with its

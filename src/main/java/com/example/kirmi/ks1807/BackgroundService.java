@@ -1,19 +1,16 @@
 package com.example.kirmi.ks1807;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,16 +38,10 @@ import com.spotify.protocol.client.Subscription;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
-import org.w3c.dom.Text;
-
-import java.text.Normalizer;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 public class BackgroundService extends Service {
     private static final int NOTIFICATION_FOREGROUND_ID = 1;                    //ID for mandatory foreground notification
@@ -91,7 +82,6 @@ public class BackgroundService extends Service {
         return START_STICKY;
     }
 
-
     public void gettrack(String trackID) {
         String temp = trackID;
         if (!temp.equals("Dummy")) {
@@ -103,7 +93,7 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         //CHECK HERE IF THERE IS A SPOTIFY INSTANCE/SERVICE ALREADY RUNNING???
-        client = retrofit.create(RestInterface.Ks1807Client.class);
+        client = retrofit.create(RestInterface.Ks1807Client.class);     //is this correct????
         isRunning = true;
         //save context
         t = this;

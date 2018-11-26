@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);                             // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
-        client = retrofit.create(RestInterface.Ks1807Client.class);
+        client = retrofit.create(RestInterface.Ks1807Client.class);         //
         Password.setOnFocusChangeListener(new View.OnFocusChangeListener()
             {
                 @Override
