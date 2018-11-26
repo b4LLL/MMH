@@ -7,7 +7,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public class RestInterface{
+class RestInterface{
     private static Retrofit retrofit = null;
     static Retrofit getClient(){ //getClient definition
         final String BASE_URL = "http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/"; // URL for the API endpoints -> glassfish
@@ -15,14 +15,14 @@ public class RestInterface{
             Retrofit.Builder builder = new Retrofit.Builder()                   // Retrofit.Builder is a class -> Builder() is the constructor
                 .baseUrl(BASE_URL)                                              // sets the baseUrl (API base URL)
                 .addConverterFactory(ScalarsConverterFactory.create());         // adds a converter factory for serial/deserialization of objects
-                // OkHttp is used for all android HTTP calls
                 OkHttpClient.Builder httpClient = new OkHttpClient.Builder();   // Builders are like constructors, prepping object with default values,
-            retrofit = builder.client(httpClient.build()).build();              // Build simple executes the return from each builder/constructor
-        }                                                                       //retrofit uses OkHttp library for HTTP requests
+            retrofit = builder.client(httpClient.build()).build();              // Build simply executes the return from each builder/constructor
+        }               // Retrofit.Builder() => builder;
+                        // builder.client(okhttp3.OkHttpClient client)
+                        // This is the HTTP client used for requests.
+                        // retrofit uses OkHttp library for HTTP requests
         return retrofit;
     }
-
-    //this interface talks to glassfish
 
     public interface Ks1807Client{
         @GET("mmhpackage.useraccount/GetMusicHistory/{id}/{password}")
@@ -116,40 +116,5 @@ public class RestInterface{
 
         @GET("mmhpackage.musictrack/CheckMoodEntry/{id}/{password}")
         Call<String> CheckMoodEntry(@Path("id") String id, @Path("password") String password);
-    }
-
-    //Data Structures
-    public class User{
-        String firstName;
-        String lastName;
-        String email;
-        String dob;
-        String gender;
-    }
-
-    public class Settings{
-        String makeRecommendations;
-        String moodFrequency;
-        String rememberLogin;
-    }
-
-    public static User getUserFromResult(String body){
-        User item = new RestInterface().new User();
-        String temp[] = body.split(",");
-        item.firstName = temp[0];
-        item.lastName = temp[1];
-        item.email = temp[2];
-        item.dob = temp[3];
-        item.gender = temp[4];
-        return item;
-    }
-
-    public static Settings getSettingsFromResult(String body){
-        Settings item = new RestInterface().new Settings();
-        String temp[] = body.split(",");
-        item.makeRecommendations = temp[0];
-        item.moodFrequency = temp[1];
-        item.rememberLogin = temp[2];
-        return item;
     }
 }

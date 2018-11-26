@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity
 {
     private final Context context = this;
     final CommonFunctions PasswordFunctions = new CommonFunctions();
-    Retrofit retrofit = RestInterface.getClient();
-    RestInterface.Ks1807Client client;
+    Retrofit retrofit = RestInterface.getClient();  // sets up the interface implementation
+    RestInterface.Ks1807Client client;              // client is an <interface> and implemented below
     EditText EmailAddress;
     EditText Password;
     String TheEmailAddress;
@@ -29,11 +29,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);                                 // onCreate code called
-        setContentView(R.layout.activity_main);                             // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
+        super.onCreate(savedInstanceState);                         // onCreate code called
+        setContentView(R.layout.activity_main);                     // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
-        client = retrofit.create(RestInterface.Ks1807Client.class);         //
+        Log.d("onCreate", "");
+        client = retrofit.create(RestInterface.Ks1807Client.class); // an implementation of the interface
+
         Password.setOnFocusChangeListener(new View.OnFocusChangeListener()
             {
                 @Override
@@ -60,13 +62,24 @@ public class MainActivity extends AppCompatActivity
 
     protected void onPause(){
         super.onPause();
-        Log.d("onPause Called", "Paused");
+        Log.d("onPause called", "MainActivity");
         //onSaveInstanceState(Bundle) ??
+    }
+
+    protected void onStop(){
+        super.onStop();
+        Log.d("onStop called","");
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.d("DESTROYED","");
     }
 
     protected void onResume(){
         super.onResume();
-        Log.d("onResume Called", "We have resumed");
+        Log.d("onResume called", "");
+
         //check here for if logged in or not
         //View.onRestoreInstanceState(Bundle bundleThing) ??
     }
@@ -75,13 +88,13 @@ public class MainActivity extends AppCompatActivity
         if(ValidateLogin()){
             String EncryptedPassword = PasswordFunctions.EncryptPassword(ThePassword);
             Global.UserPassword = EncryptedPassword;
-            Call<String> response = client.VerifyLogin(TheEmailAddress, EncryptedPassword);
+            Call<String> response = client.VerifyLogin(TheEmailAddress, EncryptedPassword);     //calls a
             response.enqueue(new Callback<String>()
                 {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response)
                     {
-                        Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                        Log.d("retrofit", "SUCCESS: " + response);
                         if(response.code() == 404)  //is the code actually an integer and not a string?
                             Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                         else{
