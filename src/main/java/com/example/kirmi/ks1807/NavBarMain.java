@@ -28,20 +28,18 @@ public class NavBarMain extends AppCompatActivity
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
                 startActivity(intent);
             }
-        }
+        }       //checking here if the App has permission to write over other apps
 
         BottomNavigationView nav = findViewById(R.id.bottom_nav);
         nav.setOnNavigationItemSelectedListener(this);
 
         //Creating fragments.
-        loadFragment(new HomeFragment());
+        loadFragment(new HomeFragment());   //load the homepage
     }
 
     private boolean loadFragment(Fragment fragment)
     {
-        if(fragment != null)
-        {
-
+        if(fragment != null){
             //Getting the content of the fragment onto the main container.
             getSupportFragmentManager()
                     .beginTransaction()
@@ -58,7 +56,7 @@ public class NavBarMain extends AppCompatActivity
 
         /*On selection of the navigation menu, the fragment content is displayed with its
         connected java fragment class*/
-        switch(item.getItemId())
+        switch(item.getItemId())        //determine which MenuItem was selected -> then send the fragment (object) to loadFragment()
         {
             case R.id.nav_home:
                 fragment = new HomeFragment();

@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);                     // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
-        Log.d("onCreate", "");
+        Log.d("onCreate", "Called");
         client = retrofit.create(RestInterface.Ks1807Client.class); // an implementation of the interface
 
         Password.setOnFocusChangeListener(new View.OnFocusChangeListener()
@@ -66,6 +66,10 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         Log.d("onPause called", "MainActivity");
         //onSaveInstanceState(Bundle) ??
+        if(Global.isLogged){
+            Log.d("onPause called", "finish()");
+            finish();
+        }
     }
 
     protected void onStop(){
@@ -81,7 +85,6 @@ public class MainActivity extends AppCompatActivity
     protected void onResume(){
         super.onResume();
         Log.d("onResume called", "");
-
         //check here for if logged in or not
         //View.onRestoreInstanceState(Bundle bundleThing) ??
     }
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity
                                 showAlert(3);
                             else{
                                 Global.UserID = response.body();
-                                Global.isLogged = true;
+                                Global.isLogged = true;             //declare user as logged in
                                 success_Login();
                             }
                         }
