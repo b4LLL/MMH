@@ -14,4 +14,7 @@ public class Global
     /*Used if the user backtracks on the connect page (determines if they go to the first or
     second registration page.*/
     public static String UserExtraMoodQuestions = "";
+
+    //add 2 variables here to declare ->
+        //  when the user is signed in
 }
