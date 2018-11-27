@@ -17,4 +17,5 @@ public class Global
 
     //add 2 variables here to declare ->
         //  when the user is signed in
+        // the boolean state of the backgroundservice
 }

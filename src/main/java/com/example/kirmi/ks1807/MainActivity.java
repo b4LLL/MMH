@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity
     String ThePassword;
     String UserID = "";
 
+    // write a function to check if the background service is running
+    // also check if Spotify is already installed -> the function should be called on the "Login" button click
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);                         // onCreate code called
