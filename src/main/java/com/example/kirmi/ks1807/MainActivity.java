@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity
                                 showAlert(3);
                             else{
                                 Global.UserID = response.body();
+                                Global.isLogged = true;
                                 success_Login();
                             }
                         }
