@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 public class NavBarMain extends AppCompatActivity
@@ -20,7 +21,6 @@ public class NavBarMain extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navbarmain);
-
         UserID = Global.UserID;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -36,6 +36,8 @@ public class NavBarMain extends AppCompatActivity
         //Creating fragments.
         loadFragment(new HomeFragment());   //load the homepage
     }
+
+
 
     private boolean loadFragment(Fragment fragment)
     {

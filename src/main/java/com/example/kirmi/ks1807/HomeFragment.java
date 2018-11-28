@@ -27,8 +27,8 @@ public class HomeFragment extends Fragment
 {
     String UserID = "";
     String password = "";
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter adapter;
     private List<TrackDetails> listItems;
     private ArrayList<TrackDetails> tracks;
 
@@ -39,56 +39,39 @@ public class HomeFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.activity_homefrag, null);
-
+        View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent...
         //run service
         if(!BackgroundService.isRunning)
             new BackgroundServiceStarter().onReceive(getContext(), new Intent());
-
         UserID = Global.UserID;
         password = Global.UserPassword;
         client = retrofit.create(RestInterface.Ks1807Client.class);
-
-
-        final LinearLayout nomusic = (LinearLayout)view.findViewById(R.id.nohistory);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        final LinearLayout nomusic = view.findViewById(R.id.nohistory);
+        recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listItems = new ArrayList<>();
-
+        listItems = new ArrayList<>();      //should use cards instead
         Call<String> response = client.GetMusicHistory(UserID, password);
         response.enqueue(new Callback<String>()
         {
             @Override
-            public void onResponse(Call<String> call, Response<String> response)
-            {
+            public void onResponse(Call<String> call, Response<String> response){
                 Log.d("retrofitclick", "SUCCESS: " + response.raw());
-
-                if(response.code() == 404)
-                {
-                    Toast.makeText(getContext(),
-                            "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    if(response.body().equals("-1"))
-                    {
-                        Toast.makeText(getActivity(), "Failed to get details from server",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        if (response.body().equals("-,-,-,-,-,-,-")) {
+                if(response.code() == 404){
+                    Toast.makeText(getContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                }else{
+                    if(response.body().equals("-1")){
+                        Toast.makeText(getActivity(), "Failed to get details from server", Toast.LENGTH_SHORT).show();
+                    }else{
+                        if (response.body().equals("-,-,-,-,-,-,-")){
                             nomusic.setVisibility(View.VISIBLE);
                             recyclerView.setAdapter(adapter);
                             recyclerView.setVisibility(View.GONE);
-
-                        } else {
+                        }else{
                             String musicHistory = response.body();
                             String MusicDetails[] = musicHistory.split(System.getProperty("line.separator"));
-                            listItems = new ArrayList<TrackDetails>();
+                            listItems = new ArrayList<>();
                             int length = 0;
                             if (MusicDetails.length > 10) {
                                 length = 10;
@@ -114,6 +97,17 @@ public class HomeFragment extends Fragment
         });
         return view;
     }
+
+    // onpause / destroy for calling service disconnection??
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("Called onPause","in HomeFrag");
+        
+    }
+
+
 
     void fail_LoginNetwork()
     {

@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         Log.d("onPause called", "MainActivity");
         //onSaveInstanceState(Bundle) ??
-        if(Global.isLogged){
+        /*if(Global.isLogged){
             Log.d("onPause called", "finish()");
             finish();
-        }
+        }*/
     }
 
     protected void onStop(){

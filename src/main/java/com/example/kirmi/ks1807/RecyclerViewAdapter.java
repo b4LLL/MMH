@@ -23,25 +23,39 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private BackgroundService mService;
     private boolean mBound = false;
 
-    RecyclerViewAdapter(List<TrackDetails> tracks, Context context) {
+    RecyclerViewAdapter(List<TrackDetails> tracks, Context context) {   //constructor
         Tracks = tracks;
         this.context = context;
+    }
 
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tracktitle, artist, genre, length, beforemood, aftermood;
+        Button play;
+        ViewHolder(View itemView) {
+            super(itemView);
+            tracktitle = (TextView)itemView.findViewById(R.id.text_tracktitle);
+            artist = (TextView)itemView.findViewById(R.id.Text_artist);
+            genre = (TextView)itemView.findViewById(R.id.Text_genre);
+            length = (TextView)itemView.findViewById(R.id.Text_length);
+            beforemood = (TextView)itemView.findViewById(R.id.Text_moodbefore);
+            aftermood = (TextView)itemView.findViewById(R.id.Text_moodafter);
+            play = (Button)itemView.findViewById(R.id.btn_Play);
+        }
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_mostplayedtrack, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_mostplayedtrack, parent, false);
 
         Intent intent = new Intent(parent.getContext(), BackgroundService.class);
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
+        // the .unbindService needs to be called here
+        // https://developer.android.com/reference/android/content/Context#unbindService(android.content.ServiceConnection)
         return new ViewHolder(v);
     }
 
-
+    //this sets up each ViewHolder in the HomeFragment.RecyclerView screen
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final TrackDetails track = Tracks.get(position);
@@ -57,41 +71,25 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 if (mBound) {
-                    mService.gettrack(track.spotifyTrackID);
+                    mService.gettrack(track.spotifyTrackID);    //this will crash if no Spotify installed???
                 }
             }
         });
-
     }
 
     @Override
     public int getItemCount() {
         return Tracks.size();
     }
-    class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tracktitle, artist, genre, length, beforemood, aftermood;
-        Button play;
-        ViewHolder(View itemView) {
-            super(itemView);
-            tracktitle = (TextView)itemView.findViewById(R.id.text_tracktitle);
-            artist = (TextView)itemView.findViewById(R.id.Text_artist);
-            genre = (TextView)itemView.findViewById(R.id.Text_genre);
-            length = (TextView)itemView.findViewById(R.id.Text_length);
-            beforemood = (TextView)itemView.findViewById(R.id.Text_moodbefore);
-            aftermood = (TextView)itemView.findViewById(R.id.Text_moodafter);
-            play = (Button)itemView.findViewById(R.id.btn_Play);
 
-        }
-    }
-
+    //here we set the connection to the service
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
             Log.d("RecyclerViewAdapter","BackgroundService binding..");
-            mService = binder.getService();
+            mService = binder.getService(); //set the service to mService, mBound is just a flag to state that it is bound...
             mBound = true;
-
         }
 
         @Override
@@ -100,6 +98,4 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mBound = false;
         }
     };
-
-
 }
