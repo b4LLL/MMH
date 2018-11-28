@@ -50,9 +50,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         Intent intent = new Intent(parent.getContext(), BackgroundService.class);
         context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        // the .unbindService needs to be called here
+        // the .unbindService needs to be called here?
+
         // https://developer.android.com/reference/android/content/Context#unbindService(android.content.ServiceConnection)
         return new ViewHolder(v);
+        // https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter#oncreateviewholder
     }
 
     //this sets up each ViewHolder in the HomeFragment.RecyclerView screen
@@ -76,6 +78,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
     }
+    public void killBind(){
+        context.unbindService(serviceConnection);
+    }
 
     @Override
     public int getItemCount() {
@@ -95,6 +100,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d("RecyclerViewAdapter","onServiceDisconnected called");
+            //mService.unbindService(serviceConnection);
             mBound = false;
         }
     };

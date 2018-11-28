@@ -30,8 +30,6 @@ public class HomeFragment extends Fragment
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     private List<TrackDetails> listItems;
-    private ArrayList<TrackDetails> tracks;
-
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -39,7 +37,7 @@ public class HomeFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent...
+        View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent... unless set to mainAct ?
         //run service
         if(!BackgroundService.isRunning)
             new BackgroundServiceStarter().onReceive(getContext(), new Intent());
@@ -103,11 +101,9 @@ public class HomeFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("Called onPause","in HomeFrag");
-        
+        Log.d("Called onPause","in HomeFrag. \nAdapter.itemCount = " + adapter.getItemCount());
+        //new RecyclerViewAdapter().killBind(); // ?
     }
-
-
 
     void fail_LoginNetwork()
     {
