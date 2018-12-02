@@ -1,9 +1,13 @@
 package com.example.kirmi.ks1807;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,10 +37,15 @@ public class HomeFragment extends Fragment
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
+    Context context;
+    public BackgroundService mService;
+    boolean mBound;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
     {
+        context = getContext();
         View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent... unless set to mainAct ?
         //run service
         if(!BackgroundService.isRunning)
@@ -49,7 +58,7 @@ public class HomeFragment extends Fragment
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listItems = new ArrayList<>();      //should use cards instead
+        listItems = new ArrayList<>();
         Call<String> response = client.GetMusicHistory(UserID, password);
         response.enqueue(new Callback<String>()
         {
@@ -70,43 +79,70 @@ public class HomeFragment extends Fragment
                             String musicHistory = response.body();
                             String MusicDetails[] = musicHistory.split(System.getProperty("line.separator"));
                             listItems = new ArrayList<>();
-                            int length = 0;
-                            if (MusicDetails.length > 10) {
-                                length = 10;
-                            } else if (MusicDetails.length <= 10) {
+                            int length;
+                            if (MusicDetails.length <= 10) {
                                 length = MusicDetails.length;
+                            } else {
+                                length = 10;
                             }
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
                                 TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);
                                 listItems.add(list);
                             }
-                            adapter = new RecyclerViewAdapter(listItems, getContext());
+
+
+                            Intent intent = new Intent(context, BackgroundService.class);
+                            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+
+                            adapter = new RecyclerViewAdapter(listItems, getContext(),mService,mBound);
                             recyclerView.setAdapter(adapter);
                         }
                     }
                 }
             }
             @Override
-            public void onFailure(Call<String> call, Throwable t)
-            {
+            public void onFailure(Call<String> call, Throwable t){
                 fail_LoginNetwork();
             }
         });
+
         return view;
     }
 
-    // onpause / destroy for calling service disconnection??
+    //here we set the connection to the service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
+            Log.d("RecyclerViewAdapter","BackgroundService binding..");
+            mService = binder.getService(); //set the service to mService, mBound is just a flag to state that it is bound...
+            mBound = true;
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d("RecyclerViewAdapter","onServiceDisconnected called");
+            mService.unbindService(serviceConnection);
+            mBound = false;
+        }
+    };
+
+    public void unbindService() {
+        mService.unbindService(serviceConnection);
+    }
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("Called onPause","in HomeFrag. \nAdapter.itemCount = " + adapter.getItemCount());
-        //new RecyclerViewAdapter().killBind(); // ?
+        Log.d("Pausing", "serviceConnection= " + mService);
+        if(mBound) {
+            Log.d("onPause called", "we are bound");
+        }
+        //unbindService();
     }
 
-    void fail_LoginNetwork()
-    {
+    void fail_LoginNetwork(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder

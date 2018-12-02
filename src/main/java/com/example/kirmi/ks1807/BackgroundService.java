@@ -64,6 +64,8 @@ public class BackgroundService extends Service {
         }
     }
 
+
+
     //Binder method - gives the main application a spotifyAppRemote instance - temporary, should use Web API if possible.
     @Override
     public IBinder onBind(Intent intent) {

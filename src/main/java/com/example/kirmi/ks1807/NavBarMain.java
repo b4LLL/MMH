@@ -37,8 +37,6 @@ public class NavBarMain extends AppCompatActivity
         loadFragment(new HomeFragment());   //load the homepage
     }
 
-
-
     private boolean loadFragment(Fragment fragment)
     {
         if(fragment != null){
@@ -49,6 +47,12 @@ public class NavBarMain extends AppCompatActivity
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.example.kirmi.ks1807;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,12 +22,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private List<TrackDetails> Tracks;
     private Context context;
-    private BackgroundService mService;
+    public BackgroundService mService;
     private boolean mBound = false;
 
-    RecyclerViewAdapter(List<TrackDetails> tracks, Context context) {   //constructor
+
+
+    RecyclerViewAdapter(List<TrackDetails> tracks, Context context, BackgroundService service, boolean isBound) {   //constructor
         Tracks = tracks;
         this.context = context;
+        this.mService = service;
+        this.mBound = isBound;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -41,30 +47,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             aftermood = (TextView)itemView.findViewById(R.id.Text_moodafter);
             play = (Button)itemView.findViewById(R.id.btn_Play);
         }
-    }
+    }   //object holding track information
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_mostplayedtrack, parent, false);
-
-        Intent intent = new Intent(parent.getContext(), BackgroundService.class);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        // the .unbindService needs to be called here?
-
-        // https://developer.android.com/reference/android/content/Context#unbindService(android.content.ServiceConnection)
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) { //returns the ViewHolder Object
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_mostplayedtrack, parent, false); //create the viewholder
+        //Intent intent = new Intent(parent.getContext(), BackgroundService.class);
+        //context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE
         return new ViewHolder(v);
-        // https://developer.android.com/reference/android/support/v7/widget/RecyclerView.Adapter#oncreateviewholder
     }
 
     //this sets up each ViewHolder in the HomeFragment.RecyclerView screen
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+
         final TrackDetails track = Tracks.get(position);
+
         holder.tracktitle.setText(track.getTitle());
         holder.artist.setText("Artist: " + track.getArtist());
         holder.genre.setText("Genre: " + track.getGenre());
-
         holder.length.setText("Length: " + track.getLength());
         holder.beforemood.setText("Your mood before listening: " + track.getMoodBefore() );
         holder.aftermood.setText("Your mood after listening: " + track.getMoodAfter());
@@ -78,16 +80,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
     }
-    public void killBind(){
-        context.unbindService(serviceConnection);
-    }
 
     @Override
     public int getItemCount() {
         return Tracks.size();
     }
+}
 
-    //here we set the connection to the service
+
+
+
+
+
+
+    /*//here we set the connection to the service
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -100,8 +106,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d("RecyclerViewAdapter","onServiceDisconnected called");
-            //mService.unbindService(serviceConnection);
+            mService.unbindService(serviceConnection);
             mBound = false;
         }
-    };
-}
+    };*/
