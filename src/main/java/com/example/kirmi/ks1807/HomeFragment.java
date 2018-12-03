@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 public class HomeFragment extends Fragment
 {
     String UserID = "";
@@ -36,16 +39,13 @@ public class HomeFragment extends Fragment
     private List<TrackDetails> listItems;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
-
     Context context;
     public BackgroundService mService;
-    boolean mBound;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
     {
-        context = getContext();
         View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent... unless set to mainAct ?
         //run service
         if(!BackgroundService.isRunning)
@@ -58,7 +58,26 @@ public class HomeFragment extends Fragment
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new RecyclerView.Adapter() {
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return null;
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public int getItemCount() {
+                return 0;
+            }
+        };
+        recyclerView.setAdapter(adapter);
         listItems = new ArrayList<>();
+        context = this.getContext();
         Call<String> response = client.GetMusicHistory(UserID, password);
         response.enqueue(new Callback<String>()
         {
@@ -90,13 +109,7 @@ public class HomeFragment extends Fragment
                                 TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);
                                 listItems.add(list);
                             }
-
-
-                            Intent intent = new Intent(context, BackgroundService.class);
-                            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
-
-                            adapter = new RecyclerViewAdapter(listItems, getContext(),mService,mBound);
+                            adapter = new RecyclerViewAdapter(listItems, context, mService, true);
                             recyclerView.setAdapter(adapter);
                         }
                     }
@@ -111,35 +124,8 @@ public class HomeFragment extends Fragment
         return view;
     }
 
-    //here we set the connection to the service
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
-            Log.d("RecyclerViewAdapter","BackgroundService binding..");
-            mService = binder.getService(); //set the service to mService, mBound is just a flag to state that it is bound...
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d("RecyclerViewAdapter","onServiceDisconnected called");
-            mService.unbindService(serviceConnection);
-            mBound = false;
-        }
-    };
-
-    public void unbindService() {
-        mService.unbindService(serviceConnection);
-    }
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("Pausing", "serviceConnection= " + mService);
-        if(mBound) {
-            Log.d("onPause called", "we are bound");
-        }
-        //unbindService();
+    public void setService(BackgroundService service){
+        this.mService = service;
     }
 
     void fail_LoginNetwork(){

@@ -7,7 +7,7 @@ public class TrackDetails
     {
 
     }
-    public TrackDetails(String spotifyID, String title, String genre, String artist, String length, String moodBefore, String moodAfter) {
+    TrackDetails(String spotifyID, String title, String genre, String artist, String length, String moodBefore, String moodAfter) {
         this.spotifyTrackID = spotifyID;
         this.title = title;
         this.artist = artist;
@@ -20,15 +20,15 @@ public class TrackDetails
     {
         return title;
     }
-    public String getArtist()
+    String getArtist()
     {
         return artist;
     }
-    public String getGenre()
+    String getGenre()
     {
         return genre;
     }
-    public String getLength()
+    String getLength()
     {
         return length;
     }
@@ -37,11 +37,11 @@ public class TrackDetails
         return spotifyTrackID;
     }
 
-    public String getMoodBefore() {
+    String getMoodBefore() {
         return moodBefore;
     }
 
-    public String getMoodAfter() {
+    String getMoodAfter() {
         return moodAfter;
     }
 }
