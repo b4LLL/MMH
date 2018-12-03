@@ -62,14 +62,10 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    protected void onPause(){
+    @Override
+    protected void onPause() {
         super.onPause();
-        Log.d("onPause called", "MainActivity");
-        //onSaveInstanceState(Bundle) ??
-        /*if(Global.isLogged){
-            Log.d("onPause called", "finish()");
-            finish();
-        }*/
+        Log.d("onPause called","");
     }
 
     protected void onStop(){
@@ -140,6 +136,9 @@ public class MainActivity extends AppCompatActivity
     void success_Login(){
         Intent intent = new Intent(MainActivity.this, NavBarMain.class);
         startActivity(intent);
+        this.getIntent().setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY); //// check me out
+
+        Log.d("INTENT :"," " + this.getIntent());
     }
 
     public void button_Register(View view){

@@ -60,13 +60,11 @@ public class BackgroundService extends Service {
     RestInterface.Ks1807Client client;
 
     //Binder implementation
-    public class LocalBinder extends Binder {
+    class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
         }
     }
-
-
 
     //Binder method - gives the main application a spotifyAppRemote instance - temporary, should use Web API if possible.
     @Override
@@ -97,9 +95,8 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         //CHECK HERE IF THERE IS A SPOTIFY INSTANCE/SERVICE ALREADY RUNNING???
-        client = retrofit.create(RestInterface.Ks1807Client.class);     //is this correct????
+        client = retrofit.create(RestInterface.Ks1807Client.class);
         isRunning = true;
-        //save context
         t = this;
         Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
         //Create mandatory notification for API 26+
