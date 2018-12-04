@@ -55,6 +55,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".RegisterSecondPage" />
         <activity android:name=".OtherPlatforms"/>
-        <activity android:name=".NavBarMain" />
+        <activity android:name=".NavBarMain"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

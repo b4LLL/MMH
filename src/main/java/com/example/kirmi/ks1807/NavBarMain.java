@@ -75,10 +75,15 @@ public class NavBarMain extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onBackPressed() {
         unbindService(serviceConnection);
-        Log.d("Pausing"," ");
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d("onResume"," called in NBM");
     }
 
     @Override

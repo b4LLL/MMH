@@ -100,18 +100,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
-        if(Global.isLogged) {
+        /*if(Global.isLogged) {
             Button buttonSignout = findViewById(R.id.btn_Signout);
             Button buttonRegister = findViewById(R.id.btn_Register);
             Button buttonSignin = findViewById(R.id.btn_Login);
             Button buttonContinue = findViewById(R.id.btn_Continue);
             TextView textOr = findViewById(R.id.Text_Or2);
-
             buttonSignout.setVisibility(View.VISIBLE);  //set a listener here.
             buttonRegister.setVisibility(View.INVISIBLE);
             buttonSignin.setVisibility(View.INVISIBLE);
             buttonContinue.setVisibility(View.VISIBLE);
             textOr.setVisibility(View.GONE);
+            EmailAddress.setVisibility(View.GONE);
+            Password.setVisibility(View.GONE);
 
             buttonContinue.setOnClickListener(new View.OnClickListener(){
                 public void onClick (View v){
@@ -126,11 +127,7 @@ public class MainActivity extends AppCompatActivity
                         stopService(new Intent(getParent(), BackgroundService.class));
                 }
             });
-
-            EmailAddress.setVisibility(View.GONE);
-            Password.setVisibility(View.GONE);
-
-        }
+        }*/
     }
 
     private boolean ValidateLogin(){
@@ -150,8 +147,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     void success_Login(){
-        Intent intent = new Intent(MainActivity.this, NavBarMain.class);
+        Intent intent = new Intent(this, NavBarMain.class);
         startActivity(intent);
+        finish();
     }
 
     public void button_Register(View view){
