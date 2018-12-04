@@ -1,15 +1,22 @@
 package com.example.kirmi.ks1807;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,51 +45,24 @@ public class MainActivity extends AppCompatActivity
         Log.d("onCreate", "Called");
         client = retrofit.create(RestInterface.Ks1807Client.class); // an implementation of the interface
 
-        Password.setOnFocusChangeListener(new View.OnFocusChangeListener()
-            {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus)
-                {
-                    if (hasFocus && Password.getText().toString().isEmpty()){
-                        Password.setHint("");
-                        Password.setText("");
-                    }
-                }
-            });
-        EmailAddress.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+        Password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus)
-            {
-                if (hasFocus && EmailAddress.getText().toString().isEmpty()){
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && Password.getText().toString().isEmpty()) {
+                    Password.setHint("");
+                    Password.setText("");
+                }
+            }
+        });
+        EmailAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && EmailAddress.getText().toString().isEmpty()) {
                     EmailAddress.setHint("");
                     EmailAddress.setText("");
                 }
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("onPause called","");
-    }
-
-    protected void onStop(){
-        super.onStop();
-        Log.d("onStop called","");
-    }
-
-    protected void onDestroy(){
-        super.onDestroy();
-        Log.d("DESTROYED","");
-    }
-
-    protected void onResume(){
-        super.onResume();
-        Log.d("onResume called", "");
-        //check here for if logged in or not
-        //View.onRestoreInstanceState(Bundle bundleThing) ??
     }
 
     public void button_Login(View view){
@@ -91,29 +71,65 @@ public class MainActivity extends AppCompatActivity
             Global.UserPassword = EncryptedPassword;
             Call<String> response = client.VerifyLogin(TheEmailAddress, EncryptedPassword);     //calls a
             response.enqueue(new Callback<String>()
+            {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response)
                 {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response)
-                    {
-                        Log.d("retrofit", "SUCCESS: " + response);
-                        if(response.code() == 404)  //is the code actually an integer and not a string?
-                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                    Log.d("retrofit", "SUCCESS: " + response);
+                    if(response.code() == 404)  //is the code actually an integer and not a string?
+                        Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                    else{
+                        if(response.body().equals("-1"))
+                            showAlert(3);
                         else{
-                            if(response.body().equals("-1"))
-                                showAlert(3);
-                            else{
-                                Global.UserID = response.body();
-                                Global.isLogged = true;             //declare user as logged in
-                                success_Login();
-                            }
+                            Global.UserID = response.body();
+                            Global.isLogged = true;             //declare user as logged in
+                            success_Login();
                         }
                     }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t)
-                    {
-                        showAlert(4);
-                    }
-                });
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t)
+                {
+                    showAlert(4);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(Global.isLogged) {
+            Button buttonSignout = findViewById(R.id.btn_Signout);
+            Button buttonRegister = findViewById(R.id.btn_Register);
+            Button buttonSignin = findViewById(R.id.btn_Login);
+            Button buttonContinue = findViewById(R.id.btn_Continue);
+            TextView textOr = findViewById(R.id.Text_Or2);
+
+            buttonSignout.setVisibility(View.VISIBLE);  //set a listener here.
+            buttonRegister.setVisibility(View.INVISIBLE);
+            buttonSignin.setVisibility(View.INVISIBLE);
+            buttonContinue.setVisibility(View.VISIBLE);
+            textOr.setVisibility(View.GONE);
+
+            buttonContinue.setOnClickListener(new View.OnClickListener(){
+                public void onClick (View v){
+                    success_Login();
+                }
+            });
+
+            buttonSignout.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+                    Global.UserID = "";
+                    if(BackgroundService.isRunning) //confirm this
+                        stopService(new Intent(getParent(), BackgroundService.class));
+                }
+            });
+
+            EmailAddress.setVisibility(View.GONE);
+            Password.setVisibility(View.GONE);
+
         }
     }
 
@@ -136,9 +152,6 @@ public class MainActivity extends AppCompatActivity
     void success_Login(){
         Intent intent = new Intent(MainActivity.this, NavBarMain.class);
         startActivity(intent);
-        this.getIntent().setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY); //// check me out
-
-        Log.d("INTENT :"," " + this.getIntent());
     }
 
     public void button_Register(View view){
@@ -195,5 +208,7 @@ public class MainActivity extends AppCompatActivity
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
+
 
 }
