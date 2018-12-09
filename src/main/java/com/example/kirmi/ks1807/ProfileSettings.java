@@ -444,6 +444,7 @@ public class ProfileSettings extends Fragment
                                     new BackgroundServiceStarter().onEnd(getContext(), new Intent());
                                 }
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
+                                Global.isLogged = false;
                                 startActivity(intent);
                             }
                         })

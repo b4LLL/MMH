@@ -65,6 +65,10 @@ public class NavBarMain extends AppCompatActivity
                     .beginTransaction()
                     .replace(R.id.main_container, fragment)
                     .commit();
+
+            Log.d("Backstack ",""+ getFragmentManager().getBackStackEntryCount());
+            Log.d("Backstack ",""+ getSupportFragmentManager().getBackStackEntryCount());
+
             if(fragment.getClass() == HomeFragment.class){
                 Log.d("NBM", "HomeFragment Loading");
                 ((HomeFragment) fragment).setService(mService);
@@ -76,8 +80,10 @@ public class NavBarMain extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        unbindService(serviceConnection);
-        super.onBackPressed();
+        if(!Global.isLogged){
+            unbindService(serviceConnection);
+            super.onBackPressed();
+        }
     }
 
     @Override
