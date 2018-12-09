@@ -52,7 +52,6 @@ public class NavBarMain extends AppCompatActivity
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.d("OSD ","onServiceDisconnected called");
             mBound = false;
             mService = null;
         }
@@ -60,36 +59,42 @@ public class NavBarMain extends AppCompatActivity
 
     private boolean loadFragment(Fragment fragment)
     {
-        if(fragment != null){
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.main_container, fragment)
-                    .commit();
-
-            Log.d("Backstack ",""+ getFragmentManager().getBackStackEntryCount());
-            Log.d("Backstack ",""+ getSupportFragmentManager().getBackStackEntryCount());
-
-            if(fragment.getClass() == HomeFragment.class){
-                Log.d("NBM", "HomeFragment Loading");
-                ((HomeFragment) fragment).setService(mService);
+        if(Global.isLogged){
+            if(fragment != null){
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_container, fragment)
+                        .commit();
+                if(fragment.getClass() == HomeFragment.class){  //bind service to the homefragment
+                    ((HomeFragment) fragment).setService(mService);
+                }
+                return true;
             }
-            return true;
         }
-        return false;
+            return false;
     }
 
     @Override
     public void onBackPressed() {
-        if(!Global.isLogged){
             unbindService(serviceConnection);
             super.onBackPressed();
-        }// figure out if you can call onPause here - and or finish() in mainActivity.js
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        Log.d("onResume"," called in NBM");
+        if(!Global.isLogged){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            unbindService(serviceConnection);
+            this.finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(serviceConnection);
+        super.onDestroy();
     }
 
     @Override

@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity
     void success_Login(){
         Intent intent = new Intent(this, NavBarMain.class);
         startActivity(intent);
+        this.finish();
     }
 
     public void button_Register(View view){

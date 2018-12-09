@@ -444,7 +444,9 @@ public class ProfileSettings extends Fragment
                                     new BackgroundServiceStarter().onEnd(getContext(), new Intent());
                                 }
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
                                 Global.isLogged = false;
+                                
                                 startActivity(intent);
                             }
                         })
