@@ -83,7 +83,7 @@ public class NavBarMain extends AppCompatActivity
         if(!Global.isLogged){
             unbindService(serviceConnection);
             super.onBackPressed();
-        }
+        }// figure out if you can call onPause here - and or finish() in mainActivity.js
     }
 
     @Override
