@@ -17,6 +17,8 @@ public class Global
 
     static Boolean isLogged = false;
 
+    static Boolean isInstalled = false;
+
     //add 2 variables here to declare ->
         //  when the user is signed in
         // the boolean state of the backgroundservice

@@ -3,11 +3,8 @@ package com.example.kirmi.ks1807;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -21,6 +18,7 @@ public class NavBarMain extends AppCompatActivity
     String UserID = "";
     Boolean mBound;
     BackgroundService mService;
+    String fragID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  //when NavBarMain loads: it loads the new HomeFragment
@@ -28,13 +26,6 @@ public class NavBarMain extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navbarmain);
         UserID = Global.UserID;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //checking here if the App has permission to write over other apps
-            if (!Settings.canDrawOverlays(getApplicationContext())) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-            }
-        }
         BottomNavigationView nav = findViewById(R.id.bottom_nav);
         nav.setOnNavigationItemSelectedListener(this);
         Intent intent = new Intent(this, BackgroundService.class);
@@ -63,7 +54,7 @@ public class NavBarMain extends AppCompatActivity
             if(fragment != null){
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.main_container, fragment)
+                        .replace(R.id.main_container, fragment, fragID)
                         .commit();
                 if(fragment.getClass() == HomeFragment.class){  //bind service to the homefragment
                     ((HomeFragment) fragment).setService(mService);
@@ -75,49 +66,51 @@ public class NavBarMain extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-            unbindService(serviceConnection);
-            super.onBackPressed();
+    protected void onPause() {
+        unbindService(serviceConnection);
+        super.onPause();
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        Log.d("onResume ","called");
         if(!Global.isLogged){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             unbindService(serviceConnection);
             this.finish();
+        } else {
+            Intent intent = new Intent(this, BackgroundService.class);
+            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        unbindService(serviceConnection);
-        super.onDestroy();
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
         Fragment fragment = null;
-
         switch(item.getItemId())
         {
             case R.id.nav_home:
                 fragment = new HomeFragment();
+                fragID = "home";
                 break;
             case R.id.nav_diary:
                 fragment = new DiaryFragment();
+                fragID = "diary";
                 break;
             case R.id.nav_resources:
                 fragment = new ResourcesFragment();
+                fragID = "resources";
                 break;
             case R.id.nav_progress:
                 fragment = new ProgressFragment();
+                fragID = "progress";
                 break;
             case R.id.nav_settings:
                 fragment = new SettingsFragment();
+                fragID = "settings";
                 break;
         }
         return loadFragment(fragment);

@@ -136,6 +136,7 @@ public class BackgroundService extends Service {
                     Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof CouldNotFindSpotifyApp) {
                     Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
+                    Global.isInstalled = false;
                 } else if (error instanceof LoggedOutException) {
                     Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof NotLoggedInException) {

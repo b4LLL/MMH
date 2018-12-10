@@ -66,8 +66,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBound) {
-                    mService.gettrack(track.spotifyTrackID);    //this will crash if no Spotify installed???
+                if (mBound && Global.isInstalled) {
+                    mService.gettrack(track.spotifyTrackID);
                 }
             }
         });
