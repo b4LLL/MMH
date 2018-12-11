@@ -52,10 +52,11 @@ public class BackgroundService extends Service {
     private Context t;
     public static final String CLIENT_ID = "9a7355bd24ff4544b4bdada73483aaa0";
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
-    public SpotifyAppRemote spotifyAppRemote;
+    public SpotifyAppRemote mSpotifyAppRemote;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
     public static String lastSong = "First";
     public static Boolean SongStarted = false;
+
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -76,8 +77,8 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         isRunning = false;
         Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
-        if (spotifyAppRemote != null)
-            SpotifyAppRemote.CONNECTOR.disconnect(spotifyAppRemote);
+        if (mSpotifyAppRemote != null)
+            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -85,10 +86,9 @@ public class BackgroundService extends Service {
     }
 
     public void gettrack(String trackID) {
-        String temp = trackID;
-        if (!temp.equals("Dummy")) {
-            Toast.makeText(getApplicationContext(), temp, Toast.LENGTH_SHORT).show();
-            spotifyAppRemote.getPlayerApi().play(temp);
+        if (!trackID.equals("Dummy")) {
+            Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
+            mSpotifyAppRemote.getPlayerApi().play(trackID);
         }
     }
 
@@ -114,22 +114,21 @@ public class BackgroundService extends Service {
             startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
         }
         //Create connection parameters
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
+        ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
                         .showAuthView(true)
                         .build();
         //Try to connect to spotify
+
         SpotifyAppRemote.CONNECTOR.connect(this, connectionParams, new Connector.ConnectionListener() {
             //Connected to Spotify, get appremote instance.
             @Override
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                BackgroundService.this.spotifyAppRemote = spotifyAppRemote;
+                mSpotifyAppRemote = spotifyAppRemote;
+                Global.isInstalled = true;
                 connected();
                 Log.d("BackgroundService", "Established connection with spotify");
             }
-
-            //Connection failed, show error.
             @Override
             public void onFailure(Throwable error) {
                 if (error instanceof AuthenticationFailedException) {
@@ -151,9 +150,11 @@ public class BackgroundService extends Service {
                     Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
                 } else if (error instanceof UserNotAuthorizedException) {
                     Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
-                }
-            }
+                } else
+                    Log.d("Error ", " - > " + error);
+            }       //errors on connection to spotify app
         });
+
     }
 
     String[][] GetMoods(String MoodList) {
@@ -204,9 +205,8 @@ public class BackgroundService extends Service {
         String MoodListAndScore[][] = {AllMoods, AllScores, AllEmoticons};
         return MoodListAndScore;
     }
-
     void connected() {
-        spotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
+        mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
             new Subscription.EventCallback<PlayerState>() {
                 String SpotifyTrackID;
                 String Track;
@@ -216,7 +216,6 @@ public class BackgroundService extends Service {
                 String TheMood;
                 String BeforeMood;
                 boolean PromptUser = false;
-
                 public void onEvent(final PlayerState playerState) {
             /*This code checks if the user should be prompted to enter their mood, in
             accordance with whatever setting they changed this to for their account.*/
@@ -262,21 +261,17 @@ public class BackgroundService extends Service {
                                     if (!response.body().equals("")) {
                                         String MoodList = response.body();
                                         final String[][] FullList = GetMoods(MoodList);
-
                                 /*Break up the two dimensional array of scores, Emoticons and
                                 Mood Names and then convert the scores from String to Integer*/
                                         final String[] List = FullList[0];
                                         final String[] StringScoreList = FullList[1];
                                         final String[] EmoticonList = FullList[2];
                                         int MoodListSize = FullList[0].length;
-
                                 /*Combine Emoticons and Mood Names for display purposes.
                                 However list of mood names on their own will be maintained as
                                 well as this is what will go into the DB.*/
                                         final String[] MoodAndEmoticonList = new String[MoodListSize];
-
                                         int[] ScoreList = new int[MoodListSize];
-
                                 /*Loop used to convert the string numbers to ints and to
                                 combine the mood name and emoticon.*/
                                         for (int i = 0; i < MoodListSize; i++) {

@@ -65,10 +65,24 @@ public class NavBarMain extends AppCompatActivity
         return false;
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
-        unbindService(serviceConnection);
+        if(!Global.isLogged && !Global.isInstalled){
+            unbindService(serviceConnection);
+        }
         super.onPause();
+    }*/
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+        Log.d("OBP >>> "," isLogged and " + Global.isLogged + " isInstalled " + Global.isInstalled);
+    }
+
+    @Override
+    public void onStop(){
+        unbindService(serviceConnection);
+        super.onStop();
     }
 
     @Override
