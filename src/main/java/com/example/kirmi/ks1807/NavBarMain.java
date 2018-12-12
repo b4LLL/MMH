@@ -65,14 +65,6 @@ public class NavBarMain extends AppCompatActivity
         return false;
     }
 
-    /*@Override
-    protected void onPause() {
-        if(!Global.isLogged && !Global.isInstalled){
-            unbindService(serviceConnection);
-        }
-        super.onPause();
-    }*/
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
@@ -88,7 +80,6 @@ public class NavBarMain extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
-        Log.d("onResume ","called");
         if(!Global.isLogged){
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
