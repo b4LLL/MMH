@@ -25,6 +25,7 @@ import android.text.format.DateUtils;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.types.*;
 import com.spotify.android.appremote.api.error.AuthenticationFailedException;
 import com.spotify.android.appremote.api.error.CouldNotFindSpotifyApp;
 import com.spotify.android.appremote.api.error.LoggedOutException;
@@ -50,7 +51,7 @@ public class BackgroundService extends Service {
     private static final String NOTIFICATION_CHANNEL_ID = "MandatoryChannelID"; //Channel ID for mandatory foreground notification
     private final IBinder binder = new LocalBinder();
     private Context t;
-    public static final String CLIENT_ID = "9a7355bd24ff4544b4bdada73483aaa0";
+    public static final String CLIENT_ID = "74447ee7e0f949029b91c1f4dc4af433";
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
@@ -205,7 +206,9 @@ public class BackgroundService extends Service {
         String MoodListAndScore[][] = {AllMoods, AllScores, AllEmoticons};
         return MoodListAndScore;
     }
+
     void connected() {
+        Log.d("connected","BGS");
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
             new Subscription.EventCallback<PlayerState>() {
                 String SpotifyTrackID;
@@ -219,15 +222,16 @@ public class BackgroundService extends Service {
                 public void onEvent(final PlayerState playerState) {
             /*This code checks if the user should be prompted to enter their mood, in
             accordance with whatever setting they changed this to for their account.*/
-                    if (!Global.UserID.equals("") && !Global.UserPassword.equals("")) {
-                /*Caution - this server call is made 2-4 times every time a music
-                track is played. It should really only do this once per change for
-                efficiency's sake. But it works okay as is.*/
+
+                    if (Global.isLogged) {
+                    /*Caution - this server call is made 2-4 times every time a music
+                    track is played. It should really only do this once per change for
+                    efficiency's sake. But it works okay as is.*/
                         Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
                         response.enqueue(new Callback<String>() {
                             @Override
                             public void onResponse(Call<String> call, Response<String> response) {
-                                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                                //Log.d("retrofitclick", "SUCCESS: " + response.raw());
 
                                 if (response.code() == 404) {
                                     Toast.makeText(getApplicationContext(),
@@ -251,7 +255,7 @@ public class BackgroundService extends Service {
                         response.enqueue(new Callback<String>() {
                             @Override
                             public void onResponse(Call<String> call, Response<String> response) {
-                                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                                //Log.d("retrofitclick", "SUCCESS: " + response.raw());
 
                                 if (response.code() == 404) {
                                     Toast.makeText(getApplicationContext(),
@@ -346,9 +350,9 @@ public class BackgroundService extends Service {
                                                                     } else {
                                                                         if (!response.body().equals("Incorrect UserID or Password. Query not executed.")) {
                                                                             Global.MoodID = response.body();
-//                                                                                        Toast.makeText(getApplicationContext(),
-//                                                                                                "Mood at start of track updated with Mood ID " + Global.MoodID,
-//                                                                                                Toast.LENGTH_SHORT).show();
+    //                                                                                        Toast.makeText(getApplicationContext(),
+    //                                                                                                "Mood at start of track updated with Mood ID " + Global.MoodID,
+    //                                                                                                Toast.LENGTH_SHORT).show();
                                                                         } else {
                                                                             Global.MoodID = "-1";
                                                                             Toast.makeText(getApplicationContext(),
@@ -457,7 +461,7 @@ public class BackgroundService extends Service {
                         });
                     }
                 }
-            });
+        });
     }
 
     void fail_LoginNetwork()

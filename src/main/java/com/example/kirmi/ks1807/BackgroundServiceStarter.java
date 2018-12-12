@@ -7,8 +7,6 @@ import android.os.Build;
 
 public class BackgroundServiceStarter extends BroadcastReceiver
 {
-    // check here to see if the backgroundserver is already running for this App
-    // if it is not running -> change a global boolean variable
     public void onReceive(Context context, Intent intent)
     {
         Intent i = new Intent(context, BackgroundService.class);
