@@ -67,7 +67,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             @Override
             public void onClick(View v) {
                 if (mBound && Global.isInstalled) {
-                    mService.gettrack(track.spotifyTrackID);
+                    mService.getTrack(track.spotifyTrackID);
                 }
             }
         });

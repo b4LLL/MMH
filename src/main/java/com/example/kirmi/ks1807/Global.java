@@ -19,6 +19,8 @@ public class Global
 
     static Boolean isInstalled = false;
 
+    static Boolean bgsReceiverRunning = false;
+
     //add 2 variables here to declare ->
         //  when the user is signed in
         // the boolean state of the backgroundservice

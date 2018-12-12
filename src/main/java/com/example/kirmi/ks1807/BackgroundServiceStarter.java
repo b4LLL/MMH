@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 public class BackgroundServiceStarter extends BroadcastReceiver
 {
+
     public void onReceive(Context context, Intent intent)
     {
         Intent i = new Intent(context, BackgroundService.class);
@@ -14,6 +16,8 @@ public class BackgroundServiceStarter extends BroadcastReceiver
             context.startForegroundService(i);
         else
             context.startService(i);
+        Log.d("BroadcastReceiver","BGS started.");
+        Global.bgsReceiverRunning = true;
     }
 
     public void onEnd(Context context, Intent intent)

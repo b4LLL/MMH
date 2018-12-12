@@ -86,7 +86,7 @@ public class BackgroundService extends Service {
         return START_STICKY;
     }
 
-    public void gettrack(String trackID) {
+    public void getTrack(String trackID) {
         if (!trackID.equals("Dummy")) {
             Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
             mSpotifyAppRemote.getPlayerApi().play(trackID);
@@ -128,7 +128,6 @@ public class BackgroundService extends Service {
                 mSpotifyAppRemote = spotifyAppRemote;
                 Global.isInstalled = true;
                 connected();
-                Log.d("BackgroundService", "Established connection with spotify");
             }
             @Override
             public void onFailure(Throwable error) {
@@ -208,7 +207,7 @@ public class BackgroundService extends Service {
     }
 
     void connected() {
-        Log.d("connected","BGS");
+        Log.d("BackgroundService", "Established connection with Spotify remote.");
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
             new Subscription.EventCallback<PlayerState>() {
                 String SpotifyTrackID;
