@@ -42,7 +42,8 @@
         <!-- The app's starting activity -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -51,11 +52,12 @@
         </activity>
 
         <!-- Other activities -->
-        <activity
-            android:name=".Register"
+        <activity android:name=".Register"
             android:screenOrientation="portrait" />
-        <activity android:name=".RegisterSecondPage" />
-        <activity android:name=".OtherPlatforms"/>
+        <activity android:name=".RegisterSecondPage"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".OtherPlatforms"
+            android:screenOrientation="portrait"/>
         <activity android:name=".NavBarMain"
             android:screenOrientation="portrait"/>
     </application>

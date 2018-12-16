@@ -68,7 +68,7 @@ public class NavBarMain extends AppCompatActivity
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
-        Log.d("OBP >>> "," isLogged and " + Global.isLogged + " isInstalled " + Global.isInstalled);
+        Log.d("OBP >>> "," isLogged: " + Global.isLogged + " isInstalled: " + Global.isInstalled);
     }
 
     @Override

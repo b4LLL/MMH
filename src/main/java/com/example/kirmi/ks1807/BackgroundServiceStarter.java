@@ -11,18 +11,22 @@ public class BackgroundServiceStarter extends BroadcastReceiver
 
     public void onReceive(Context context, Intent intent)
     {
-        Intent i = new Intent(context, BackgroundService.class);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)  //checking for SDK/Build version?
-            context.startForegroundService(i);
-        else
-            context.startService(i);
-        Log.d("BroadcastReceiver","BGS started.");
-        Global.bgsReceiverRunning = true;
+        if(Global.isLogged){
+            Intent i = new Intent(context, BackgroundService.class);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)  //checking for SDK/Build version?
+                context.startForegroundService(i);
+            else
+                context.startService(i);
+            Log.d("BroadcastReceiver","BGS started.");
+            Global.bgsReceiverRunning = true;
+        }
     }
 
     public void onEnd(Context context, Intent intent)
     {
         Intent i = new Intent(context, BackgroundService.class);
         context.stopService(i);
+        Log.d("BroadcastReceiver","BGS ended.");
+        Global.bgsReceiverRunning = false;
     }
 }

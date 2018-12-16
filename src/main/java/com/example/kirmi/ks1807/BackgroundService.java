@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,66 +96,66 @@ public class BackgroundService extends Service {
 
     @Override
     public void onCreate() {
-        //CHECK HERE IF THERE IS A SPOTIFY INSTANCE/SERVICE ALREADY RUNNING???
-        client = retrofit.create(RestInterface.Ks1807Client.class);
-        isRunning = true;
-        t = this;
-        Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
-        //Create mandatory notification for API 26+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //Create notification channel
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "MMH", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Main Notification Channel");
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-            Notification.Builder builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID);
-            builder.setSmallIcon(R.drawable.ic_queue_music_black_24dp);
-            builder.setContentTitle("MMH");
-            builder.setContentText("Music for Mental Health running");
-            //Make the service foreground
-            startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
-        }
-        //Create connection parameters
-        ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .showAuthView(true)
-                        .build();
-        //Try to connect to spotify
-
-        SpotifyAppRemote.CONNECTOR.connect(this, connectionParams, new Connector.ConnectionListener() {
-            //Connected to Spotify, get appremote instance.
-            @Override
-            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                mSpotifyAppRemote = spotifyAppRemote;
-                Global.isInstalled = true;
-                connected();
+        if(Global.isLogged){
+            client = retrofit.create(RestInterface.Ks1807Client.class);
+            isRunning = true;
+            t = this;
+            Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
+            //Create mandatory notification for API 26+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //Create notification channel
+                NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "MMH", NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription("Main Notification Channel");
+                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+                Notification.Builder builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID);
+                builder.setSmallIcon(R.drawable.ic_queue_music_black_24dp);
+                builder.setContentTitle("MMH");
+                builder.setContentText("Music for Mental Health running");
+                //Make the service foreground
+                startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
             }
-            @Override
-            public void onFailure(Throwable error) {
-                if (error instanceof AuthenticationFailedException) {
-                    Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof CouldNotFindSpotifyApp) {
-                    Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
-                    Global.isInstalled = false;
-                } else if (error instanceof LoggedOutException) {
-                    Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof NotLoggedInException) {
-                    Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof OfflineModeException) {
-                    Toast.makeText(t, "This feature is not available in offline mode", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof SpotifyConnectionTerminatedException) {
-                    Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof SpotifyDisconnectedException) {
-                    Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof UnsupportedFeatureVersionException) {
-                    Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
-                } else if (error instanceof UserNotAuthorizedException) {
-                    Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
-                } else
-                    Log.d("Error ", " - > " + error);
-            }       //errors on connection to spotify app
-        });
+            //Create connection parameters
+            ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                    .setRedirectUri(REDIRECT_URI)
+                    .showAuthView(true)
+                    .build();
+            //Try to connect to spotify
 
+            SpotifyAppRemote.CONNECTOR.connect(this, connectionParams, new Connector.ConnectionListener() {
+                //Connected to Spotify, get appremote instance.
+                @Override
+                public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                    mSpotifyAppRemote = spotifyAppRemote;
+                    Global.isInstalled = true;
+                    connected();
+                }
+                @Override
+                public void onFailure(Throwable error) {
+                    if (error instanceof AuthenticationFailedException) {
+                        Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof CouldNotFindSpotifyApp) {
+                        Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
+                        Global.isInstalled = false;
+                    } else if (error instanceof LoggedOutException) {
+                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof NotLoggedInException) {
+                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof OfflineModeException) {
+                        Toast.makeText(t, "This feature is not available in offline mode", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof SpotifyConnectionTerminatedException) {
+                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof SpotifyDisconnectedException) {
+                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof UnsupportedFeatureVersionException) {
+                        Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof UserNotAuthorizedException) {
+                        Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
+                    } else
+                        Log.d("Error ", " - > " + error);
+                }       //errors on connection to spotify app
+            });
+        }
     }
 
     String[][] GetMoods(String MoodList) {
@@ -221,7 +222,6 @@ public class BackgroundService extends Service {
                 public void onEvent(final PlayerState playerState) {
             /*This code checks if the user should be prompted to enter their mood, in
             accordance with whatever setting they changed this to for their account.*/
-
                     if (Global.isLogged) {
                     /*Caution - this server call is made 2-4 times every time a music
                     track is played. It should really only do this once per change for
