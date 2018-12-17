@@ -49,13 +49,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         }
-        // onCreate code called
-        setContentView(R.layout.activity_main);                     // needs to be called inside onCreate - activity_main.xml [R.layout.* => /res/layout/]
+        setContentView(R.layout.activity_main);
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
         Log.d("onCreate", "Called");
         client = retrofit.create(RestInterface.Ks1807Client.class); // an implementation of the interface
-
         Password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

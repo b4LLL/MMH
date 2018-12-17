@@ -8,7 +8,6 @@ import android.util.Log;
 
 public class BackgroundServiceStarter extends BroadcastReceiver
 {
-
     public void onReceive(Context context, Intent intent)
     {
         if(Global.isLogged){
