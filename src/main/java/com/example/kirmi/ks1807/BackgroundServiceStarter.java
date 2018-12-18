@@ -10,7 +10,7 @@ public class BackgroundServiceStarter extends BroadcastReceiver
 {
     public void onReceive(Context context, Intent intent)
     {
-        if(Global.isLogged){
+        if(Global.isLogged && !Global.bgsReceiverRunning){
             Intent i = new Intent(context, BackgroundService.class);
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)  //checking for SDK/Build version?
                 context.startForegroundService(i);

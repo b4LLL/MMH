@@ -1,6 +1,7 @@
 package com.example.kirmi.ks1807;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -28,8 +29,11 @@ public class NavBarMain extends AppCompatActivity
         UserID = Global.UserID;
         BottomNavigationView nav = findViewById(R.id.bottom_nav);
         nav.setOnNavigationItemSelectedListener(this);
-        Intent intent = new Intent(this, BackgroundService.class);
-        bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+        //Intent intent = new Intent(this, BackgroundService.class);
+        getApplicationContext().bindService(new Intent(getApplication().getApplicationContext(), BackgroundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
+        //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
+
+        //bindService(intent, serviceConnection, BIND_AUTO_CREATE);
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
