@@ -55,7 +55,7 @@ public class BackgroundService extends Service {
     public static String tempTrack = "";
     public static String lastSong = "";
     public static Boolean SongStarted = false;
-    public static Boolean isPrompting = false;
+    public static Boolean isPrompting = true;       //flag to check whether the previous/existing prompt has been processed by the user
     String SpotifyTrackID;
     String Track;
     String Artist;
@@ -217,33 +217,31 @@ public class BackgroundService extends Service {
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
             new Subscription.EventCallback<PlayerState>() {
                 public void onEvent(final PlayerState playerState) {
-                    if ((playerState.track != null) && !playerState.isPaused){
-                        if((currentTrack != null) && (currentTrack != playerState.track)){
+                    Track tempTrack = playerState.track;
+                    if ((playerState.track != null) && !(playerState.isPaused)){      // IF not an ad and not paused
+                        if((currentTrack != tempTrack)){
                             previousTrack = currentTrack;
-                            currentTrack = playerState.track;
-                            Log.d("CHANGE OCCURED","\tCurrent -> " + currentTrack.name + "\tPrevious -> " + previousTrack.name);
-                        }else if(currentTrack == null){
-                            currentTrack = playerState.track;
-                        }
-                        //Log.d("CURRENT ","\t" + currentTrack.name +"\n PREVIOUS \t" + previousTrack.name);
-                        Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);  // checking if logged in - does the user want to be asked for mood
-                        response.enqueue(new Callback<String>() {
-                            @Override
-                            public void onResponse(Call<String> call, Response<String> response) {
-                                if (response.code() == 404) {
-                                    Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                                } else {
-                                    if (response.body().equals("Yes") && !isPrompting){
-                                        promptUser(playerState);
-                                        //isPrompting = true;
+                            currentTrack = tempTrack;
+                            Log.d("CHANGE OCCURED","\tCurrent -> " + currentTrack.name + "\n\t\t\tPrevious -> " + previousTrack.name);
+                            Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);  // checking if logged in - does the user want to be asked for mood
+                            response.enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+                                    if (response.code() == 404) {
+                                        Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        if (response.body().equals("Yes") && isPrompting){
+                                            promptUser(playerState);
+                                            isPrompting = false;
+                                        }
                                     }
                                 }
-                            }
-                            @Override
-                            public void onFailure(Call<String> call, Throwable t) {
-                                fail_LoginNetwork();
-                            }
-                        });
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    fail_LoginNetwork();
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -273,6 +271,9 @@ public class BackgroundService extends Service {
                             MoodAndEmoticonList[i] = EmoticonList[i] + " " + List[i];
                         }
                         final int[] CompleteScoreList = ScoreList;
+
+
+
                         if (!lastSong.equals(playerState.track.uri) && !playerState.track.name.equals("null")) {
                             final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
                             String DialogText;
@@ -295,7 +296,7 @@ public class BackgroundService extends Service {
                                 @Override
                                 public void onClick(View view) {
                                     dialog.dismiss();
-                                    //isPrompting = false;
+                                    isPrompting = true;
                                     String selectedMood = spinner.getSelectedItem().toString();
                                     Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
                                     int i = spinner.getSelectedItemPosition();
