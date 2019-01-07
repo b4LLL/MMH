@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,6 @@ import android.text.format.DateUtils;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.types.*;
 import com.spotify.android.appremote.api.error.AuthenticationFailedException;
 import com.spotify.android.appremote.api.error.CouldNotFindSpotifyApp;
 import com.spotify.android.appremote.api.error.LoggedOutException;
@@ -40,8 +37,6 @@ import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
 import com.spotify.protocol.client.Subscription;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
-
-import java.io.Serializable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,9 +52,10 @@ public class BackgroundService extends Service {
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
-    public static String firstSong = "";
+    public static String tempTrack = "";
     public static String lastSong = "";
     public static Boolean SongStarted = false;
+    public static Boolean isPrompting = false;
     String SpotifyTrackID;
     String Track;
     String Artist;
@@ -67,8 +63,8 @@ public class BackgroundService extends Service {
     String Length;
     String TheMood;
     String BeforeMood;
-    Track previousTrack = null;
     Track currentTrack = null;
+    Track previousTrack = null;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -216,28 +212,39 @@ public class BackgroundService extends Service {
         return MoodListAndScore;
     }
 
-    void connected() {
+    void connected() {      // listening to playerState changes
         Log.d("BackgroundService", "Established connection with Spotify remote.");
         mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
             new Subscription.EventCallback<PlayerState>() {
                 public void onEvent(final PlayerState playerState) {
-                    firstSong = playerState.track.uri;
-                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);  // checking if logged in - does the user want to be asked for mood
-                    response.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            if (response.code() == 404) {
-                                Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                            } else {
-                                if (response.body().equals("Yes"))
-                                    promptUser(playerState);
+                    if ((playerState.track != null) && !playerState.isPaused){
+                        if((currentTrack != null) && (currentTrack != playerState.track)){
+                            previousTrack = currentTrack;
+                            currentTrack = playerState.track;
+                            Log.d("CHANGE OCCURED","\tCurrent -> " + currentTrack.name + "\tPrevious -> " + previousTrack.name);
+                        }else if(currentTrack == null){
+                            currentTrack = playerState.track;
+                        }
+                        //Log.d("CURRENT ","\t" + currentTrack.name +"\n PREVIOUS \t" + previousTrack.name);
+                        Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);  // checking if logged in - does the user want to be asked for mood
+                        response.enqueue(new Callback<String>() {
+                            @Override
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                if (response.code() == 404) {
+                                    Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (response.body().equals("Yes") && !isPrompting){
+                                        promptUser(playerState);
+                                        //isPrompting = true;
+                                    }
+                                }
                             }
-                        }
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            fail_LoginNetwork();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<String> call, Throwable t) {
+                                fail_LoginNetwork();
+                            }
+                        });
+                    }
                 }
             }
         );
@@ -288,6 +295,7 @@ public class BackgroundService extends Service {
                                 @Override
                                 public void onClick(View view) {
                                     dialog.dismiss();
+                                    //isPrompting = false;
                                     String selectedMood = spinner.getSelectedItem().toString();
                                     Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
                                     int i = spinner.getSelectedItemPosition();
@@ -304,7 +312,6 @@ public class BackgroundService extends Service {
                                         BeforeMood = List[i];
                                         String UserID = Global.UserID;
                                         String UserPassword = Global.UserPassword;
-                                        /*Prevents the mood from being added if the user is not logged in.*/
                                         if (!UserID.equals("") && !UserPassword.equals("")) {
                                             Call<String> response = client.TrackStarted(SpotifyTrackID, Track, Genre, Artist, Length, TheMood,UserID, UserPassword);
                                             response.enqueue(new Callback<String>() {
@@ -312,26 +319,18 @@ public class BackgroundService extends Service {
                                                 public void onResponse(Call<String> call, Response<String> response) {
                                                     Log.d("retrofitclick", "SUCCESS: " + response.raw());
                                                     if (response.code() == 404) {
-                                                        Toast.makeText(getApplicationContext(),
-                                                                "404 Error. Server did not return a response.",
-                                                                Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
                                                     } else {
                                                         if (!response.body().equals("Incorrect UserID or Password. Query not executed.")) {
                                                             Global.MoodID = response.body();
-                                                            //                                                                                        Toast.makeText(getApplicationContext(),
-                                                            //                                                                                                "Mood at start of track updated with Mood ID " + Global.MoodID,
-                                                            //                                                                                                Toast.LENGTH_SHORT).show();
                                                         } else {
                                                             Global.MoodID = "-1";
-                                                            Toast.makeText(getApplicationContext(),
-                                                                    "Error, mood at start of track failed to update",
-                                                                    Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(getApplicationContext(),"Error, mood at start of track failed to update",Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 }
                                                 @Override
                                                 public void onFailure(Call<String> call, Throwable t) {
-                                                    //This crashes on loading.
                                                     //fail_LoginNetwork();
                                                 }
                                             });
@@ -368,6 +367,7 @@ public class BackgroundService extends Service {
                                             });
                                         }
                                         SongStarted = false;
+
                                         CommonFunctions Common = new CommonFunctions();
                                         int ScoreIndex;
                                         ScoreIndex = Common.GetArrayIndexFromString(List, BeforeMood);
@@ -383,11 +383,9 @@ public class BackgroundService extends Service {
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.setCancelable(false);
                             if(Build.VERSION.SDK_INT >= 26) {
-                                dialog.getWindow().setType(
-                                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                                dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
                             }else {
-                                dialog.getWindow().setType(
-                                        WindowManager.LayoutParams.TYPE_PHONE);
+                                dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
                             }
                             dialog.show();
                             final Track track = playerState.track;
@@ -407,6 +405,7 @@ public class BackgroundService extends Service {
             }
         });
     }
+
 
 
     void fail_LoginNetwork()
