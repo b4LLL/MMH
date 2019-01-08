@@ -83,7 +83,7 @@ public class BackgroundService extends Service {
         isRunning = false;
         Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
         if (mSpotifyAppRemote != null)
-            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+            SpotifyAppRemote.disconnect(mSpotifyAppRemote);
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -124,7 +124,7 @@ public class BackgroundService extends Service {
                 .showAuthView(true)
                 .build();
             //Try to connect to spotify
-            SpotifyAppRemote.CONNECTOR.connect(this, connectionParams, new Connector.ConnectionListener() {
+            SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
                 @Override
                 public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote;
