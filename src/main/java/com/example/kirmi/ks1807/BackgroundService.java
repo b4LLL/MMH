@@ -58,6 +58,10 @@ public class BackgroundService extends Service {
     String BeforeMood;
     Track currentTrack = null;
     Track previousTrack = null;
+    int[] CompleteScoreList;
+
+
+
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -248,6 +252,7 @@ public class BackgroundService extends Service {
                     Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
                 } else if (!response.body().equals("")) {
                     String MoodList = response.body();
+
                     final String[][] FullList = GetMoods(MoodList);
                     final String[] List = FullList[0];
                     final String[] StringScoreList = FullList[1];
@@ -259,7 +264,8 @@ public class BackgroundService extends Service {
                         ScoreList[i] = Integer.parseInt(StringScoreList[i]);
                         MoodAndEmoticonList[i] = EmoticonList[i] + " " + List[i];
                     }
-                    final int[] CompleteScoreList = ScoreList;
+                    CompleteScoreList = ScoreList;
+
                     final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
                     String DialogText;
                     LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -350,8 +356,7 @@ public class BackgroundService extends Service {
                     }
                     dialog.show();
                     if (playerState.track!= null) {
-                        Toast.makeText(t, playerState.track.name + " by " +
-                                playerState.track.artist.name, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(t, playerState.track.name + " by " + playerState.track.artist.name, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
