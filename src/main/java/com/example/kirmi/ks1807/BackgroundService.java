@@ -120,11 +120,10 @@ public class BackgroundService extends Service {
             }
             //Create connection parameters
             ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                    .setRedirectUri(REDIRECT_URI)
-                    .showAuthView(true)
-                    .build();
+                .setRedirectUri(REDIRECT_URI)
+                .showAuthView(true)
+                .build();
             //Try to connect to spotify
-
             SpotifyAppRemote.CONNECTOR.connect(this, connectionParams, new Connector.ConnectionListener() {
                 @Override
                 public void onConnected(SpotifyAppRemote spotifyAppRemote) {
@@ -218,7 +217,6 @@ public class BackgroundService extends Service {
                         if((currentTrack != playerState.track)){
                             previousTrack = currentTrack;
                             currentTrack = playerState.track;
-                            Log.d("CHANGE OCCURED","\tCurrent -> " + currentTrack.name + "\n\t\t\tPrevious -> " + previousTrack.name);
                             Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);  // checking if logged in - does the user want to be asked for mood
                             response.enqueue(new Callback<String>() {
                                 @Override
@@ -235,6 +233,7 @@ public class BackgroundService extends Service {
                                     fail_LoginNetwork();
                                 }
                             });
+                            Log.d("CHANGE OCCURED","\tCurrent -> " + currentTrack.name + "\n\t\t\tPrevious -> " + previousTrack.name);
                         }
                     }
                 }
@@ -252,7 +251,6 @@ public class BackgroundService extends Service {
                     Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
                 } else if (!response.body().equals("")) {
                     String MoodList = response.body();
-
                     final String[][] FullList = GetMoods(MoodList);
                     final String[] List = FullList[0];
                     final String[] StringScoreList = FullList[1];
@@ -265,7 +263,6 @@ public class BackgroundService extends Service {
                         MoodAndEmoticonList[i] = EmoticonList[i] + " " + List[i];
                     }
                     CompleteScoreList = ScoreList;
-
                     final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
                     String DialogText;
                     LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -274,7 +271,7 @@ public class BackgroundService extends Service {
                     if (!SongStarted)
                         DialogText = "How are you feeling \nat the moment?";
                     else
-                        DialogText = "How are you feeling now after\n listening to last \nsong you played:\n\n"+playerState.track.name +"?";
+                        DialogText = "How are you feeling now after\n listening to last \nsong you played:\n\n" + playerState.track.name + "?";
                     title.setText(DialogText);
                     final Spinner spinner = mView.findViewById(R.id.spinner_over);
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, MoodAndEmoticonList);
@@ -369,7 +366,6 @@ public class BackgroundService extends Service {
     }
 
     void setUpDiaryPrompt(String[] List, String BeforeMood, String TheMood, int[] CompleteScoreList){
-
         CommonFunctions Common = new CommonFunctions();
         int ScoreIndex;
         ScoreIndex = Common.GetArrayIndexFromString(List, BeforeMood);
@@ -379,8 +375,6 @@ public class BackgroundService extends Service {
         if (AfterMoodScore - BeforeMoodScore > 3 || AfterMoodScore - BeforeMoodScore < -3) {
             //Diary prompt - Not yet implemented.
         }
-
-
     }
 
     void fail_LoginNetwork(){
