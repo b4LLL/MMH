@@ -24,6 +24,7 @@ import android.text.format.DateUtils;
 
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.PlayerApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.android.appremote.api.error.AuthenticationFailedException;
 import com.spotify.android.appremote.api.error.CouldNotFindSpotifyApp;
@@ -34,9 +35,11 @@ import com.spotify.android.appremote.api.error.SpotifyConnectionTerminatedExcept
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException;
 import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionException;
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
-import com.spotify.protocol.client.Subscription;
+
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
+
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -208,37 +211,32 @@ public class BackgroundService extends Service {
         return MoodListAndScore;
     }
 
-    void connected() {      // listening to playerState changes
+    void connected() {
         Log.d("BackgroundService", "Established connection with Spotify remote.");
-        mSpotifyAppRemote.getPlayerApi().subscribeToPlayerState().setEventCallback(
-            new Subscription.EventCallback<PlayerState>() {
-                public void onEvent(final PlayerState playerState) {
-                    if ((playerState.track != null) && !(playerState.isPaused)){      // IF not an ad and not paused
-                        if((currentTrack != playerState.track)){
-                            previousTrack = currentTrack;
-                            currentTrack = playerState.track;
-                            Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);  // checking if logged in - does the user want to be asked for mood
-                            response.enqueue(new Callback<String>() {
-                                @Override
-                                public void onResponse(Call<String> call, Response<String> response) {
-                                    if (response.code() == 404) {
-                                        Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                                    } else if (response.body().equals("Yes") && isPrompting){
-                                        promptUser(playerState);
-                                        isPrompting = false;
-                                    }
-                                }
-                                @Override
-                                public void onFailure(Call<String> call, Throwable t) {
-                                    fail_LoginNetwork();
-                                }
-                            });
-                            Log.d("CHANGE OCCURED","\tCurrent -> " + currentTrack.name + "\n\t\t\tPrevious -> " + previousTrack.name);
+
+        /*playerApi.subscribeToPlayerState().setEventCallback(playerState-> {
+                if((currentTrack != playerState.track)){
+                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
+                    response.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.code() == 404) {
+                                Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
+                            } else if (response.body().equals("Yes") && isPrompting){
+                                promptUser(playerState);
+                                isPrompting = false;
+                            }
                         }
-                    }
-                }
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            fail_LoginNetwork();
+                        }
+                });
+                previousTrack = currentTrack;
+                currentTrack = playerState.track;
+                Log.d("State","\n\tCurrent -> " + currentTrack.name + "\n\t\tPrevious -> " + previousTrack.name);
             }
-        );
+        }).setErrorCallback(throwable -> Log.d("ERROR"," - > \n" + throwable));*/
     }
 
     public void promptUser(PlayerState pState){
