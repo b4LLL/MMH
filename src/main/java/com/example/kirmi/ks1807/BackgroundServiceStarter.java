@@ -33,15 +33,14 @@ public class BackgroundServiceStarter extends BroadcastReceiver
             if(Global.mSpotifyAppRemote != null){
                 PlayerApi playerApi = Global.mSpotifyAppRemote.getPlayerApi();
                 playerApi.getPlayerState()
-                        .setResultCallback(playerState -> {
-                            // have fun with playerState
-                            this.pollPlayerState(playerState);
-
-                        })
-                        .setErrorCallback(throwable -> {
-                            // =(
-                        });
-
+                    .setResultCallback(playerState -> {
+                        // have fun with playerState
+                        this.pollPlayerState(playerState);
+                        
+                    })
+                    .setErrorCallback(throwable -> {
+                        // =(
+                    });
             }
         }
 
