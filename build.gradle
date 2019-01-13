@@ -40,7 +40,7 @@ dependencies
             androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
             implementation 'com.android.support:design:27.1.1'
             implementation project(':spotify-app-remote-release-0.6.0')
-            implementation project(':spotify-auth-release')
+            implementation project(':spotify-auth-release-1.1.0')
             implementation 'com.google.code.gson:gson:2.8.5'
             //Supernova Emoji
             implementation 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'

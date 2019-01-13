@@ -1,4 +1,5 @@
 package com.example.kirmi.ks1807;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 public class Global
 {
@@ -14,6 +15,8 @@ public class Global
     /*Used if the user backtracks on the connect page (determines if they go to the first or
     second registration page.*/
     static String UserExtraMoodQuestions = "";
+
+    static SpotifyAppRemote mSpotifyAppRemote = null;
 
     static Boolean isLogged = false;
 

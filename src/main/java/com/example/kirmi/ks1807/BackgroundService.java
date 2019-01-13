@@ -131,8 +131,10 @@ public class BackgroundService extends Service {
                 @Override
                 public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote;
+                    Global.mSpotifyAppRemote = spotifyAppRemote;
                     Global.isInstalled = true;
-                    connected();
+                    //connected();
+                    Log.d("BackgroundService", "Established connection with Spotify remote.");
                 }
                 @Override
                 public void onFailure(Throwable error) {
@@ -212,7 +214,7 @@ public class BackgroundService extends Service {
     }
 
     void connected() {
-        Log.d("BackgroundService", "Established connection with Spotify remote.");
+        PlayerApi playerApi = mSpotifyAppRemote.getPlayerApi();
 
         /*playerApi.subscribeToPlayerState().setEventCallback(playerState-> {
                 if((currentTrack != playerState.track)){
