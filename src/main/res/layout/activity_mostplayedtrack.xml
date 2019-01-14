@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        app:cardCornerRadius="3dp">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
+            <TextView
+                android:id="@+id/textTrackTitle"
+                android:layout_width="299dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="6dp"
+                android:fontFamily="@font/roboto_medium"
+                android:paddingBottom="5dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textArtist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textTrackTitle"
+                android:layout_alignStart="@+id/textTrackTitle"
+                android:layout_marginTop="11dp"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textAlbum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textArtist"
+                android:layout_alignStart="@+id/textTrackTitle"
+                android:layout_marginTop="10dp"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textLength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textAlbum"
+                android:layout_alignStart="@+id/textTrackTitle"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textMoodBefore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textLength"
+                android:layout_alignStart="@+id/textTrackTitle"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/textMoodAfter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textMoodBefore"
+                android:layout_alignStart="@+id/textTrackTitle"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:text="TextView" />
+
+            <ImageButton
+                android:contentDescription="Play!"
+                android:id="@+id/buttonPlay"
+                android:layout_width="50dp"
+                android:layout_height="49dp"
+                android:layout_alignEnd="@+id/textTrackTitle"
+                android:layout_alignBottom="@+id/textMoodAfter"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="46dp"
+                app:srcCompat="@android:drawable/ic_media_play" />
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>
