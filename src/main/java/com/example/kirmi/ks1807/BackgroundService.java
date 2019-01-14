@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -37,9 +39,8 @@ import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionExceptio
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
 
 import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Track;
 
-
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,15 +56,16 @@ public class BackgroundService extends Service {
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
-    public static Boolean SongStarted = false;
-    public static Boolean isPrompting = true;       //flag to check whether the previous/existing prompt has been processed by the user
+    public static Boolean isPrompting = false;       //flag to check whether the previous/existing prompt has been processed by the user
     String TheMood;
     String BeforeMood;
-    Track currentTrack = null;
-    Track previousTrack = null;
+    PlayerState currentState = null;
+    PlayerState previousState = null;
     int[] CompleteScoreList;
-
-
+    public String[] moodEmoticonList;
+    public String[] List;
+    public String[] scoreList;
+    public ArrayList<PlayerState> listOfPlayerStates = new ArrayList<>();
 
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
@@ -75,96 +77,11 @@ public class BackgroundService extends Service {
         }
     }
 
-    //Binder method - gives the main application a spotifyAppRemote instance - temporary, should use Web API if possible.
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
-
-    @Override
-    public void onDestroy() {
-        isRunning = false;
-        Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
-        if (mSpotifyAppRemote != null)
-            SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-    }
-
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
 
-    public void getTrack(String trackID) {
-        if (!trackID.equals("Dummy")) {
-            Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
-            mSpotifyAppRemote.getPlayerApi().play(trackID);
-        }
-    }
-
-    @Override
-    public void onCreate() {
-        if(Global.isLogged){
-            client = retrofit.create(RestInterface.Ks1807Client.class);
-            isRunning = true;
-            t = this;
-            Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
-            //Create mandatory notification for API 26+
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                //Create notification channel
-                NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "MMH", NotificationManager.IMPORTANCE_DEFAULT);
-                channel.setDescription("Main Notification Channel");
-                NotificationManager notificationManager = getSystemService(NotificationManager.class);
-                notificationManager.createNotificationChannel(channel);
-                Notification.Builder builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID);
-                builder.setSmallIcon(R.drawable.ic_queue_music_black_24dp);
-                builder.setContentTitle("MMH");
-                builder.setContentText("Music for Mental Health running");
-                //Make the service foreground
-                startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
-            }
-            //Create connection parameters
-            ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI)
-                .showAuthView(true)
-                .build();
-            //Try to connect to spotify
-            SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-                @Override
-                public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                    mSpotifyAppRemote = spotifyAppRemote;
-                    Global.mSpotifyAppRemote = spotifyAppRemote;
-                    Global.isInstalled = true;
-                    //connected();
-                    Log.d("BackgroundService", "Established connection with Spotify remote.");
-                }
-                @Override
-                public void onFailure(Throwable error) {
-                    if (error instanceof AuthenticationFailedException) {
-                        Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof CouldNotFindSpotifyApp) {
-                        Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
-                        Global.isInstalled = false;
-                    } else if (error instanceof LoggedOutException) {
-                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof NotLoggedInException) {
-                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof OfflineModeException) {
-                        Toast.makeText(t, "This feature is not available in offline mode", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof SpotifyConnectionTerminatedException) {
-                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof SpotifyDisconnectedException) {
-                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof UnsupportedFeatureVersionException) {
-                        Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof UserNotAuthorizedException) {
-                        Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
-                    } else
-                        Log.d("Error ", " - > " + error);
-                }
-            });
-        }
-    }
-
-    String[][] GetMoods(String MoodList) {
+    String[][] getMoods(String MoodList) {
         //Begin code to get the scores from the Mood List.
 
         //Split the incoming string by comma then get its size.
@@ -213,68 +130,172 @@ public class BackgroundService extends Service {
         return MoodListAndScore;
     }
 
-    void connected() {
-        PlayerApi playerApi = mSpotifyAppRemote.getPlayerApi();
-
-        /*playerApi.subscribeToPlayerState().setEventCallback(playerState-> {
-                if((currentTrack != playerState.track)){
-                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
-                    response.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            if (response.code() == 404) {
-                                Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                            } else if (response.body().equals("Yes") && isPrompting){
-                                promptUser(playerState);
-                                isPrompting = false;
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            fail_LoginNetwork();
-                        }
-                });
-                previousTrack = currentTrack;
-                currentTrack = playerState.track;
-                Log.d("State","\n\tCurrent -> " + currentTrack.name + "\n\t\tPrevious -> " + previousTrack.name);
-            }
-        }).setErrorCallback(throwable -> Log.d("ERROR"," - > \n" + throwable));*/
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
     }
 
-    public void promptUser(PlayerState pState){
-        final PlayerState playerState = pState;
+    @Override
+    public void onDestroy() {
+        isRunning = false;
+        Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
+        if (mSpotifyAppRemote != null)
+            SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
+
+    public void getTrack(String trackID) {
+        if (!trackID.equals("Dummy")) {
+            Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
+            mSpotifyAppRemote.getPlayerApi().play(trackID);
+        }
+    }
+
+    @Override
+    public void onCreate() {
+        if(Global.isLogged){
+            client = retrofit.create(RestInterface.Ks1807Client.class);
+            isRunning = true;
+            t = this;
+            Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
+            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d("message received"," " + intent.getAction());
+                    pollPlayerState();
+                }
+            };
+            registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
+            //Create mandatory notification for API 26+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //Create notification channel
+                NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "MMH", NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription("Main Notification Channel");
+                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+                Notification.Builder builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID);
+                builder.setSmallIcon(R.drawable.ic_queue_music_black_24dp);
+                builder.setContentTitle("MMH");
+                builder.setContentText("Music for Mental Health running");
+                //Make the service foreground
+                startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
+            }
+            //Create connection parameters
+            ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+                .setRedirectUri(REDIRECT_URI)
+                .showAuthView(true)
+                .build();
+            //Try to connect to spotify
+            SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+                @Override
+                public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                    mSpotifyAppRemote = spotifyAppRemote;
+                    Global.mSpotifyAppRemote = spotifyAppRemote;
+                    Global.isInstalled = true;
+                    Log.d("BackgroundService", "Established connection with Spotify remote.");
+                }
+                @Override
+                public void onFailure(Throwable error) {
+                    if (error instanceof AuthenticationFailedException) {
+                        Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof CouldNotFindSpotifyApp) {
+                        Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
+                        Global.isInstalled = false;
+                    } else if (error instanceof LoggedOutException) {
+                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof NotLoggedInException) {
+                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof OfflineModeException) {
+                        Toast.makeText(t, "This feature is not available in offline mode", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof SpotifyConnectionTerminatedException) {
+                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof SpotifyDisconnectedException) {
+                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof UnsupportedFeatureVersionException) {
+                        Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
+                    } else if (error instanceof UserNotAuthorizedException) {
+                        Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
+                    } else
+                        Log.d("Error ", " - > " + error);
+                }
+            });
+        }
+    }
+
+    void pollPlayerState(){
+        PlayerApi playerApi = mSpotifyAppRemote.getPlayerApi();
+        playerApi.getPlayerState()
+            .setResultCallback(playerState -> {
+                Log.d("BSS\t"," signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
+                Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
+                response.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.code() == 404) {
+                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
+                        } else if (response.body().equals("Yes")){
+                            if(currentState == null){
+                                currentState = playerState;
+                                promptUser(playerState, true);
+                            } else if (currentState != playerState){
+                                previousState = currentState;
+                                currentState = playerState;
+                                promptUser(previousState, false);
+                                promptUser(currentState, true);
+                            }
+                            /*listOfPlayerStates.add(playerState);
+                            for (PlayerState playerState : listOfPlayerStates) {
+                                promptUser(playerState);
+                                listOfPlayerStates.remove(playerState);
+                            }*/
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        networkLoginFail(t);
+                    }
+                });
+            })
+            .setErrorCallback(throwable -> {
+                // =(
+            });
+    }
+
+    int[] loadScoreList(String moodList){
+        String[][] fullList = getMoods(moodList);
+        scoreList = fullList[0];
+        String[] stringScoreList = fullList[1];
+        String[] emoticonList = fullList[2];
+        int moodListSize = fullList[0].length;
+        moodEmoticonList = new String[moodListSize];
+        int[] intScoreList = new int[moodListSize];
+        for (int i = 0; i < moodListSize; i++) {
+            intScoreList[i] = Integer.parseInt(stringScoreList[i]);
+            moodEmoticonList[i] = emoticonList[i] + " " + scoreList[i];
+        }
+        return intScoreList;
+    }
+
+    public void promptUser(PlayerState playerState, Boolean trackIsRunning){
         Call<String> response = client.GetMoodList();
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if (response.code() == 404) {
-                    Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                } else if (!response.body().equals("")) {
-                    String MoodList = response.body();
-                    final String[][] FullList = GetMoods(MoodList);
-                    final String[] List = FullList[0];
-                    final String[] StringScoreList = FullList[1];
-                    final String[] EmoticonList = FullList[2];
-                    int MoodListSize = FullList[0].length;
-                    final String[] MoodAndEmoticonList = new String[MoodListSize];
-                    int[] ScoreList = new int[MoodListSize];
-                    for (int i = 0; i < MoodListSize; i++) {
-                        ScoreList[i] = Integer.parseInt(StringScoreList[i]);
-                        MoodAndEmoticonList[i] = EmoticonList[i] + " " + List[i];
-                    }
-                    CompleteScoreList = ScoreList;
+                if((response.code() != 400) && (response.body() != null)){
+                    CompleteScoreList = loadScoreList(response.body());
                     final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
                     String DialogText;
                     LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                     View mView = inflater.inflate(R.layout.overlay_spinner, null);
                     TextView title = mView.findViewById(R.id.text_alerttitle);
-                    if (!SongStarted)
-                        DialogText = "How are you feeling \nat the moment?";
-                    else
-                        DialogText = "How are you feeling now after\n listening to last \nsong you played:\n\n" + playerState.track.name + "?";
+
+                    if (trackIsRunning){
+                        DialogText = "How are you feeling before listening to\n\n" + playerState.track.name + "?";
+                    }else {
+                        DialogText = "How are you feeling now after\n listening to the last \nsong you played:\n" + playerState.track.name + "?";
+                    }
                     title.setText(DialogText);
                     final Spinner spinner = mView.findViewById(R.id.spinner_over);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, MoodAndEmoticonList);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, moodEmoticonList);
                     adapter.setDropDownViewResource(R.layout.spinner_item);
                     spinner.setAdapter(adapter);
                     Button submit = mView.findViewById(R.id.btn_positiveoverlay);
@@ -284,17 +305,16 @@ public class BackgroundService extends Service {
                         @Override
                         public void onClick(View view) {
                             dialog.dismiss();
-                            isPrompting = true;
                             String selectedMood = spinner.getSelectedItem().toString();
                             Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
                             int i = spinner.getSelectedItemPosition();
                             //Verify if this is before or after.
-                            if (!SongStarted) { // why is this not initiated
-                                SongStarted = true;
+                            if (trackIsRunning) {
                                 //For tracking the difference of the before and after moods.
-                                BeforeMood = List[i];
+                                Log.d("!songStarted"," " + playerState.track.name);
+                                BeforeMood = scoreList[i];
                                 Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
-                                        String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), List[i], Global.UserID, Global.UserPassword);
+                                        String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), scoreList[i], Global.UserID, Global.UserPassword);
                                 response.enqueue(new Callback<String>() {
                                     @Override
                                     public void onResponse(Call<String> call, Response<String> response) {
@@ -312,11 +332,11 @@ public class BackgroundService extends Service {
                                     }
                                     @Override
                                     public void onFailure(Call<String> call, Throwable t) {
-                                        //fail_LoginNetwork();
+                                        networkLoginFail(t);
                                     }
                                 });
-                            } else if (SongStarted) {
-                                TheMood = List[i];
+                            } else {
+                                TheMood = scoreList[i];
                                 if (Global.MoodID.equals(""))
                                     Global.MoodID = "-1";
                                 /*Prevents the mood from being added if the user is not logged in.*/
@@ -325,22 +345,19 @@ public class BackgroundService extends Service {
                                 response.enqueue(new Callback<String>() {
                                     @Override
                                     public void onResponse(Call<String> call, Response<String> response) {
-                                        Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                                        Log.d("retrofitclick", "SUCCESS: " + response.body());
                                         if (response.code() == 404) {
                                             Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                                         } else if (response.body().equals("Incorrect UserID or Password. Query not executed.")) {
-                                                Toast.makeText(getApplicationContext(),"Error, mood at end of track failed to update", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(),"Error, mood at end of track failed to update", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                     @Override
                                     public void onFailure(Call<String> call, Throwable t) {
-                                        //This crashes on loading.
-                                        //fail_LoginNetwork();
+                                        networkLoginFail(t);
                                     }
                                 });
-                                SongStarted = false;
-                                setUpDiaryPrompt(List, BeforeMood, TheMood, CompleteScoreList);
-
+                                setUpDiaryPrompt(scoreList, BeforeMood, TheMood, CompleteScoreList);
                             }
                         }
                     });
@@ -352,15 +369,13 @@ public class BackgroundService extends Service {
                         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
                     }
                     dialog.show();
-                    if (playerState.track!= null) {
-                        Toast.makeText(t, playerState.track.name + " by " + playerState.track.artist.name, Toast.LENGTH_SHORT).show();
-                    }
+                }else if (response.code() == 404) {
+                    Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                //This crashes on loading.
-                //fail_LoginNetwork();
+                networkLoginFail(t);
             }
         });
     }
@@ -377,7 +392,7 @@ public class BackgroundService extends Service {
         }
     }
 
-    void fail_LoginNetwork(){
+    void networkLoginFail(Throwable t){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
