@@ -59,14 +59,12 @@ public class BackgroundService extends Service {
     public static Boolean isPrompting = false;       //flag to check whether the previous/existing prompt has been processed by the user
     String TheMood;
     String BeforeMood;
-    PlayerState currentState = null;
-    PlayerState previousState = null;
     int[] CompleteScoreList;
     public String[] moodEmoticonList;
     public String[] List;
     public String[] scoreList;
     public ArrayList<PlayerState> listOfPlayerStates = new ArrayList<>();
-
+    PlayerState currentState = null;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -235,18 +233,12 @@ public class BackgroundService extends Service {
                         } else if (response.body().equals("Yes")){
                             if(currentState == null){
                                 currentState = playerState;
-                                promptUser(playerState, true);
+                                promptUser(currentState, true);
                             } else if (currentState != playerState){
-                                previousState = currentState;
+                                promptUser(currentState, false);
                                 currentState = playerState;
-                                promptUser(previousState, false);
                                 promptUser(currentState, true);
                             }
-                            /*listOfPlayerStates.add(playerState);
-                            for (PlayerState playerState : listOfPlayerStates) {
-                                promptUser(playerState);
-                                listOfPlayerStates.remove(playerState);
-                            }*/
                         }
                     }
                     @Override
@@ -287,7 +279,6 @@ public class BackgroundService extends Service {
                     LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                     View mView = inflater.inflate(R.layout.overlay_spinner, null);
                     TextView title = mView.findViewById(R.id.text_alerttitle);
-
                     if (trackIsRunning){
                         DialogText = "How are you feeling before listening to\n\n" + playerState.track.name + "?";
                     }else {

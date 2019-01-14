@@ -24,20 +24,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.context = context;
         this.mService = service;
         this.mBound = isBound;
-        Log.d("TRACKS ",""+ this.Tracks);
-        Log.d("CONTEXT ",""+ this.context);
-        Log.d("SERVICE ",""+ this.mService);
-        Log.d("BOUND ",""+ this.mBound);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tracktitle, artist, genre, length, beforemood, aftermood;
+        TextView tracktitle, artist, album, length, beforemood, aftermood;
         Button play;
         ViewHolder(View itemView) {
             super(itemView);
             tracktitle = itemView.findViewById(R.id.text_tracktitle);
             artist = itemView.findViewById(R.id.Text_artist);
-            genre = itemView.findViewById(R.id.Text_genre);
+            album = itemView.findViewById(R.id.Text_album);
             length = itemView.findViewById(R.id.Text_length);
             beforemood = itemView.findViewById(R.id.Text_moodbefore);
             aftermood = itemView.findViewById(R.id.Text_moodafter);
@@ -58,7 +54,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final TrackDetails track = Tracks.get(position);
         holder.tracktitle.setText(track.getTitle());
         holder.artist.setText("Artist: " + track.getArtist());
-        holder.genre.setText("Genre: " + track.getGenre());
+        holder.album.setText("Album: " + track.getAlbum());
         holder.length.setText("Length: " + track.getLength());
         holder.beforemood.setText("Your mood before listening: " + track.getMoodBefore() );
         holder.aftermood.setText("Your mood after listening: " + track.getMoodAfter());
