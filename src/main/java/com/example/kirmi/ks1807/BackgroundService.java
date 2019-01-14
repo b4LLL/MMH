@@ -155,14 +155,6 @@ public class BackgroundService extends Service {
             isRunning = true;
             t = this;
             Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
-            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Log.d("message received"," " + intent.getAction());
-                    pollPlayerState();
-                }
-            };
-            registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
             //Create mandatory notification for API 26+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 //Create notification channel
@@ -216,6 +208,15 @@ public class BackgroundService extends Service {
                         Log.d("Error ", " - > " + error);
                 }
             });
+            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d("message received"," " + intent.getAction());
+                    if(Global.mSpotifyAppRemote != null)
+                        pollPlayerState();
+                }
+            };
+            registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
         }
     }
 

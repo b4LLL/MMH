@@ -3,11 +3,11 @@ package com.example.kirmi.ks1807;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,16 +28,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tracktitle, artist, album, length, beforemood, aftermood;
-        Button play;
+        ImageButton play;
         ViewHolder(View itemView) {
             super(itemView);
-            tracktitle = itemView.findViewById(R.id.text_tracktitle);
-            artist = itemView.findViewById(R.id.Text_artist);
-            album = itemView.findViewById(R.id.Text_album);
-            length = itemView.findViewById(R.id.Text_length);
-            beforemood = itemView.findViewById(R.id.Text_moodbefore);
-            aftermood = itemView.findViewById(R.id.Text_moodafter);
-            play = itemView.findViewById(R.id.btn_Play);
+            tracktitle = itemView.findViewById(R.id.textTrackTitle);
+            artist = itemView.findViewById(R.id.textArtist);
+            album = itemView.findViewById(R.id.textAlbum);
+            length = itemView.findViewById(R.id.textLength);
+            beforemood = itemView.findViewById(R.id.textMoodBefore);
+            aftermood = itemView.findViewById(R.id.textMoodAfter);
+            play = itemView.findViewById(R.id.buttonPlay);
         }
     }   //object holding track information
 
