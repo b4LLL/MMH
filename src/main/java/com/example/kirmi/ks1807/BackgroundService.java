@@ -40,6 +40,7 @@ import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
 
 import com.spotify.protocol.types.PlayerState;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -67,7 +68,7 @@ public class BackgroundService extends Service {
     PlayerState currentState = null;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
-
+    ConnectionParams connectionParams;
     //Binder implementation
     class LocalBinder extends Binder {
         BackgroundService getService() {
@@ -170,44 +171,13 @@ public class BackgroundService extends Service {
                 startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
             }
             //Create connection parameters
-            ConnectionParams connectionParams = new ConnectionParams.Builder(CLIENT_ID)
+            connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI)
                 .showAuthView(true)
                 .build();
             //Try to connect to spotify
-            SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
-                @Override
-                public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                    mSpotifyAppRemote = spotifyAppRemote;
-                    Global.mSpotifyAppRemote = spotifyAppRemote;
-                    Global.isInstalled = true;
-                    Log.d("BackgroundService", "Established connection with Spotify remote.");
-                }
-                @Override
-                public void onFailure(Throwable error) {
-                    if (error instanceof AuthenticationFailedException) {
-                        Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof CouldNotFindSpotifyApp) {
-                        Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
-                        Global.isInstalled = false;
-                    } else if (error instanceof LoggedOutException) {
-                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof NotLoggedInException) {
-                        Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof OfflineModeException) {
-                        Toast.makeText(t, "This feature is not available in offline mode", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof SpotifyConnectionTerminatedException) {
-                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof SpotifyDisconnectedException) {
-                        Toast.makeText(t, "Spotify closed unexpectedly, please try again", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof UnsupportedFeatureVersionException) {
-                        Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
-                    } else if (error instanceof UserNotAuthorizedException) {
-                        Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
-                    } else
-                        Log.d("Error ", " - > " + error);
-                }
-            });
+            connectSpotify(connectionParams);
+
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -218,6 +188,43 @@ public class BackgroundService extends Service {
             };
             registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
         }
+    }
+
+    void connectSpotify(ConnectionParams connectionParams){
+        SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
+            @Override
+            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                mSpotifyAppRemote = spotifyAppRemote;
+                Global.mSpotifyAppRemote = spotifyAppRemote;
+                Global.isRunning= true;
+                Log.d("BackgroundService", "Established connection with Spotify remote.");
+            }
+            @Override
+            public void onFailure(Throwable error) {
+                if (error instanceof AuthenticationFailedException) {
+                    Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof CouldNotFindSpotifyApp) {
+                    Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
+                    Global.isRunning = false;
+                } else if (error instanceof LoggedOutException) {
+                    Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof NotLoggedInException) {
+                    Toast.makeText(t, "You are not logged into Spotify", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof OfflineModeException) {
+                    Toast.makeText(t, "This feature is not available in offline mode", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof SpotifyConnectionTerminatedException) {
+                    Toast.makeText(t, "Spotify closed in the background.. attempting to reload.", Toast.LENGTH_SHORT).show();
+                    connectSpotify(connectionParams);
+                } else if (error instanceof SpotifyDisconnectedException) {
+                    Toast.makeText(t, "Spotify disconnected.. attempting to reload.", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof UnsupportedFeatureVersionException) {
+                    Toast.makeText(t, "Sorry, this feature is not supported", Toast.LENGTH_SHORT).show();
+                } else if (error instanceof UserNotAuthorizedException) {
+                    Toast.makeText(t, "Did not get authorization from Spotify, please try again", Toast.LENGTH_SHORT).show();
+                } else
+                    Log.d("Error ", " - > " + error);
+            }
+        });
     }
 
     void pollPlayerState(){

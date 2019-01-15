@@ -2,6 +2,7 @@ package com.example.kirmi.ks1807;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,11 +59,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.length.setText("Length: " + track.getLength());
         holder.beforemood.setText("Your mood before listening: " + track.getMoodBefore() );
         holder.aftermood.setText("Your mood after listening: " + track.getMoodAfter());
-
+        //holder.play.setImageURI(); ???
         holder.play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBound && Global.isInstalled) {
+                if (mBound && Global.isRunning) {
                     mService.getTrack(track.spotifyTrackID);
                 }
             }

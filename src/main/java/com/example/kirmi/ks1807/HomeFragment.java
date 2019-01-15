@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment
                             }
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
-                                TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);
+                                TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);    //add additional imgURI? here to give to adapter/.
                                 listItems.add(list);
                             }
                             adapter = new RecyclerViewAdapter(listItems, context, mService, true);

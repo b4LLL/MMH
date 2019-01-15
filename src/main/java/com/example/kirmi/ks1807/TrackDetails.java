@@ -15,6 +15,8 @@ public class TrackDetails
         this.length = length;
         this.moodBefore = moodBefore;
         this.moodAfter = moodAfter;
+        // pull/load img url here..
+        // this.trackImage = trackImage;
     }
     public String getTitle()
     {

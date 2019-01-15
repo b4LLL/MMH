@@ -9,16 +9,17 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
         app:cardCornerRadius="3dp">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
             <TextView
                 android:id="@+id/textTrackTitle"
@@ -83,16 +84,15 @@
                 android:text="TextView" />
 
             <ImageButton
-                android:contentDescription="Play!"
                 android:id="@+id/buttonPlay"
-                android:layout_width="50dp"
-                android:layout_height="49dp"
+                android:layout_width="86dp"
+                android:layout_height="82dp"
                 android:layout_alignEnd="@+id/textTrackTitle"
                 android:layout_alignBottom="@+id/textMoodAfter"
-                android:layout_marginEnd="40dp"
-                android:layout_marginBottom="46dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="62dp"
+                android:contentDescription="Play!"
                 app:srcCompat="@android:drawable/ic_media_play" />
         </RelativeLayout>
-
     </android.support.v7.widget.CardView>
 </LinearLayout>

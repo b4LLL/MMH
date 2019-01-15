@@ -20,7 +20,7 @@ public class Global
 
     static Boolean isLogged = false;
 
-    static Boolean isInstalled = false;
+    static Boolean isRunning = false;
 
     static Boolean bgsReceiverRunning = false;
 }
