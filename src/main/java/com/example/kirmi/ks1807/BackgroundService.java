@@ -64,12 +64,12 @@ public class BackgroundService extends Service {
     public String[] moodEmoticonList;
     public String[] List;
     public String[] scoreList;
+    public String[] emoticonList;
     public ArrayList<PlayerState> listOfPlayerStates = new ArrayList<>();
     PlayerState currentState = null;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
-    //Binder implementation
     class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
@@ -264,7 +264,7 @@ public class BackgroundService extends Service {
         String[][] fullList = getMoods(moodList);
         scoreList = fullList[0];
         String[] stringScoreList = fullList[1];
-        String[] emoticonList = fullList[2];
+        emoticonList = fullList[2];
         int moodListSize = fullList[0].length;
         moodEmoticonList = new String[moodListSize];
         int[] intScoreList = new int[moodListSize];
@@ -313,7 +313,7 @@ public class BackgroundService extends Service {
                                 Log.d("!songStarted"," " + playerState.track.name);
                                 BeforeMood = scoreList[i];
                                 Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
-                                        String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), scoreList[i], Global.UserID, Global.UserPassword);
+                                        String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), emoticonList[i], Global.UserID, Global.UserPassword);
                                 response.enqueue(new Callback<String>() {
                                     @Override
                                     public void onResponse(Call<String> call, Response<String> response) {
@@ -335,7 +335,7 @@ public class BackgroundService extends Service {
                                     }
                                 });
                             } else {
-                                TheMood = scoreList[i];
+                                TheMood = emoticonList[i];
                                 if (Global.MoodID.equals(""))
                                     Global.MoodID = "-1";
                                 /*Prevents the mood from being added if the user is not logged in.*/
@@ -396,8 +396,7 @@ public class BackgroundService extends Service {
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
             .setCancelable(false)
-            .setPositiveButton("Ok",new DialogInterface.OnClickListener()
-            {
+            .setPositiveButton("Ok",new DialogInterface.OnClickListener(){
                 public void onClick(DialogInterface dialog,int id)
                 {
                 }
