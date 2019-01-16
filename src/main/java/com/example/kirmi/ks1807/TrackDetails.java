@@ -40,10 +40,24 @@ public class TrackDetails
     }
 
     String getMoodBefore() {
+        if(Global.moodList != null){
+            for(int i = 0; i < Global.moodList.length; i++){
+                if(moodBefore.equals(Global.moodList[i])){
+                    return Global.emoticonList[i];
+                }
+            }
+        }
         return moodBefore;
     }
 
     String getMoodAfter() {
+        if(Global.moodList != null){
+            for(int i = 0; i < Global.moodList.length; i++){
+                if(moodAfter.equals(Global.moodList[i])){
+                    return Global.emoticonList[i];
+                }
+            }
+        }
         return moodAfter;
     }
 }

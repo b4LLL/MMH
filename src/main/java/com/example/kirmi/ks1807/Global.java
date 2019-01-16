@@ -18,9 +18,14 @@ public class Global
 
     static SpotifyAppRemote mSpotifyAppRemote = null;
 
+    static int[] CompleteScoreList;
+
     static Boolean isLogged = false;
 
     static Boolean isRunning = false;
 
     static Boolean bgsReceiverRunning = false;
+
+    static String[] moodList;
+    static String[] emoticonList;
 }
