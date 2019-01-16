@@ -28,7 +28,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tracktitle, artist, album, length, beforemood, aftermood;
+        TextView tracktitle, artist, album, length, beforemood, aftermood, moodBeforeEmote, moodAfterEmote;
         ImageButton play;
         ViewHolder(View itemView) {
             super(itemView);
@@ -38,6 +38,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             length = itemView.findViewById(R.id.textLength);
             beforemood = itemView.findViewById(R.id.textMoodBefore);
             aftermood = itemView.findViewById(R.id.textMoodAfter);
+            moodBeforeEmote = itemView.findViewById(R.id.moodBeforeEmote);
+            moodAfterEmote = itemView.findViewById(R.id.moodAfterEmote);
             play = itemView.findViewById(R.id.buttonPlay);
         }
     }   //object holding track information
@@ -54,11 +56,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         final TrackDetails track = Tracks.get(position);
         holder.tracktitle.setText(track.getTitle());
-        holder.artist.setText("Artist: " + track.getArtist());
-        holder.album.setText("Album: " + track.getAlbum());
-        holder.length.setText("Length: " + track.getLength());
-        holder.beforemood.setText("Your mood before listening: " + track.getMoodBefore() );
-        holder.aftermood.setText("Your mood after listening: " + track.getMoodAfter());
+        holder.artist.setText(track.getArtist());
+        holder.album.setText(track.getAlbum());
+        holder.length.setText(track.getLength());
+        holder.beforemood.setText("Mood before: ");
+        holder.aftermood.setText("Mood after: ");
+        holder.moodBeforeEmote.setText(track.getMoodBeforeEmote());
+        holder.moodAfterEmote.setText(track.getMoodAfterEmote());
+
         //holder.play.setImageURI(); ???
         holder.play.setOnClickListener(new View.OnClickListener() {
             @Override

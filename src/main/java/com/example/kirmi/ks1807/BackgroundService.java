@@ -163,7 +163,7 @@ public class BackgroundService extends Service {
                 .showAuthView(true)
                 .build();
             //Try to connect to spotify
-            connectSpotify(connectionParams);
+            this.connectSpotify(connectionParams);
 
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                 @Override
@@ -174,7 +174,7 @@ public class BackgroundService extends Service {
                 }
             };
             registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
-            loadMoodArray();
+            this.loadMoodArray();
         }
     }
 
@@ -311,7 +311,6 @@ public class BackgroundService extends Service {
                 if (trackIsRunning) {
                     //For tracking the difference of the before and after moods.
                     BeforeMood = Global.moodList[i];
-                    Log.d("BeforeMood ","" + Global.moodList[i]);
                     Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
                             String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), Global.moodList[i], Global.UserID, Global.UserPassword);
                     response.enqueue(new Callback<String>() {

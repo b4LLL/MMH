@@ -2,7 +2,7 @@ package com.example.kirmi.ks1807;
 
 public class TrackDetails
 {
-    String title, artist, album, length, spotifyTrackID, moodBefore, moodAfter;
+    String title, artist, album, length, spotifyTrackID, moodBefore, moodAfter, moodBeforeEmote, moodAfterEmote;
     public TrackDetails()
     {
 
@@ -10,15 +10,15 @@ public class TrackDetails
     TrackDetails(String spotifyID, String title, String album, String artist, String length, String moodBefore, String moodAfter) {
         this.spotifyTrackID = spotifyID;
         this.title = title;
-        this.artist = artist;
-        this.album = album;
-        this.length = length;
+        this.artist = "Artist: " + artist;
+        this.album = "Album: " + album;
+        this.length = "Length: " + length;
         this.moodBefore = moodBefore;
         this.moodAfter = moodAfter;
         // pull/load img url here..
         // this.trackImage = trackImage;
     }
-    public String getTitle()
+    String getTitle()
     {
         return title;
     }
@@ -38,8 +38,14 @@ public class TrackDetails
     {
         return spotifyTrackID;
     }
-
     String getMoodBefore() {
+        return moodBefore;
+    }
+    String getMoodAfter() {
+        return moodAfter;
+    }
+
+    public String getMoodBeforeEmote() {
         if(Global.moodList != null){
             for(int i = 0; i < Global.moodList.length; i++){
                 if(moodBefore.equals(Global.moodList[i])){
@@ -47,10 +53,10 @@ public class TrackDetails
                 }
             }
         }
-        return moodBefore;
+        return moodBeforeEmote;
     }
 
-    String getMoodAfter() {
+    public String getMoodAfterEmote() {
         if(Global.moodList != null){
             for(int i = 0; i < Global.moodList.length; i++){
                 if(moodAfter.equals(Global.moodList[i])){
@@ -58,6 +64,6 @@ public class TrackDetails
                 }
             }
         }
-        return moodAfter;
+        return moodAfterEmote;
     }
 }
