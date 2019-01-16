@@ -14,7 +14,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
-        android:alpha="100"
+        app:cardElevation="5dp"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="3dp">
 
@@ -34,7 +34,7 @@
                 android:fontFamily="@font/roboto_medium"
                 android:paddingBottom="5dp"
                 android:textAlignment="center"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -44,10 +44,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textTrackTitle"
                 android:layout_alignStart="@+id/textTrackTitle"
-                android:layout_marginStart="0dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginTop="11dp"
                 android:fontFamily="@font/roboto_medium"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -57,10 +57,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textArtist"
                 android:layout_alignStart="@+id/textTrackTitle"
-                android:layout_marginStart="0dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/roboto_medium"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -70,10 +70,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textAlbum"
                 android:layout_alignStart="@+id/textTrackTitle"
-                android:layout_marginStart="0dp"
+                android:layout_marginStart="6dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/roboto_medium"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -83,11 +83,11 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textLength"
                 android:layout_alignStart="@+id/textTrackTitle"
-                android:layout_marginStart="3dp"
-                android:layout_marginTop="43dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="32dp"
                 android:fontFamily="@font/roboto_medium"
                 android:text="dd"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -96,12 +96,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textLength"
-                android:layout_marginStart="7dp"
-                android:layout_marginTop="43dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="32dp"
                 android:layout_toEndOf="@+id/moodAfterEmote"
                 android:fontFamily="@font/roboto_medium"
                 android:text="dd"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -123,9 +123,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="9dp"
-                android:layout_marginBottom="9dp"
+                android:layout_marginBottom="20dp"
                 android:layout_toEndOf="@+id/textMoodAfter"
                 android:text="T"
+                android:textColor="@color/ic_launcher_background"
                 android:textSize="30sp" />
 
             <TextView
@@ -133,10 +134,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="9dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="20dp"
                 android:layout_toEndOf="@+id/textMoodBefore"
                 android:text="T"
+                android:textColor="@color/white"
                 android:textSize="30sp" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
