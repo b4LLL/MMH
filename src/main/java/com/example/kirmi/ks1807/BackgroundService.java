@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -26,6 +27,7 @@ import android.text.format.DateUtils;
 
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.ImagesApi;
 import com.spotify.android.appremote.api.PlayerApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.android.appremote.api.error.AuthenticationFailedException;
@@ -38,6 +40,7 @@ import com.spotify.android.appremote.api.error.SpotifyDisconnectedException;
 import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionException;
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
 
+import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
 
 import java.util.ArrayList;
@@ -217,6 +220,7 @@ public class BackgroundService extends Service {
 
     void pollPlayerState(){
         PlayerApi playerApi = mSpotifyAppRemote.getPlayerApi();
+        //Bitmap trackBmp
         playerApi.getPlayerState()
             .setResultCallback(playerState -> {
                 Log.d("BSS\t"," signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
@@ -228,9 +232,13 @@ public class BackgroundService extends Service {
                             Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
                         } else if (response.body().equals("Yes")){
                             if(currentState == null){
+                                //ImagesApi imageApi = mSpotifyAppRemote.getImagesApi();
+                                //imageApi.getImage(playerState.track.imageUri)
+                                //        .setResultCallback()
                                 currentState = playerState;
                                 promptUser(currentState, true);
                             } else if (currentState != playerState){
+                                Log.d("Track Image","URI ->\t" + playerState.track.imageUri.raw);
                                 promptUser(currentState, false);
                                 currentState = playerState;
                                 promptUser(currentState, true);
