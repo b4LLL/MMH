@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fadeScrollbars="false"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbarSize="5dp"
+    android:scrollbarThumbVertical="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+
+                <Button
+                    android:id="@+id/btn_Options"
+                    android:layout_width="47dp"
+                    android:layout_height="24dp"
+                    android:layout_weight="0"
+                    android:background="@android:drawable/btn_dropdown" />
+
+                <Space
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/user_details"
+                android:layout_width="match_parent"
+                android:layout_height="498dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="29dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0" />
+
+                    <Button
+                        android:id="@+id/btn_profileeditsettingback"
+                        android:layout_width="24dp"
+                        android:layout_height="22dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/back"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="29dp" />
+
+                <EditText
+                    android:id="@+id/editText_EditFirstName"
+                    android:layout_width="310dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/settingsfirstname"
+                    android:ems="10"
+                    android:textColor="@color/darkgrey"
+                    android:enabled="false"
+                    android:fontFamily="@font/roboto_medium"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="50dp"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp" />
+
+                <EditText
+                    android:id="@+id/editText_EditLastName"
+                    android:layout_width="310dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/settingslastname"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:fontFamily="@font/roboto_medium"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="50dp"
+                    android:textColor="@color/darkgrey"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp" />
+
+                <EditText
+                    android:id="@+id/editText_EditEmail"
+                    android:layout_width="310dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/settingsemail"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:textColor="@color/darkgrey"
+                    android:fontFamily="@font/roboto_medium"
+                    android:inputType="textEmailAddress"
+                    android:paddingLeft="50dp"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/editText_EditDateOfBirth"
+                    android:layout_width="310dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/settingsage"
+                    android:ems="10"
+                    android:enabled="false"
+                    android:fontFamily="@font/roboto_medium"
+                    android:hint="DD/MM/YYYY"
+                    android:inputType="date"
+                    android:paddingLeft="50dp"
+                    android:textColor="@color/darkgrey"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="22dp" />
+
+                <RadioGroup
+                    android:id="@+id/RadioGroup_EditGenderSelect"
+                    android:layout_width="310dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/settingsgender"
+                    android:checkedButton="@+id/RadioButton_EditMale"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/RadioButtonEdit_empty"
+                        android:layout_width="83dp"
+                        android:layout_height="32dp"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:enabled="false"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp" />
+
+                    <RadioButton
+                        android:id="@+id/RadioButton_EditMale"
+                        android:layout_width="129dp"
+                        android:layout_height="45dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/settingsmaleselected"
+                        android:button="@null"
+                        android:enabled="false"
+                        android:onClick="SettingsRadioButtonMale" />
+
+                    <RadioButton
+                        android:id="@+id/RadioButton_EditFemale"
+                        android:layout_width="129dp"
+                        android:layout_height="45dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/settingsfemaleunselected"
+                        android:button="@null"
+                        android:enabled="false"
+                        android:onClick="SettingsRadioButtonFemale" />
+
+                    <RadioButton
+                        android:id="@+id/RadioButton_EditOther"
+                        android:layout_width="129dp"
+                        android:layout_height="45dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/settingsotherunselected"
+                        android:button="@null"
+                        android:enabled="false"
+                        android:onClick="SettingsRadioButtonOther" />
+                </RadioGroup>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_signout"
+                        android:layout_width="108dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="right"
+                        android:background="@drawable/signoutbtn" />
+
+                    <Space
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_updateprofile"
+                    android:layout_width="210dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/updateprofile"
+                    android:visibility="invisible" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp"
+                    android:layout_weight="0" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/changepasscontent"
+                android:layout_width="match_parent"
+                android:layout_height="394dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="23dp"
+                    android:layout_weight="0"
+                    android:orientation="horizontal">
+
+                    <Space
+                        android:layout_width="29dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0" />
+
+                    <Button
+                        android:id="@+id/btn_profilechangepasssettingback"
+                        android:layout_width="24dp"
+                        android:layout_height="22dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/back"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp" />
+
+                <EditText
+                    android:id="@+id/EditText_OldPassword"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/changepasswordback"
+                    android:ems="10"
+                    android:hint="@string/OldPassword_Caption"
+                    android:inputType="textPassword"
+                    android:paddingLeft="50dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp" />
+
+                <EditText
+                    android:id="@+id/EditText_NewPassword"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/changepasswordback"
+                    android:ems="10"
+                    android:hint="@string/NewPassword_Caption"
+                    android:inputType="textPassword"
+                    android:paddingLeft="50dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp" />
+
+                <EditText
+                    android:id="@+id/EditTextNewPasswordAgain"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/changepasswordback"
+                    android:ems="10"
+                    android:hint="@string/NewPassword_Caption"
+                    android:inputType="textPassword"
+                    android:paddingLeft="50dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="63dp" />
+
+                <Button
+                    android:id="@+id/btnchangepass"
+                    android:layout_width="210dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/changepassbtn" />
+            </LinearLayout>
+
+        </LinearLayout>
+</ScrollView>
