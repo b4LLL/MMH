@@ -26,6 +26,10 @@ import retrofit2.Retrofit;
 public class Register extends AppCompatActivity
 {
     private final Context context = this;
+    static final String FIRST_NAME = "firstName";
+    static final String LAST_NAME = "lastName";
+    static final String EMAIL = "email";
+    static final String DOB = "dateOfBirth";
 
     String UserID = "-1";
     String BackUserID = "";
@@ -35,6 +39,12 @@ public class Register extends AppCompatActivity
 
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
