@@ -66,11 +66,12 @@ public class BackgroundService extends Service {
     public String[] moodEmoticonList;
 
 
-    public ArrayList<PlayerState> listOfPlayerStates = new ArrayList<>();
+    // public ArrayList<PlayerState> listOfPlayerStates = new ArrayList<>(); --> maybe useable to track all the songs listened too at the end of listening (onDestroy etc)
     PlayerState currentState = null;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
+
     class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
