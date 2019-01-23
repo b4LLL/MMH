@@ -195,6 +195,7 @@ public class BackgroundService extends Service {
             public void onFailure(Throwable error) {
                 if (error instanceof AuthenticationFailedException) {
                     Toast.makeText(t, "Authentication Failed, please try again", Toast.LENGTH_SHORT).show();
+                    Log.d("New ERROR :) ", "\n" + error);
                 } else if (error instanceof CouldNotFindSpotifyApp) {
                     Toast.makeText(t, "Spotify is not installed", Toast.LENGTH_SHORT).show();
                     Global.isRunning = false;
@@ -232,14 +233,15 @@ public class BackgroundService extends Service {
                         if (response.code() == 404) {
                             Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
                         } else if (response.body().equals("Yes")){
-                            if(currentState == null){
+                            if(currentState == null && playerState != null){
                                 //ImagesApi imageApi = mSpotifyAppRemote.getImagesApi();
                                 //imageApi.getImage(playerState.track.imageUri)
                                 //        .setResultCallback()
                                 currentState = playerState;
                                 promptUser(currentState, true);
                             } else if (currentState != playerState){
-                                Log.d("Track Image","URI ->\t" + playerState.track.imageUri.raw);
+                                if(playerState.track.imageUri.raw != null)
+                                    Log.d("Track Image","URI ->\t" + playerState.track.imageUri.raw);
                                 promptUser(currentState, false);
                                 currentState = playerState;
                                 promptUser(currentState, true);
@@ -249,11 +251,12 @@ public class BackgroundService extends Service {
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
                         networkLoginFail(t);
+                        Log.d("Error"," " + t);
                     }
                 });
             })
             .setErrorCallback(throwable -> {
-                // =(
+                Log.d("Error", " throwable from pollPlayerState" + throwable);
             });
     }
 

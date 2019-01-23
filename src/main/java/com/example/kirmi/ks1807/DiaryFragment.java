@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
@@ -29,6 +30,9 @@ public class DiaryFragment extends Fragment
     EditText q1Ans, q3Ans, q4Ans, q5Ans;
     Button submitInfo;
 
+    //onSaveInstanceState()
+    //onRestoreInstanceState()
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -37,11 +41,11 @@ public class DiaryFragment extends Fragment
         View view = inflater.inflate(R.layout.activity_diaryfrag, null);
         UserID = Global.UserID;
 
-        q1Ans = (EditText) view.findViewById(R.id.editText_q1Answer);
-        q3Ans = (EditText) view.findViewById(R.id.editText_q3Answer);
-        q4Ans = (EditText) view.findViewById(R.id.editText_q4Answer);
-        q5Ans = (EditText) view.findViewById(R.id.editText_q5Answer);
-        submitInfo = (Button) view.findViewById(R.id.btn_DiaryInfo);
+        q1Ans = view.findViewById(R.id.editText_q1Answer);
+        q3Ans = view.findViewById(R.id.editText_q3Answer);
+        q4Ans = view.findViewById(R.id.editText_q4Answer);
+        q5Ans = view.findViewById(R.id.editText_q5Answer);
+        submitInfo = view.findViewById(R.id.btn_DiaryInfo);
 
         q1WhyLinkToDialog = (TextView) view.findViewById(R.id.textView_linkwhy);
         q1WhyLinkToDialog.setMovementMethod(LinkMovementMethod.getInstance());
@@ -126,7 +130,6 @@ public class DiaryFragment extends Fragment
 
             }
         });
-
 
         return view;
     }
