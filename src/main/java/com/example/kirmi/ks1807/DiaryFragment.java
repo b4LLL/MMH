@@ -20,8 +20,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Date;
+
+
+import retrofit2.Call;
+import retrofit2.Retrofit;
+
 public class DiaryFragment extends Fragment
 {
+    Date date = new Date();
 
     String UserID = "";
     Spinner q2Ans;
@@ -29,17 +39,21 @@ public class DiaryFragment extends Fragment
     String q2selectedItem;
     EditText q1Ans, q3Ans, q4Ans, q5Ans;
     Button submitInfo;
-
+    //rest interface needed here0
+    Retrofit retrofit = RestInterface.getClient();
+    RestInterface.Ks1807Client client;
     //onSaveInstanceState()
     //onRestoreInstanceState()
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
+
         View view = inflater.inflate(R.layout.activity_diaryfrag, null);
         UserID = Global.UserID;
+
+        client = retrofit.create(RestInterface.Ks1807Client.class);
 
         q1Ans = view.findViewById(R.id.editText_q1Answer);
         q3Ans = view.findViewById(R.id.editText_q3Answer);
@@ -125,6 +139,11 @@ public class DiaryFragment extends Fragment
                 if (q1Ans.getText().toString().equals("") || q3Ans.getText().toString().equals("") || q4Ans.getText().toString().equals("") || q5Ans.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
                 } else {
+                    Date date = new Date();
+                    Timestamp ts = new Timestamp(date.getTime());
+
+                    client.SetDiaryEntry(Global.UserID, date.toString(),q1Ans + "\n" + q3Ans + "\n" + q4Ans + "\n" + q5Ans);
+
                     Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
                 }
 

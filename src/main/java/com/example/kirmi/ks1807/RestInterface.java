@@ -1,5 +1,7 @@
 package com.example.kirmi.ks1807;
 
+import java.util.Date;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -105,9 +107,6 @@ class RestInterface{
                                 @Path("entry5") String entry5, @Path("id") String id,
                                 @Path("password") String password);
 
-        @GET("mmhpackage.moodscore/GetMoodList")
-        Call<String> GetMoodList();
-
         @GET("mmhpackage.musictrack/GetRecommendedTracksUser/{id}/{password}")
         Call<String> GetRecommendedTracksUser(@Path("id") String id, @Path("password") String password);
 
@@ -116,5 +115,13 @@ class RestInterface{
 
         @GET("mmhpackage.musictrack/CheckMoodEntry/{id}/{password}")
         Call<String> CheckMoodEntry(@Path("id") String id, @Path("password") String password);
+
+        @GET("mmhpackage.moodscore/GetMoodList")
+        Call<String> GetMoodList();
+
+        @GET("mmhpackage.userdiary/")
+        Call<String> SetDiaryEntry(@Path("id") String id,
+                                   @Path("date") String date,
+                                   @Path("diarytext") String diarytext);
     }
 }
