@@ -84,6 +84,7 @@ public class HomeFragment extends Fragment
             @Override
             public void onResponse(Call<String> call, Response<String> response){
                 Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.d("Response.body() -> ","is" + response.body());
                 if(response.code() == 404){
                     Toast.makeText(getContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                 }else{
@@ -94,7 +95,7 @@ public class HomeFragment extends Fragment
                             nomusic.setVisibility(View.VISIBLE);
                             recyclerView.setAdapter(adapter);
                             recyclerView.setVisibility(View.GONE);
-                        }else{
+                        }else if (!response.body().equals("")){
                             String musicHistory = response.body();
                             String MusicDetails[] = musicHistory.split(System.getProperty("line.separator"));
                             listItems = new ArrayList<>();
@@ -106,6 +107,7 @@ public class HomeFragment extends Fragment
                             }
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
+                                Log.d("MusicDetails[i]"," " + MusicDetails[i]);
                                 TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);    //add additional imgURI? here to give to adapter/.
                                 listItems.add(list);
                             }
@@ -117,6 +119,7 @@ public class HomeFragment extends Fragment
             }
             @Override
             public void onFailure(Call<String> call, Throwable t){
+                Log.d("Throwable ","" + t);
                 fail_LoginNetwork();
             }
         });

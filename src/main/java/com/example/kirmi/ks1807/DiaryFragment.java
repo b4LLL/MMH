@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import java.util.Date;
 
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DiaryFragment extends Fragment
@@ -140,13 +143,30 @@ public class DiaryFragment extends Fragment
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
                 } else {
                     Date date = new Date();
-                    Timestamp ts = new Timestamp(date.getTime());
+                    Call<String> response = client.SetDiaryEntry(Global.UserID, date.toString(),q1Ans + "\n" + q3Ans + "\n" + q4Ans + "\n" + q5Ans);
+                    response.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            Log.d("retrofit", "SUCCESS: " + response);
+                            if(response.code() == 404)
+                                Log.d("404", " ");
+                            else{
+                                if(response.body().equals("-1"))
+                                    Log.d("response.code()", " " + response.body() + "\nresponse.code() " + response.code());
+                                else{
+                                    Log.d("Successful response"," " + response.body());
+                                }
+                            }
+                        }
 
-                    client.SetDiaryEntry(Global.UserID, date.toString(),q1Ans + "\n" + q3Ans + "\n" + q4Ans + "\n" + q5Ans);
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+
+                        }
+                    });
 
                     Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 

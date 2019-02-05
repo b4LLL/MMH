@@ -119,8 +119,13 @@ class RestInterface{
         @GET("mmhpackage.moodscore/GetMoodList")
         Call<String> GetMoodList();
 
-        @GET("mmhpackage.userdiary/")
+        @GET("mmhpackage.userdiary/SetDiaryEntry/{id}/{date}/{diarytext}")
         Call<String> SetDiaryEntry(@Path("id") String id,
+                                   @Path("date") String date,
+                                   @Path("diarytext") String diarytext);
+
+        @GET("mmhpackage.userdiary/GetDiaryEntry/{id}/{date}/{diarytext}")
+        Call<String> GetDiaryEntry(@Path("id") String id,
                                    @Path("date") String date,
                                    @Path("diarytext") String diarytext);
     }
