@@ -142,8 +142,10 @@ public class DiaryFragment extends Fragment
                 if (q1Ans.getText().toString().equals("") || q3Ans.getText().toString().equals("") || q4Ans.getText().toString().equals("") || q5Ans.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
                 } else {
-                    Date date = new Date();
-                    Call<String> response = client.SetDiaryEntry(Global.UserID, date.toString(),q1Ans + "\n" + q3Ans + "\n" + q4Ans + "\n" + q5Ans);
+                    java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
+                    Call<String> response = client.SetDiaryEntry(Global.UserID, sqlDate.toString(),q1Ans.getText().toString(),q3Ans.getText().toString(),
+                            q4Ans.getText().toString(), q5Ans.getText().toString());
+                    Log.d("Call<String>", " " + response);
                     response.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
