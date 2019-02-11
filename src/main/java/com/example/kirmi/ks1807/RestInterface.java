@@ -127,9 +127,12 @@ class RestInterface{
                                    @Path("diarytextthree") String diarytextthree,
                                    @Path("diarytextfour") String diarytextfour);
 
-        @GET("mmhpackage.userdiary/GetDiaryEntry/{id}/{date}/{diarytext}")
+        @GET("mmhpackage.userdiary/GetDiaryEntry/{id}/{date}/{diarytextone}/{diarytexttwo}/{diarytextthree}/{diarytextfour}")
         Call<String> GetDiaryEntry(@Path("id") String id,
                                    @Path("date") String date,
-                                   @Path("diarytext") String diarytext);
+                                   @Path("diarytextone") String diarytextone,
+                                   @Path("diarytexttwo") String diarytexttwo,
+                                   @Path("diarytextthree") String diarytextthree,
+                                   @Path("diarytextfour") String diarytextfour);
     }
 }

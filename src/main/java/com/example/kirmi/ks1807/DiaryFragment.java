@@ -151,12 +151,13 @@ public class DiaryFragment extends Fragment
                         public void onResponse(Call<String> call, Response<String> response) {
                             Log.d("retrofit", "SUCCESS: " + response);
                             if(response.code() == 404)
-                                Log.d("404", " ");
+                                Log.d("404", " " + response.body());
                             else{
                                 if(response.body().equals("-1"))
                                     Log.d("response.code()", " " + response.body() + "\nresponse.code() " + response.code());
                                 else{
                                     Log.d("Successful response"," " + response.body());
+                                    Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -166,8 +167,6 @@ public class DiaryFragment extends Fragment
 
                         }
                     });
-
-                    Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
                 }
             }
         });
