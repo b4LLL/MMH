@@ -1,7 +1,5 @@
 package com.example.kirmi.ks1807;
 
-import java.util.Date;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -12,7 +10,8 @@ import retrofit2.http.Path;
 class RestInterface{
     private static Retrofit retrofit = null;
     static Retrofit getClient(){ //getClient definition
-        final String BASE_URL = "http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/"; // URL for the API endpoints -> glassfish
+        //"http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/"
+        final String BASE_URL = "http://10.0.2.2:8080/MMH_API/webresources/";         // URL for the API endpoints -> glassfish
             if (retrofit == null){                                              // simple straight forward instantiation of an object
             Retrofit.Builder builder = new Retrofit.Builder()                   // Retrofit.Builder is a class -> Builder() is the constructor
                 .baseUrl(BASE_URL)                                              // sets the baseUrl (API base URL)
@@ -27,6 +26,7 @@ class RestInterface{
     }
 
     public interface Ks1807Client{
+
         @GET("mmhpackage.useraccount/GetMusicHistory/{id}/{password}")
         Call<String> GetMusicHistory(@Path("id") String id, @Path("password") String password);
 
