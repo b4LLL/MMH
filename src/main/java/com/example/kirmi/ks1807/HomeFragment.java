@@ -27,6 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.http.Path;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -78,7 +79,8 @@ public class HomeFragment extends Fragment
         recyclerView.setAdapter(adapter);
         listItems = new ArrayList<>();
         context = this.getContext();
-        Call<String> response = client.GetMusicHistory(UserID, password);
+
+        /*Call<String> response = client.GetMusicHistory(UserID, password);
         response.enqueue(new Callback<String>()
         {
             @Override
@@ -108,7 +110,7 @@ public class HomeFragment extends Fragment
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
                                 Log.d("MusicDetails[i]"," " + MusicDetails[i]);
-                                TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6]);    //add additional imgURI? here to give to adapter/.
+                                TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4]);    //add additional imgURI? here to give to adapter/.
                                 listItems.add(list);
                             }
                             adapter = new RecyclerViewAdapter(listItems, context, mService, true);
@@ -122,7 +124,7 @@ public class HomeFragment extends Fragment
                 Log.d("Throwable ","" + t);
                 fail_LoginNetwork();
             }
-        });
+        });*/
 
         return view;
     }
@@ -132,7 +134,7 @@ public class HomeFragment extends Fragment
     }
 
     void fail_LoginNetwork(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Dialog_Alert);
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
             .setCancelable(false)
