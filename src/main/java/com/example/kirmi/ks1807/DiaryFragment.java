@@ -146,7 +146,7 @@ public class DiaryFragment extends Fragment
                     Call<String> response = client.SetDiaryEntry(Global.UserID, sqlDate.toString(),q1Ans.getText().toString(),q3Ans.getText().toString(),
                             q4Ans.getText().toString(), q5Ans.getText().toString());
                     Log.d("Call<String>", " " + response);
-                    response.enqueue(new Callback<String>() {
+                    /*response.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
                             Log.d("retrofit", "SUCCESS: " + response);
@@ -166,7 +166,7 @@ public class DiaryFragment extends Fragment
                         public void onFailure(Call<String> call, Throwable t) {
 
                         }
-                    });
+                    });*/
                 }
             }
         });
