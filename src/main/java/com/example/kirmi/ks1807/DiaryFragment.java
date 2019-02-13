@@ -48,6 +48,9 @@ public class DiaryFragment extends Fragment
     //onSaveInstanceState()
     //onRestoreInstanceState()
 
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
@@ -139,17 +142,21 @@ public class DiaryFragment extends Fragment
         submitInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (q1Ans.getText().toString().equals("") || q3Ans.getText().toString().equals("") || q4Ans.getText().toString().equals("") || q5Ans.getText().toString().equals("")) {
+                java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
+                String q1 = q1Ans.getText().toString();
+                String q3 = q3Ans.getText().toString();
+                String q4 = q4Ans.getText().toString();
+                String q5 = q5Ans.getText().toString();
+
+                Log.d("Diary", "\nID:\t" + Global.UserID + "\ndate\t " + sqlDate + "\nq1\t " + q1 + "\nq3\t " + q3 + "\nq4\t " + q4 + "\nq5\t " + q5);
+                if (q1.equals("") || q3.equals("") || q4.equals("") || q5.equals("")) {
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
                 } else {
-                    java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
-                    Call<String> response = client.SetDiaryEntry(Global.UserID, sqlDate.toString(),q1Ans.getText().toString(),q3Ans.getText().toString(),
-                            q4Ans.getText().toString(), q5Ans.getText().toString());
-                    Log.d("Call<String>", " " + response);
-                    /*response.enqueue(new Callback<String>() {
+                    Call<String> response = client.SetDiaryEntry(Global.UserID,q1,q3,q4,q5);
+                    response.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
-                            Log.d("retrofit", "SUCCESS: " + response);
+                            Log.d("RETRO", " " + response.raw());
                             if(response.code() == 404)
                                 Log.d("404", " " + response.body());
                             else{
@@ -164,9 +171,9 @@ public class DiaryFragment extends Fragment
 
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
-
+                            Log.d("onFailure"," t= " + t + " response: " + response.toString());
                         }
-                    });*/
+                    });
                 }
             }
         });

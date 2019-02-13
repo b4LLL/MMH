@@ -240,8 +240,6 @@ public class BackgroundService extends Service {
                                 currentState = playerState;
                                 promptUser(currentState, true);
                             } else if (currentState != playerState){
-                                if(playerState.track.imageUri.raw != null)
-                                    Log.d("Track Image","URI ->\t" + playerState.track.imageUri.raw);
                                 promptUser(currentState, false);
                                 currentState = playerState;
                                 promptUser(currentState, true);
