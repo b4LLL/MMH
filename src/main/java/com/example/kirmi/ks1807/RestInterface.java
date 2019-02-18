@@ -125,5 +125,8 @@ class RestInterface{
                                    @Path("diaryentrytwo") String diarytexttwo,
                                    @Path("diaryentrythree") String diarytextthree,
                                    @Path("diaryentryfour") String diarytextfour);
+
+        @GET("mmhpackage.userdiary/CheckDiaryDate/{id}")
+        Call<String> CheckDiaryDate(@Path("id") String id);
     }
 }

@@ -61,6 +61,20 @@ public class DiaryFragment extends Fragment
 
         client = retrofit.create(RestInterface.Ks1807Client.class);
 
+        Call<String> response = client.CheckDiaryDate(Global.UserID);
+        response.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("Response.code -> ","" + response.code() +
+                        "Response.body " + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("onFailure"," t= " + t + " response: " + response.toString());
+            }
+        });
+
         q1Ans = view.findViewById(R.id.editText_q1Answer);
         q3Ans = view.findViewById(R.id.editText_q3Answer);
         q4Ans = view.findViewById(R.id.editText_q4Answer);
