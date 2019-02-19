@@ -126,6 +126,16 @@ class RestInterface{
                                    @Path("diaryentrythree") String diarytextthree,
                                    @Path("diaryentryfour") String diarytextfour);
 
+        @GET("mmhpackage.userdiary/UpdateDiaryEntry/{id}/{diaryentryone}/{diaryentrytwo}/{diaryentrythree}/{diaryentryfour}")
+        Call<String> UpdateDiaryEntry(@Path("id") String id,
+                                   @Path("diaryentryone") String diarytextone,
+                                   @Path("diaryentrytwo") String diarytexttwo,
+                                   @Path("diaryentrythree") String diarytextthree,
+                                   @Path("diaryentryfour") String diarytextfour);
+
+        @GET("mmhpackage.userdiary/GetDiaryEntry/{id}")
+        Call<String> GetDiaryEntry(@Path("id") String id);
+
         @GET("mmhpackage.userdiary/CheckDiaryDate/{id}")
         Call<String> CheckDiaryDate(@Path("id") String id);
     }

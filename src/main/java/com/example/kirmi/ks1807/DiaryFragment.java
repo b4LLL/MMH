@@ -42,20 +42,40 @@ public class DiaryFragment extends Fragment
     String q2selectedItem;
     EditText q1Ans, q3Ans, q4Ans, q5Ans;
     Button submitInfo;
-    //rest interface needed here0
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
+    boolean updateEntry = false;
     //onSaveInstanceState()
     //onRestoreInstanceState()
 
+    void getDiaryEntry(String UserID){
+        Call<String> response = client.GetDiaryEntry(UserID);
 
 
+        response.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("getDiaryEntry", " " + response.body());
+                updateEntry = true;     //makes sure next submission is Update instead of Set
+                String returnDiaryRaw = response.body();
+                String[] returnDiaryText = returnDiaryRaw.split("\n");
+                q1Ans.setText(returnDiaryText[1]);
+                q3Ans.setText(returnDiaryText[2]);
+                q4Ans.setText(returnDiaryText[3]);
+                q5Ans.setText(returnDiaryText[4]);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("onFailure"," t= " + t + " response: " + t.toString());
+            }
+        });
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
-
         View view = inflater.inflate(R.layout.activity_diaryfrag, null);
         UserID = Global.UserID;
 
@@ -65,8 +85,10 @@ public class DiaryFragment extends Fragment
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("Response.code -> ","" + response.code() +
-                        "Response.body " + response.body());
+                Log.d("CheckDiaryEntry"," " +response.body());
+                if(response.body().equals("0")){
+                    getDiaryEntry(Global.UserID);
+                }
             }
 
             @Override
@@ -165,7 +187,7 @@ public class DiaryFragment extends Fragment
                 Log.d("Diary", "\nID:\t" + Global.UserID + "\ndate\t " + sqlDate + "\nq1\t " + q1 + "\nq3\t " + q3 + "\nq4\t " + q4 + "\nq5\t " + q5);
                 if (q1.equals("") || q3.equals("") || q4.equals("") || q5.equals("")) {
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
-                } else {
+                } else if (!updateEntry){
                     Call<String> response = client.SetDiaryEntry(Global.UserID,q1,q3,q4,q5);
                     response.enqueue(new Callback<String>() {
                         @Override
@@ -181,6 +203,20 @@ public class DiaryFragment extends Fragment
                                     Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
                                 }
                             }
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Log.d("onFailure"," t= " + t + " response: " + response.toString());
+                        }
+                    });
+                } else if (updateEntry){
+                    Call<String> response = client.UpdateDiaryEntry(Global.UserID,q1,q3,q4,q5);
+                    response.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            Log.d("Response", " " + response.body());
+                            Toast.makeText(getContext(), "Answers updated", Toast.LENGTH_LONG).show();
                         }
 
                         @Override
