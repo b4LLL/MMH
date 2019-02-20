@@ -45,29 +45,30 @@ public class DiaryFragment extends Fragment
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     boolean updateEntry = false;
+    String currentDiaryID;
     //onSaveInstanceState()
     //onRestoreInstanceState()
 
-    void getDiaryEntry(String UserID){
-        Call<String> response = client.GetDiaryEntry(UserID);
-
-
+    void getDiaryEntry(String UserDiaryID){
+        Log.d("GetDiaryEntry"," " + UserDiaryID);
+        Call<String> response = client.GetDiaryEntry(UserDiaryID);
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("getDiaryEntry", " " + response.body());
-                updateEntry = true;     //makes sure next submission is Update instead of Set
-                String returnDiaryRaw = response.body();
-                String[] returnDiaryText = returnDiaryRaw.split("\n");
-                q1Ans.setText(returnDiaryText[1]);
-                q3Ans.setText(returnDiaryText[2]);
-                q4Ans.setText(returnDiaryText[3]);
-                q5Ans.setText(returnDiaryText[4]);
+                Log.d("GetDiaryEntry", " response.body()\t" + response.body());
+                if(!response.body().equals("")){
+                    updateEntry = true;     //makes sure next submission is Update instead of Set
+                    String returnDiaryRaw = response.body();
+                    String[] returnDiaryText = returnDiaryRaw.split("\n");
+                    q1Ans.setText(returnDiaryText[0]);
+                    q3Ans.setText(returnDiaryText[1]);
+                    q4Ans.setText(returnDiaryText[2]);
+                    q5Ans.setText(returnDiaryText[3]);
+                }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("onFailure"," t= " + t + " response: " + t.toString());
+                Log.d("onFailure"," -> getDiaryEntry t= " + t);
             }
         });
     }
@@ -78,22 +79,21 @@ public class DiaryFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.activity_diaryfrag, null);
         UserID = Global.UserID;
-
         client = retrofit.create(RestInterface.Ks1807Client.class);
-
         Call<String> response = client.CheckDiaryDate(Global.UserID);
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("CheckDiaryEntry"," " +response.body());
-                if(response.body().equals("0")){
-                    getDiaryEntry(Global.UserID);
+                if(!response.body().equals("")){
+                    getDiaryEntry(response.body());
+                    Log.d("CheckDiaryDate"," " + response.body());
+                }else if(response.body().equals("-1")){
+                    Log.d("CheckDiaryDate"," " + response.body() + "\nNo Diary Entry Found");
                 }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("onFailure"," t= " + t + " response: " + response.toString());
+                Log.d("onFailure"," -> CheckDiaryDate t= " + t + " response: " + response.toString());
             }
         });
 
