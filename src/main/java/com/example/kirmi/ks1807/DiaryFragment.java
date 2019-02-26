@@ -45,7 +45,7 @@ public class DiaryFragment extends Fragment
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     boolean updateEntry = false;
-    String currentDiaryID;
+    public String currentDiaryID;
     //onSaveInstanceState()
     //onRestoreInstanceState()
 
@@ -56,10 +56,10 @@ public class DiaryFragment extends Fragment
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.d("GetDiaryEntry", " response.body()\t" + response.body());
-                if(!response.body().equals("")){
+                if(!response.body().equals("-1")){
                     updateEntry = true;     //makes sure next submission is Update instead of Set
                     String returnDiaryRaw = response.body();
-                    String[] returnDiaryText = returnDiaryRaw.split("\n");
+                    String[] returnDiaryText = returnDiaryRaw.split("@@@");
                     q1Ans.setText(returnDiaryText[0]);
                     q3Ans.setText(returnDiaryText[1]);
                     q4Ans.setText(returnDiaryText[2]);
@@ -73,30 +73,35 @@ public class DiaryFragment extends Fragment
         });
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(R.layout.activity_diaryfrag, null);
+    public void onResume() {
+        super.onResume();
         UserID = Global.UserID;
         client = retrofit.create(RestInterface.Ks1807Client.class);
         Call<String> response = client.CheckDiaryDate(Global.UserID);
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(!response.body().equals("")){
-                    getDiaryEntry(response.body());
+                Log.d("CheckDiaryDate"," " + response.body() + "\n" + response.code());
+                if(response.code() != 204){
                     Log.d("CheckDiaryDate"," " + response.body());
-                }else if(response.body().equals("-1")){
-                    Log.d("CheckDiaryDate"," " + response.body() + "\nNo Diary Entry Found");
-                }
+                    currentDiaryID = response.body();
+                    getDiaryEntry(currentDiaryID);
+                }else
+                    Log.d("CheckDiaryDate ", "" + response.body() + "\nNo Diary Entry Found");
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("onFailure"," -> CheckDiaryDate t= " + t + " response: " + response.toString());
             }
         });
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        View view = inflater.inflate(R.layout.activity_diaryfrag, null);
         q1Ans = view.findViewById(R.id.editText_q1Answer);
         q3Ans = view.findViewById(R.id.editText_q3Answer);
         q4Ans = view.findViewById(R.id.editText_q4Answer);
@@ -184,7 +189,6 @@ public class DiaryFragment extends Fragment
                 String q4 = q4Ans.getText().toString();
                 String q5 = q5Ans.getText().toString();
 
-                Log.d("Diary", "\nID:\t" + Global.UserID + "\ndate\t " + sqlDate + "\nq1\t " + q1 + "\nq3\t " + q3 + "\nq4\t " + q4 + "\nq5\t " + q5);
                 if (q1.equals("") || q3.equals("") || q4.equals("") || q5.equals("")) {
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
                 } else if (!updateEntry){
@@ -211,14 +215,14 @@ public class DiaryFragment extends Fragment
                         }
                     });
                 } else if (updateEntry){
-                    Call<String> response = client.UpdateDiaryEntry(Global.UserID,q1,q3,q4,q5);
+                    Call<String> response = client.UpdateDiaryEntry(currentDiaryID,Global.UserID,q1,q3,q4,q5);
                     response.enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Call<String> call, Response<String> response) {
-                            Log.d("Response", " " + response.body());
+                            Log.d("Response", " " + response.body() + "\tcode " + response.code() + "\n" + currentDiaryID);
+
                             Toast.makeText(getContext(), "Answers updated", Toast.LENGTH_LONG).show();
                         }
-
                         @Override
                         public void onFailure(Call<String> call, Throwable t) {
                             Log.d("onFailure"," t= " + t + " response: " + response.toString());
