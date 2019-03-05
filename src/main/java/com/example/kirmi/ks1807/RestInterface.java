@@ -11,7 +11,8 @@ class RestInterface{
     private static Retrofit retrofit = null;
     static Retrofit getClient(){ //getClient definition
         //"http://pe-ks1807.scem.westernsydney.edu.au/MMH_API/webresources/"
-        final String BASE_URL = "http://10.0.2.2:8080/MMH_API/webresources/";         // URL for the API endpoints -> glassfish
+        //"http://10.0.2.2:8080/MMH_API/webresources/";
+        final String BASE_URL = "http://10.0.2.2:80/MMH_API/webresources/";     // URL for the API endpoints -> glassfish -->
             if (retrofit == null){                                              // simple straight forward instantiation of an object
             Retrofit.Builder builder = new Retrofit.Builder()                   // Retrofit.Builder is a class -> Builder() is the constructor
                 .baseUrl(BASE_URL)                                              // sets the baseUrl (API base URL)
@@ -97,14 +98,12 @@ class RestInterface{
                                   @Path("duration") String duration, @Path("moodBefore") String moodBefore,
                                   @Path("id") String id, @Path("password") String password);
 
-        @GET("mmhpackage.musictrack/TrackEnded/{SpotifyTrackID}/{moodID}/{moodAfter}/{userLiked}/" +
-                "{entry1}/{entry2}/{entry3}/{entry4}/{entry5}/{id}/{password}")
+        @GET("mmhpackage.musictrack/TrackEnded/{SpotifyTrackID}/{moodID}/{moodAfter}/{userLiked}/{entry1}/{entry2}/{entry3}/{id}/{password}")
         Call<String> TrackEnded(@Path("SpotifyTrackID") String SpotifyTrackID,
                                 @Path("moodID") String moodID, @Path("moodAfter") String moodAfter,
                                 @Path("userLiked") String userLiked,
                                 @Path("entry1") String entry1, @Path("entry2") String entry2,
-                                @Path("entry3") String entry3, @Path("entry4") String entry4,
-                                @Path("entry5") String entry5, @Path("id") String id,
+                                @Path("entry3") String entry3, @Path("id") String id,
                                 @Path("password") String password);
 
         @GET("mmhpackage.musictrack/GetRecommendedTracksUser/{id}/{password}")
