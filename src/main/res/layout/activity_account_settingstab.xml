@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fadeScrollbars="false"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbarSize="5dp"
+    android:scrollbarThumbVertical="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <TextView
+            android:id="@+id/text_EditRecommendations"
+            android:layout_width="263dp"
+            android:layout_height="68dp"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/RecommendationsSetting_Caption"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/RadioGroup_Recommendation"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:checkedButton="@id/RadioButton_SettingsYes"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/RadioButton_SettingsYes"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/settingsyesselected"
+                android:button="@null" />
+
+            <Space
+                android:layout_width="41dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_SettingsNo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/settingnonormal"
+                android:button="@null" />
+        </RadioGroup>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="31dp" />
+
+        <TextView
+            android:id="@+id/text_FrequencyOfMoodAlerts"
+            android:layout_width="294dp"
+            android:layout_height="66dp"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/MoodFrequencyAlertSettings_Caption"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/Layout_Spinner"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
+
+            <Spinner
+                android:id="@+id/Spinner_AlertFrequency"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/accountsettingsdropdown"
+                android:popupBackground="@drawable/dropdownback"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="47dp" />
+
+        <Button
+            android:id="@+id/btn_SubmitSettings"
+            android:layout_width="210dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/settingssubmit"
+            android:minHeight="10dp"
+            android:onClick="button_Submit"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="29dp" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backnightnature3"
+    tools:context=".RegisterSecondPage"
+    tools:layout_editor_absoluteY="25dp">
+
+    <TextView
+        android:id="@+id/Text_Register"
+        android:layout_width="182dp"
+        android:layout_height="41dp"
+        android:background="@drawable/registertitle2"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/q1text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.346"
+        app:layout_constraintStart_toEndOf="@+id/btn_BackRegister"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/q1text"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/q1"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/spinner1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Text_Register" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="211dp"
+        android:layout_height="40dp"
+        android:background="@drawable/dropdown"
+        android:popupBackground="@drawable/dropdownback"
+        app:layout_constraintBottom_toTopOf="@+id/q2text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/q1text" />
+
+    <TextView
+        android:id="@+id/q2text"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:background="@drawable/q2"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/spinner2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner1" />
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="211dp"
+        android:layout_height="40dp"
+        android:background="@drawable/dropdown"
+        android:popupBackground="@drawable/dropdownback"
+        app:layout_constraintBottom_toTopOf="@+id/q3text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/q2text" />
+
+    <TextView
+        android:id="@+id/q4text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/q4"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/spinner4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner3" />
+
+    <Spinner
+        android:id="@+id/spinner4"
+        android:layout_width="211dp"
+        android:layout_height="40dp"
+        android:background="@drawable/dropdown"
+        android:popupBackground="@drawable/dropdownback"
+        app:layout_constraintBottom_toTopOf="@+id/btn_Register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/q4text" />
+
+    <TextView
+        android:id="@+id/q3text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/q3"
+        android:fontFamily="@font/roboto_medium"
+        android:textColor="#ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/spinner3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+
+    <Spinner
+        android:id="@+id/spinner3"
+        android:layout_width="211dp"
+        android:layout_height="40dp"
+        android:background="@drawable/dropdown"
+        android:popupBackground="@drawable/dropdownback"
+        app:layout_constraintBottom_toTopOf="@+id/q4text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/q3text" />
+
+    <Button
+        android:id="@+id/btn_BackRegister"
+        android:layout_width="24dp"
+        android:layout_height="22dp"
+        android:background="@drawable/back"
+        android:minHeight="10dp"
+        android:onClick="button_Back"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.074"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.025" />
+
+    <Button
+        android:id="@+id/btn_Register"
+        android:layout_width="197dp"
+        android:layout_height="45dp"
+        android:background="@drawable/registernow"
+        android:minHeight="10dp"
+        android:onClick="button_RegisterNow2"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner4" />
+
+</android.support.constraint.ConstraintLayout>

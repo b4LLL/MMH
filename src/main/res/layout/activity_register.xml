@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backnightnature3"
+    tools:context=".Register"
+    tools:layout_editor_absoluteY="25dp">
+
+    <Button
+        android:id="@+id/btn_BackRegister"
+        android:layout_width="24dp"
+        android:layout_height="22dp"
+        android:background="@drawable/back"
+        android:minHeight="10dp"
+        android:onClick="button_Back"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/Text_Register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Text_Register"
+        app:layout_constraintVertical_bias="0.55" />
+
+    <TextView
+        android:id="@+id/Text_Register"
+        android:layout_width="222dp"
+        android:layout_height="38dp"
+        android:fontFamily="@font/roboto_black"
+        android:text="Create an Account"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/EditText_FirstName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/EditText_FirstName"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/firstname"
+        android:ems="10"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        android:paddingLeft="50dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/EditText_LastName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Text_Register" />
+
+    <EditText
+        android:id="@+id/EditText_LastName"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/lastname"
+        android:ems="10"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/LNameCaption"
+        android:inputType="textPersonName"
+        android:paddingLeft="50dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/EditText_Email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditText_FirstName" />
+
+    <EditText
+        android:id="@+id/EditText_Email"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/registeremail"
+        android:ems="10"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/EmailCaption"
+        android:inputType="textEmailAddress"
+        android:paddingLeft="50dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/EditText_Password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditText_LastName" />
+
+    <EditText
+        android:id="@+id/EditText_Password"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/registerpassword"
+        android:ems="10"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/EditPasswordHintCaption"
+        android:inputType="textPassword"
+        android:paddingLeft="50dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/EditText_ConfirmPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditText_Email" />
+
+    <EditText
+        android:id="@+id/EditText_ConfirmPassword"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/confirmpassword"
+        android:ems="10"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/NewPassword_Caption"
+        android:inputType="textPassword"
+        android:paddingLeft="50dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/EditText_DateOfBirth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditText_Password" />
+
+    <EditText
+        android:id="@+id/EditText_DateOfBirth"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/age"
+        android:ems="10"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/DateOfBirth_Caption"
+        android:inputType="date"
+        android:paddingLeft="50dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/RadioGroup_GenderSelect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditText_ConfirmPassword" />
+
+    <RadioGroup
+        android:id="@+id/RadioGroup_GenderSelect"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@drawable/genderback"
+        android:checkedButton="@+id/RadioButton_Male"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EditText_DateOfBirth">
+
+        <RadioButton
+            android:id="@+id/RadioButton_empty"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/RadioButton_Male"
+            android:layout_width="89dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/maleselected"
+            android:button="@null"
+            android:onClick="RadioButtonMale" />
+
+        <RadioButton
+            android:id="@+id/RadioButton_Female"
+            android:layout_width="86.6dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/femaleunselected"
+            android:button="@null"
+            android:onClick="RadioButtonFemale" />
+
+        <RadioButton
+            android:id="@+id/RadioButton_Other"
+            android:layout_width="86.6dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/otherunselected"
+            android:button="@null"
+            android:onClick="RadioButtonOther" />
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="301dp"
+        android:layout_height="66dp"
+        android:background="@drawable/radiobuttonback"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RadioGroup_GenderSelect">
+
+        <TextView
+            android:id="@+id/Text_moremoodques"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/researchques"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="79dp"
+            tools:layout_editor_absoluteY="433dp" />
+
+        <RadioGroup
+            android:id="@+id/RadioGroup_MoreResearch"
+            android:layout_width="187dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="99dp"
+            tools:layout_editor_absoluteY="469dp">
+
+            <RadioButton
+                android:id="@+id/RadioButton_Yes1"
+                android:layout_width="10dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/yesunselected"
+                android:button="@null"
+                android:onClick="RadioButtonYesResearch" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_No1"
+                android:layout_width="10dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/nounselected"
+                android:button="@null"
+                android:onClick="RadioButtonNoResearch" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="301dp"
+        android:layout_height="92dp"
+        android:background="@drawable/radiobuttonback"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/btn_Submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/text_moremoodques"
+            android:layout_width="301dp"
+            android:layout_height="49dp"
+            android:layout_gravity="center"
+            android:fontFamily="@font/roboto_medium"
+            android:text="@string/moremoodques"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="50dp"
+            tools:layout_editor_absoluteY="517dp" />
+
+        <RadioGroup
+            android:id="@+id/RadioGroup_MoreMood"
+            android:layout_width="186dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="99dp"
+            tools:layout_editor_absoluteY="553dp">
+
+            <RadioButton
+                android:id="@+id/RadioButton_Yes"
+                android:layout_width="10dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/yesunselected"
+                android:button="@null"
+                android:onClick="RadioButtonYesMoreQues" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_No"
+                android:layout_width="10dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/nounselected"
+                android:button="@null"
+                android:onClick="RadioButtonNoMoreQues" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_Submit"
+        android:layout_width="211dp"
+        android:layout_height="45dp"
+        android:onClick="button_RegisterNow"
+        android:background="@drawable/registernow"
+        android:text=""
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+    <Button
+        android:id="@+id/btn_Next"
+        android:layout_width="211dp"
+        android:layout_height="45dp"
+        android:background="@drawable/next"
+        android:minHeight="10dp"
+        android:onClick="button_Next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+</android.support.constraint.ConstraintLayout>

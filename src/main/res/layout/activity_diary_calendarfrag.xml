@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<sun.bob.mcalendarview.MCalendarView
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="400dp"
+    tools:context=".MainActivity"
+    android:id="@+id/calendar"/>

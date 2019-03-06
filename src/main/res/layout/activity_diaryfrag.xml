@@ -1,0 +1,297 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fadeScrollbars="false"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbarSize="5dp"
+    android:scrollbarThumbVertical="@color/white">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_diarytitle"
+            android:layout_width="305dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/diarytitle"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_diaryQ1"
+                android:layout_width="350dp"
+                android:layout_height="55dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:text="@string/DiaryQ1"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/editText_q1Answer"
+                android:layout_width="350dp"
+                android:layout_height="136dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/multilinetextback"
+                android:ems="10"
+                android:fontFamily="@font/roboto_medium"
+                android:freezesText="true"
+                android:gravity="center_horizontal"
+                android:hint="Your response"
+                android:inputType="textMultiLine"
+                android:padding="5dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textView_linkwhy"
+                android:layout_width="350dp"
+                android:layout_height="39dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:text="@string/Diaryq1whylink"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="370dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/white"
+                android:visibility="visible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_diaryQ2"
+                android:layout_width="350dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:text="@string/DiaryQ2"
+                android:textColor="@android:color/white" />
+
+            <Spinner
+                android:id="@+id/DiaryQ2Spinner"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/positiveornegativedropdown"
+                android:popupBackground="@drawable/dropdownback" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="370dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/white"
+                android:visibility="visible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@android:color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_diaryQ3"
+                android:layout_width="350dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:text="@string/DiaryQ3"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/editText_q3Answer"
+                android:layout_width="350dp"
+                android:layout_height="83dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/multilinetextback"
+                android:ems="10"
+                android:fontFamily="@font/roboto_medium"
+                android:freezesText="true"
+                android:gravity="top"
+                android:hint="Your response"
+                android:inputType="textMultiLine"
+                android:padding="5dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="370dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/white"
+                android:visibility="visible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_diaryQ4"
+                android:layout_width="350dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:text="@string/DiaryQ4"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/editText_q4Answer"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/multilinetextback"
+                android:ems="10"
+                android:fontFamily="@font/roboto_medium"
+                android:freezesText="true"
+                android:gravity="top"
+                android:hint="Your response"
+                android:inputType="textMultiLine"
+                android:padding="5dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="370dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/white"
+                android:visibility="visible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_diaryQ5"
+                android:layout_width="350dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center_vertical"
+                android:padding="2dp"
+                android:text="@string/DiaryQ5"
+                android:textColor="@android:color/white" />
+
+            <EditText
+                android:id="@+id/editText_q5Answer"
+                android:layout_width="350dp"
+                android:layout_height="84dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/multilinetextback"
+                android:ems="10"
+                android:fontFamily="@font/roboto_medium"
+                android:freezesText="true"
+                android:gravity="top"
+                android:hint="Your response"
+                android:inputType="textMultiLine"
+                android:padding="5dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="370dp"
+                android:layout_height="2dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/white"
+                android:visibility="visible" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="21dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_DiaryInfo"
+            android:layout_width="175dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/diarysubmit" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+    </LinearLayout>
+
+</ScrollView>
