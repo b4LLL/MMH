@@ -2,7 +2,8 @@ package com.example.kirmi.ks1807;
 
 public class TrackDetails
 {
-    String title, artist, album, length, spotifyTrackID, moodBefore, moodAfter, moodBeforeEmote, moodAfterEmote;
+    private String title, artist, album, length, moodBefore, moodAfter, moodBeforeEmote, moodAfterEmote;
+    String spotifyTrackID;
     public TrackDetails()
     {
 
@@ -45,7 +46,7 @@ public class TrackDetails
         return moodAfter;
     }
 
-    public String getMoodBeforeEmote() {
+    String getMoodBeforeEmote() {
         if(Global.moodList != null){
             for(int i = 0; i < Global.moodList.length; i++){
                 if(moodBefore.equals(Global.moodList[i])){
@@ -56,7 +57,7 @@ public class TrackDetails
         return moodBeforeEmote;
     }
 
-    public String getMoodAfterEmote() {
+    String getMoodAfterEmote() {
         if(Global.moodList != null){
             for(int i = 0; i < Global.moodList.length; i++){
                 if(moodAfter.equals(Global.moodList[i])){

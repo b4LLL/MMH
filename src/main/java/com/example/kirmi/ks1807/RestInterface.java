@@ -136,6 +136,9 @@ class RestInterface{
         @GET("mmhpackage.userdiary/GetDiaryEntry/{userdiaryid}")
         Call<String> GetDiaryEntry(@Path("userdiaryid") String userdiaryid);
 
+        @GET("mmhpackage.userdiary/LoadCalendar/{id}")
+        Call<String> LoadCalendar(@Path("id") String id);
+
         @GET("mmhpackage.userdiary/CheckDiaryDate/{id}")
         Call<String> CheckDiaryDate(@Path("id") String id);
     }

@@ -44,12 +44,10 @@ public class DiaryInputFragment extends Fragment {
     //onRestoreInstanceState()
 
     void getDiaryEntry(String UserDiaryID) {
-        Log.d("GetDiaryEntry", " " + UserDiaryID);
         Call<String> response = client.GetDiaryEntry(UserDiaryID);
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("GetDiaryEntry", " response.body()\t" + response.body());
                 if (!response.body().equals("-1")) {
                     updateEntry = true;     //makes sure next submission is Update instead of Set
                     String returnDiaryRaw = response.body();
