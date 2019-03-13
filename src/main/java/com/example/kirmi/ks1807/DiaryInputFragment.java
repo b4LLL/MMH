@@ -40,8 +40,8 @@ public class DiaryInputFragment extends Fragment {
     RestInterface.Ks1807Client client;
     boolean updateEntry = false;
     public String currentDiaryID;
-    //onSaveInstanceState()
-    //onRestoreInstanceState()
+    String q1,q3,q4,q5;
+
 
     void getDiaryEntry(String UserDiaryID) {
         Call<String> response = client.GetDiaryEntry(UserDiaryID);
@@ -58,7 +58,6 @@ public class DiaryInputFragment extends Fragment {
                     q5Ans.setText(returnDiaryText[3]);
                 }
             }
-
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("onFailure", " -> getDiaryEntry t= " + t);
@@ -174,54 +173,58 @@ public class DiaryInputFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 java.sql.Timestamp sqlDate = new java.sql.Timestamp(date.getTime());
-                String q1 = q1Ans.getText().toString();
-                String q3 = q3Ans.getText().toString();
-                String q4 = q4Ans.getText().toString();
-                String q5 = q5Ans.getText().toString();
-
+                q1 = q1Ans.getText().toString();
+                q3 = q3Ans.getText().toString();
+                q4 = q4Ans.getText().toString();
+                q5 = q5Ans.getText().toString();
                 if (q1.equals("") || q3.equals("") || q4.equals("") || q5.equals("")) {
                     Toast.makeText(getContext(), "Answers required", Toast.LENGTH_LONG).show();
-                } else if (!updateEntry){
-                    Call<String> response = client.SetDiaryEntry(Global.UserID,q1,q3,q4,q5);
-                    response.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            Log.d("RETRO", " " + response.raw());
-                            if(response.code() == 404)
-                                Log.d("404", " " + response.body());
-                            else{
-                                if(response.body().equals("-1"))
-                                    Log.d("response.code()", " " + response.body() + "\nresponse.code() " + response.code());
-                                else{
-                                    Log.d("Successful response"," " + response.body());
-                                    Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            Log.d("onFailure"," t= " + t + " response: " + response.toString());
-                        }
-                    });
-                } else if (updateEntry){
-                    Call<String> response = client.UpdateDiaryEntry(currentDiaryID,Global.UserID,q1,q3,q4,q5);
-                    response.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            Log.d("Response", " " + response.body() + "\tcode " + response.code() + "\n" + currentDiaryID);
-
-                            Toast.makeText(getContext(), "Answers updated", Toast.LENGTH_LONG).show();
-                        }
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            Log.d("onFailure"," t= " + t + " response: " + response.toString());
-                        }
-                    });
-                }
+                }else
+                    sendDiaryEntry();
             }
         });
-
         return view;
+    }
+
+    void sendDiaryEntry(){
+        if (!updateEntry){
+            Call<String> response = client.SetDiaryEntry(Global.UserID,q1,q3,q4,q5);
+            response.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.d("RETRO", " " + response.raw());
+                    if(response.code() == 404)
+                        Log.d("404", " " + response.body());
+                    else{
+                        if(response.body().equals("-1"))
+                            Log.d("response.code()", " " + response.body() + "\nresponse.code() " + response.code());
+                        else{
+                            Log.d("Successful response"," " + response.body());
+                            updateEntry = true;
+                            Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d("onFailure"," t= " + t + " response: " + response.toString());
+                }
+            });
+        } else {
+            Call<String> response = client.UpdateDiaryEntry(currentDiaryID,Global.UserID,q1,q3,q4,q5);
+            response.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.d("Response", " " + response.body() + "\tcode " + response.code() + "\n" + currentDiaryID);
+
+                    Toast.makeText(getContext(), "Answers updated", Toast.LENGTH_LONG).show();
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d("onFailure"," t= " + t + " response: " + response.toString());
+                }
+            });
+        }
     }
 }
