@@ -60,12 +60,11 @@ public class BackgroundService extends Service {
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
-    public static Boolean isPrompting = false;       //flag to check whether the previous/existing prompt has been processed by the user
+    Boolean isPrompting = false;       //flag to check whether the previous/existing prompt has been processed by the user
     String TheMood;
     String BeforeMood;
     public String[] moodEmoticonList;
     ArrayList<PlayerState> processingQueue = new ArrayList<>();
-
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
@@ -122,7 +121,7 @@ public class BackgroundService extends Service {
     }
 
     void networkLoginFail(Throwable t){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
                 .setCancelable(false)

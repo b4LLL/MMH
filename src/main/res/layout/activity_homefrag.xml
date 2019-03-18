@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/roboto_black"
-            android:text="@string/WelcomeUserDefaultCaption"
+            android:text="Welcome to Moody Tunes!"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="30sp"

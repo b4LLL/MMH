@@ -1,16 +1,26 @@
 package com.example.kirmi.ks1807;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
+import android.support.text.emoji.TypefaceEmojiSpan;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -123,10 +133,37 @@ public class DiaryCalendarFragment extends Fragment {
                 Log.d("FOUND", "\nmonth\t" + x.getMonth() + "\ndate\t" + x.getDay() + "\ne1\t" + x.getEntryOne());
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = inflater.inflate(R.layout.diary_recollection,null);
-                PopupWindow popupWindow = new PopupWindow(popupView,400,600,true);
+                PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,true);
                 popupWindow.setContentView(popupView);
+                TextView popupTitle = popupView.findViewById(R.id.diaryTitle);
+                TextView popupDiaryEntry = popupView.findViewById(R.id.diaryEntry);
+                Button diaryRecollectButton = popupView.findViewById(R.id.diaryRecollectButton);
+                String q1 = getString(R.string.DiaryQ1);
+                String q3 = getString(R.string.DiaryQ3);
+                String q4 = getString(R.string.DiaryQ4);
+                String q5 = getString(R.string.DiaryQ5);
+                String okButton = "Ok";
+                diaryRecollectButton.setText(okButton);
+                String titleText = "Diary Entry for:\t\t\t" + x.getDay()+"/"+x.getMonth()+"/"+x.getYear();
+                String entryText = q1 + "\n" + x.getEntryOne() +
+                        "\n\n" + q3 + "\n" + x.getEntryTwo() +
+                        "\n\n" + q4 + "\n" + x.getEntryThree() +
+                        "\n\n" + q5 + "\n" + x.getEntryFour();
+                diaryRecollectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        popupWindow.dismiss();
+                    }
+                });
+                popupTitle.setTypeface(null, Typeface.BOLD);
+                GradientDrawable border = new GradientDrawable();
+                border.setCornerRadius(5);
+                border.setColor(0xFFFFFFFF);
+                border.setStroke(2,0xFF000000);
+                popupView.setBackground(border);
+                popupTitle.setText(titleText);
+                popupDiaryEntry.setText(entryText);
                 popupWindow.showAtLocation(this.getView(), Gravity.CENTER,0,0);
-                Log.d("loading popup","\tsuccess\t" + popupWindow.isShowing());
             }
         }
     }
