@@ -14,11 +14,10 @@ public class TrackDetails
         this.artist = "Artist: " + artist;
         this.album = "Album: " + album;
         this.length = "Length: " + length;
-        this.moodBefore = moodBefore;
-        this.moodAfter = moodAfter;
-        // pull/load img url here..
-        // this.trackImage = trackImage;
+        this.moodBefore = moodAfter;
+        this.moodAfter = moodBefore;
     }
+
     String getTitle()
     {
         return title;

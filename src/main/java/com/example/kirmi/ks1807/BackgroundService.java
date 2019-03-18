@@ -121,7 +121,7 @@ public class BackgroundService extends Service {
     }
 
     void networkLoginFail(Throwable t){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        /*AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle("Service Error");
         alertDialogBuilder
                 .setCancelable(false)
@@ -134,7 +134,8 @@ public class BackgroundService extends Service {
                 "or contact support";
         alertDialogBuilder.setMessage(InvalidMessage);
         AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        alertDialog.show();*/
+        Log.d("Network Error","\nt =" + t.toString());
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -294,9 +295,9 @@ public class BackgroundService extends Service {
                                 finalPrompt(processingQueue.get(0));
                                 Log.d("FINAL Prompt ",":\t" + processingQueue.get(0).track.name);
                                 processingQueue.remove(0);
-                                processingQueue.add(playerState);
+                                /*processingQueue.add(playerState);
                                 primaryPrompt(processingQueue.get(0));
-                                Log.d("START Prompt ",":\t" + processingQueue.get(0).track.name);
+                                Log.d("START Prompt ",":\t" + processingQueue.get(0).track.name);*/
                             }else{
                                 processingQueue.add(playerState);
                                 primaryPrompt(playerState);
