@@ -128,6 +128,13 @@ public class HomeFragment extends Fragment
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        Log.d("HomeFrag","\tresumed\t!");
+        super.onResume();
+    }
+
     public void setService(BackgroundService service){
         this.mService = service;
     }

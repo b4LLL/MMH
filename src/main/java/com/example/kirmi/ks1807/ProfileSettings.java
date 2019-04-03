@@ -66,7 +66,7 @@ public class ProfileSettings extends Fragment
         genderOther = (RadioButton)view.findViewById(R.id.RadioButton_EditOther);
 
         gender.setEnabled(false);
-        editback = (Button)view.findViewById(R.id.btn_profileeditsettingback);
+        //editback = (Button)view.findViewById(R.id.btn_profileeditsettingback);
         btnUpdate = (Button)view.findViewById(R.id.btn_updateprofile);
 
         updatepass = (LinearLayout)view.findViewById(R.id.changepasscontent);

@@ -25,8 +25,6 @@ public class DiaryFragment extends Fragment {
         viewPager = view.findViewById(R.id.view_pager);
         pagerAdapter = new DiaryPagerAdapter(getChildFragmentManager());
         viewPager.setAdapter(pagerAdapter);
-
-
         return view;
     }
 }
