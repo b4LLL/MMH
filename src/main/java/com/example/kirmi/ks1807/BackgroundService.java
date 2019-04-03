@@ -60,7 +60,6 @@ public class BackgroundService extends Service {
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
-    Boolean isPrompting = false;       //flag to check whether the previous/existing prompt has been processed by the user
     String TheMood;
     String BeforeMood;
     public String[] moodEmoticonList;
@@ -121,20 +120,6 @@ public class BackgroundService extends Service {
     }
 
     void networkLoginFail(Throwable t){
-        /*AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Service Error");
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Ok",new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog,int id)
-                    {
-                    }
-                });
-        String InvalidMessage = "The service is not available at this time, please try again later " +
-                "or contact support";
-        alertDialogBuilder.setMessage(InvalidMessage);
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();*/
         Log.d("Network Error","\nt =" + t.toString());
     }
 
@@ -233,8 +218,16 @@ public class BackgroundService extends Service {
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     Log.d("message received"," " + intent.getAction());
-                    if(Global.mSpotifyAppRemote != null)
-                        pollPlayerState(Global.mSpotifyAppRemote.getPlayerApi());
+                    if(Global.mSpotifyAppRemote != null){
+                        PlayerApi playerApi = Global.mSpotifyAppRemote.getPlayerApi();
+                        if(playerApi != null){
+                            try{
+                                pollPlayerState(playerApi);
+                            }catch(Exception e){
+                                Log.d("Exception " , "\t" + e.getMessage());
+                            }
+                        }
+                    }
                 }
             };
             registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
@@ -281,40 +274,45 @@ public class BackgroundService extends Service {
     }
 
     void pollPlayerState(PlayerApi playerApi){
-        playerApi.getPlayerState()
-            .setResultCallback(playerState -> {
-                Log.d("BSS\t"," signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
-                Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
-                response.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if (response.code() == 404) {
-                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                        } else if (response.body().equals("Yes")){
-                            if(processingQueue.size() > 0){
-                                finalPrompt(processingQueue.get(0));
-                                Log.d("FINAL Prompt ",":\t" + processingQueue.get(0).track.name);
-                                processingQueue.remove(0);
-                                /*processingQueue.add(playerState);
-                                primaryPrompt(processingQueue.get(0));
-                                Log.d("START Prompt ",":\t" + processingQueue.get(0).track.name);*/
-                            }else{
-                                processingQueue.add(playerState);
-                                primaryPrompt(playerState);
-                                Log.d("INITIAL Prompt ",":\t" + processingQueue.get(0).track.name);
+        if(playerApi.getPlayerState() == null) {
+            Log.d("Something went wrong", "playerApi.getPlayerState() == null");
+        } else {
+            playerApi.getPlayerState()
+                .setResultCallback(playerState -> {
+                    Log.d("BSS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
+                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
+                    response.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.code() == 404) {
+                                Toast.makeText(getApplicationContext(), "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                            } else if (response.body().equals("Yes")) {
+                                if (processingQueue.size() > 0) {
+                                    finalPrompt(processingQueue.get(0));
+                                    Log.d("FINAL Prompt ", ":\t" + processingQueue.get(0).track.name);
+                                    processingQueue.remove(0);
+                                    processingQueue.add(playerState);
+                                    primaryPrompt(processingQueue.get(0));
+                                    Log.d("START Prompt ", ":\t" + processingQueue.get(0).track.name);
+                                } else {
+                                    processingQueue.add(playerState);
+                                    primaryPrompt(playerState);
+                                    Log.d("INITIAL Prompt ", ":\t" + processingQueue.get(0).track.name);
+                                }
                             }
                         }
-                    }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        networkLoginFail(t);
-                        Log.d("Error"," " + t);
-                    }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            networkLoginFail(t);
+                            Log.d("Error", " " + t);
+                        }
+                    });
+                })
+                .setErrorCallback(throwable -> {
+                    Log.d("Error", " throwable from pollPlayerState" + throwable);
                 });
-            })
-            .setErrorCallback(throwable -> {
-                Log.d("Error", " throwable from pollPlayerState" + throwable);
-            });
+        }
     }
 
     public void primaryPrompt(PlayerState playerState){
@@ -408,7 +406,11 @@ public class BackgroundService extends Service {
                 response.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        Log.d("TrackEnded :"," " + response.body());
+                        Log.d("Response ", "\nRaw\t" + response.raw());
+                        if (response.body() == null)
+                            Log.d("ERROR", " TrackEnded return code\t" + response.code());
+                        else
+                            Log.d("TrackEnded :"," " + response.body());
                         if (response.code() == 404) {
                             Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                         } else if (response.body().equals("Incorrect UserID or Password. Query not executed.")) {
@@ -417,6 +419,7 @@ public class BackgroundService extends Service {
                     }
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("Call"," call error\t" + call.toString());
                         networkLoginFail(t);
                     }
                 });

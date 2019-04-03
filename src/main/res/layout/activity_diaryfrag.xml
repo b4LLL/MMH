@@ -286,7 +286,8 @@
             android:layout_width="175dp"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/diarysubmit" />
+            android:background="@color/colorPrimary"
+            android:text=""/>
 
         <Space
             android:layout_width="match_parent"

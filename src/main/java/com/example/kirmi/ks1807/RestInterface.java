@@ -94,16 +94,22 @@ class RestInterface{
         @GET("mmhpackage.musictrack/TrackStarted/{SpotifyTrackID}/{track}/{genre}/{artist}/{duration}/{moodBefore}/{id}/{password}")
         Call<String> TrackStarted(@Path("SpotifyTrackID") String SpotifyTrackID,
                                   @Path("track") String track,
-                                  @Path("genre") String genre, @Path("artist") String artist,
-                                  @Path("duration") String duration, @Path("moodBefore") String moodBefore,
-                                  @Path("id") String id, @Path("password") String password);
+                                  @Path("genre") String genre,
+                                  @Path("artist") String artist,
+                                  @Path("duration") String duration,
+                                  @Path("moodBefore") String moodBefore,
+                                  @Path("id") String id,
+                                  @Path("password") String password);
 
         @GET("mmhpackage.musictrack/TrackEnded/{SpotifyTrackID}/{moodID}/{moodAfter}/{userLiked}/{entry1}/{entry2}/{entry3}/{id}/{password}")
         Call<String> TrackEnded(@Path("SpotifyTrackID") String SpotifyTrackID,
-                                @Path("moodID") String moodID, @Path("moodAfter") String moodAfter,
+                                @Path("moodID") String moodID,
+                                @Path("moodAfter") String moodAfter,
                                 @Path("userLiked") String userLiked,
-                                @Path("entry1") String entry1, @Path("entry2") String entry2,
-                                @Path("entry3") String entry3, @Path("id") String id,
+                                @Path("entry1") String entry1,
+                                @Path("entry2") String entry2,
+                                @Path("entry3") String entry3,
+                                @Path("id") String id,
                                 @Path("password") String password);
 
         @GET("mmhpackage.musictrack/GetRecommendedTracksUser/{id}/{password}")

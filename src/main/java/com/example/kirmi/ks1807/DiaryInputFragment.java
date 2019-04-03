@@ -40,8 +40,9 @@ public class DiaryInputFragment extends Fragment {
     RestInterface.Ks1807Client client;
     boolean updateEntry = false;
     public String currentDiaryID;
-    String q1,q3,q4,q5;
-
+    String q1, q3, q4, q5;
+    String submit = "Submit";
+    String update = "Update";
 
     void getDiaryEntry(String UserDiaryID) {
         Call<String> response = client.GetDiaryEntry(UserDiaryID);
@@ -79,8 +80,11 @@ public class DiaryInputFragment extends Fragment {
                     Log.d("CheckDiaryDate", " " + response.body());
                     currentDiaryID = response.body();
                     getDiaryEntry(currentDiaryID);
-                } else
+                    submitInfo.setText(update);
+                } else {
                     Log.d("CheckDiaryDate ", "" + response.body() + "\nNo Diary Entry Found");
+                    submitInfo.setText(submit);
+                }
             }
 
             @Override
@@ -100,6 +104,7 @@ public class DiaryInputFragment extends Fragment {
         q4Ans = view.findViewById(R.id.editText_q4Answer);
         q5Ans = view.findViewById(R.id.editText_q5Answer);
         submitInfo = view.findViewById(R.id.btn_DiaryInfo);
+
 
         q1WhyLinkToDialog = (TextView) view.findViewById(R.id.textView_linkwhy);
         q1WhyLinkToDialog.setMovementMethod(LinkMovementMethod.getInstance());
@@ -201,6 +206,7 @@ public class DiaryInputFragment extends Fragment {
                         else{
                             Log.d("Successful response"," " + response.body());
                             updateEntry = true;
+                            submitInfo.setText(update);
                             Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -211,13 +217,12 @@ public class DiaryInputFragment extends Fragment {
                     Log.d("onFailure"," t= " + t + " response: " + response.toString());
                 }
             });
-        } else {
+        } else { //if it is only updating
             Call<String> response = client.UpdateDiaryEntry(currentDiaryID,Global.UserID,q1,q3,q4,q5);
             response.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     Log.d("Response", " " + response.body() + "\tcode " + response.code() + "\n" + currentDiaryID);
-
                     Toast.makeText(getContext(), "Answers updated", Toast.LENGTH_LONG).show();
                 }
                 @Override
