@@ -1,5 +1,8 @@
 package com.example.kirmi.ks1807;
 
+import com.spotify.protocol.types.ImageUri;
+import com.spotify.protocol.types.Uri;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -91,8 +94,9 @@ class RestInterface{
         @GET("mmhpackage.useraccount/VerifyPassword/{id}/{password}")
         Call<String> VerifyPassword(@Path("id") String id, @Path("password") String password);
 
-        @GET("mmhpackage.musictrack/TrackStarted/{SpotifyTrackID}/{track}/{genre}/{artist}/{duration}/{moodBefore}/{id}/{password}")
+        @GET("mmhpackage.musictrack/TrackStarted/{SpotifyTrackID}/{SpotifyImageID}/{track}/{genre}/{artist}/{duration}/{moodBefore}/{id}/{password}")
         Call<String> TrackStarted(@Path("SpotifyTrackID") String SpotifyTrackID,
+                                  @Path("SpotifyImageID") ImageUri SpotifyImageID,
                                   @Path("track") String track,
                                   @Path("genre") String genre,
                                   @Path("artist") String artist,
