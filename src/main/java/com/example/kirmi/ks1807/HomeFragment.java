@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -19,6 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.spotify.protocol.mappers.jackson.ImageUriJson;
+import com.spotify.protocol.types.ImageUri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +112,7 @@ public class HomeFragment extends Fragment
                             }
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
-                                Log.d("MusicDetails[i]"," " + MusicDetails[i]);
+                                //Log.d("MusicDetails[i]"," " + MusicDetails[i]);
                                 TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7]);    //add additional imgURI? here to give to adapter/.
                                 listItems.add(list);
                             }

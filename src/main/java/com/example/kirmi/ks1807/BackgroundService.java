@@ -1,12 +1,10 @@
 package com.example.kirmi.ks1807;
 
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Binder;
@@ -27,7 +25,6 @@ import android.text.format.DateUtils;
 
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
-import com.spotify.android.appremote.api.ImagesApi;
 import com.spotify.android.appremote.api.PlayerApi;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.android.appremote.api.error.AuthenticationFailedException;
@@ -40,12 +37,12 @@ import com.spotify.android.appremote.api.error.SpotifyDisconnectedException;
 import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionException;
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
 
+import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Track;
+import com.spotify.protocol.types.Uri;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,7 +65,7 @@ public class BackgroundService extends Service {
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
-
+    Bitmap bm = null;
     class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
@@ -184,12 +181,6 @@ public class BackgroundService extends Service {
             Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
             mSpotifyAppRemote.getPlayerApi().play(trackID);
         }
-    }
-
-    public Bitmap getTrackBitmap(String trackID){
-        //find a track object based on trackID then find the URI
-        Bitmap bm = null;
-        return bm;
     }
 
     @Override

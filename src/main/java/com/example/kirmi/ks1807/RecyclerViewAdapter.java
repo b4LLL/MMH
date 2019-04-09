@@ -1,6 +1,11 @@
 package com.example.kirmi.ks1807;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.ImageUri;
 
 import java.util.List;
 
@@ -65,8 +74,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.moodBeforeEmote.setText(track.getMoodBeforeEmote());
         holder.moodAfterEmote.setText(track.getMoodAfterEmote());
 
+        if(mBound && Global.isRunning && (track.getStringURI() != null)){ //something going wrong with NULL here ?
+            Global.mSpotifyAppRemote.getImagesApi().getImage(track.getStringURI()).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                @Override
+                public void onResult(Bitmap bitmap) {
+                    Drawable d = new BitmapDrawable(context.getResources(), bitmap);
+                    holder.play.setBackground(d);
+                }
+            });
 
-        //holder.play.setImageBitmap(mService.getTrackBitmap(track.spotifyTrackID));
+            //holder.play.setBackground(d);
+            //holder.play.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            //Log.d("Image","\t" + holder.play.getBackground().getCurrent());
+        }
 
         holder.play.setOnClickListener(new View.OnClickListener() {
                 @Override
