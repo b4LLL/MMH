@@ -1,14 +1,10 @@
 package com.example.kirmi.ks1807;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,20 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.spotify.protocol.mappers.jackson.ImageUriJson;
-import com.spotify.protocol.types.ImageUri;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.http.Path;
-
-import static android.content.Context.BIND_AUTO_CREATE;
 
 public class HomeFragment extends Fragment
 {
@@ -44,7 +32,7 @@ public class HomeFragment extends Fragment
     private List<TrackDetails> listItems;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
-    Context context;
+    Context context = this.getContext();
     public BackgroundService mService;
 
     @Nullable
@@ -52,26 +40,25 @@ public class HomeFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent... unless set to mainAct ?
+        Log.d("HomeFrag","\tonCreateView\t!");
         //run service
         if(!BackgroundService.isRunning)
-            new BackgroundServiceStarter().onReceive(getContext(), new Intent());
+            new BackgroundServiceStarter();//.onReceive(context, new Intent());
         UserID = Global.UserID;
         password = Global.UserPassword;
         client = retrofit.create(RestInterface.Ks1807Client.class);
         final LinearLayout nomusic = view.findViewById(R.id.nohistory);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        listItems = new ArrayList<>();
+        context = this.getContext();
         adapter = new RecyclerView.Adapter() {
             @NonNull
             @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 return null;
             }
 
             @Override
-            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
             }
 
@@ -80,10 +67,6 @@ public class HomeFragment extends Fragment
                 return 0;
             }
         };
-        recyclerView.setAdapter(adapter);
-        listItems = new ArrayList<>();
-        context = this.getContext();
-
         Call<String> response = client.GetMusicHistory(UserID, password);
         response.enqueue(new Callback<String>()
         {
@@ -112,7 +95,6 @@ public class HomeFragment extends Fragment
                             }
                             for (int i = 0; i < length; i++) {
                                 String temp[] = MusicDetails[i].split(",");
-                                //Log.d("MusicDetails[i]"," " + MusicDetails[i]);
                                 TrackDetails list = new TrackDetails(temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7]);    //add additional imgURI? here to give to adapter/.
                                 listItems.add(list);
                             }
@@ -128,9 +110,13 @@ public class HomeFragment extends Fragment
                 fail_LoginNetwork();
             }
         });
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
+        recyclerView.setAdapter(adapter);
         return view;
     }
-
 
     @Override
     public void onResume() {

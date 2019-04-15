@@ -96,7 +96,7 @@ class RestInterface{
 
         @GET("mmhpackage.musictrack/TrackStarted/{SpotifyTrackID}/{SpotifyImageID}/{track}/{genre}/{artist}/{duration}/{moodBefore}/{id}/{password}")
         Call<String> TrackStarted(@Path("SpotifyTrackID") String SpotifyTrackID,
-                                  @Path("SpotifyImageID") ImageUri SpotifyImageID,
+                                  @Path("SpotifyImageID") String SpotifyImageID,
                                   @Path("track") String track,
                                   @Path("genre") String genre,
                                   @Path("artist") String artist,
@@ -128,20 +128,22 @@ class RestInterface{
         @GET("mmhpackage.moodscore/GetMoodList")
         Call<String> GetMoodList();
 
-        @GET("mmhpackage.userdiary/SetDiaryEntry/{id}/{diaryentryone}/{diaryentrytwo}/{diaryentrythree}/{diaryentryfour}")
+        @GET("mmhpackage.userdiary/SetDiaryEntry/{id}/{diaryentryone}/{diaryentrytwo}/{diaryentrythree}/{diaryentryfour}/{outcome}")
         Call<String> SetDiaryEntry(@Path("id") String id,
                                    @Path("diaryentryone") String diarytextone,
                                    @Path("diaryentrytwo") String diarytexttwo,
                                    @Path("diaryentrythree") String diarytextthree,
-                                   @Path("diaryentryfour") String diarytextfour);
+                                   @Path("diaryentryfour") String diarytextfour,
+                                   @Path("outcome") String outcome);
 
-        @GET("mmhpackage.userdiary/UpdateDiaryEntry/{userdiaryid}/{id}/{diaryentryone}/{diaryentrytwo}/{diaryentrythree}/{diaryentryfour}")
+        @GET("mmhpackage.userdiary/UpdateDiaryEntry/{userdiaryid}/{id}/{diaryentryone}/{diaryentrytwo}/{diaryentrythree}/{diaryentryfour}/{outcome}")
         Call<String> UpdateDiaryEntry(@Path("userdiaryid") String userdiaryid,
                                       @Path("id") String id,
                                       @Path("diaryentryone") String diarytextone,
                                       @Path("diaryentrytwo") String diarytexttwo,
                                       @Path("diaryentrythree") String diarytextthree,
-                                      @Path("diaryentryfour") String diarytextfour);
+                                      @Path("diaryentryfour") String diarytextfour,
+                                      @Path("outcome") String outcome);
 
         @GET("mmhpackage.userdiary/GetDiaryEntry/{userdiaryid}")
         Call<String> GetDiaryEntry(@Path("userdiaryid") String userdiaryid);

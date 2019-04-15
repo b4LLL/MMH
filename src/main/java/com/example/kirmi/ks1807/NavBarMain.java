@@ -93,6 +93,7 @@ public class NavBarMain extends AppCompatActivity
             Intent intent = new Intent(this, BackgroundService.class);
             bindService(intent, serviceConnection, BIND_AUTO_CREATE);
         }
+        loadFragment(new HomeFragment());
     }
 
     @Override

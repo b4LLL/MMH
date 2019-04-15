@@ -1,25 +1,18 @@
 package com.example.kirmi.ks1807;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.types.ImageUri;
 
 import java.util.List;
 
@@ -82,10 +75,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     holder.play.setBackground(d);
                 }
             });
-
-            //holder.play.setBackground(d);
-            //holder.play.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            //Log.d("Image","\t" + holder.play.getBackground().getCurrent());
         }
 
         holder.play.setOnClickListener(new View.OnClickListener() {

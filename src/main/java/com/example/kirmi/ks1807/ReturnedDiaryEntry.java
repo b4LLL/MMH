@@ -1,7 +1,7 @@
 package com.example.kirmi.ks1807;
 
 class ReturnedDiaryEntry {
-    private String entryOne, entryTwo, entryThree, entryFour;
+    private String entryOne, entryTwo, entryThree, entryFour, outcome;
     private int day, month, year;
     ReturnedDiaryEntry(String returnDiaryText){
         String[] splitRow = returnDiaryText.split("@@@");
@@ -12,6 +12,7 @@ class ReturnedDiaryEntry {
         this.entryTwo = splitRow[2];
         this.entryThree = splitRow[3];
         this.entryFour = splitRow[4];
+        this.outcome = splitRow[5];
     }
 
     int getMonth() {
@@ -39,4 +40,6 @@ class ReturnedDiaryEntry {
     String getEntryFour() {
         return entryFour;
     }
+
+    String getOutcome() {return outcome;}
 }

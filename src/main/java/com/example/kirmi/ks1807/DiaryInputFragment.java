@@ -40,7 +40,7 @@ public class DiaryInputFragment extends Fragment {
     RestInterface.Ks1807Client client;
     boolean updateEntry = false;
     public String currentDiaryID;
-    String q1, q3, q4, q5;
+    String q1, q3, q4, q5, outcome;
     String submit = "Submit";
     String update = "Update";
 
@@ -57,6 +57,12 @@ public class DiaryInputFragment extends Fragment {
                     q3Ans.setText(returnDiaryText[1]);
                     q4Ans.setText(returnDiaryText[2]);
                     q5Ans.setText(returnDiaryText[3]);
+                    if(!returnDiaryText[4].equals("NULL")){
+                        if(returnDiaryText[4].equals("Negative")){
+                            q2Ans.setSelection(1);
+                        }else
+                            q2Ans.setSelection(0);
+                    }
                 }
             }
             @Override
@@ -191,9 +197,10 @@ public class DiaryInputFragment extends Fragment {
         return view;
     }
 
+
     void sendDiaryEntry(){
-        if (!updateEntry){
-            Call<String> response = client.SetDiaryEntry(Global.UserID,q1,q3,q4,q5);
+        if (!updateEntry){ //first entry for the day
+            Call<String> response = client.SetDiaryEntry(Global.UserID,q1,q3,q4,q5,q2selectedItem);
             response.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -214,11 +221,11 @@ public class DiaryInputFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("onFailure"," t= " + t + " response: " + response.toString());
+                    Log.d("INSERT FAILURE"," t= " + t + " response: " + response.toString());
                 }
             });
         } else { //if it is only updating
-            Call<String> response = client.UpdateDiaryEntry(currentDiaryID,Global.UserID,q1,q3,q4,q5);
+            Call<String> response = client.UpdateDiaryEntry(currentDiaryID,Global.UserID,q1,q3,q4,q5,q2selectedItem);
             response.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
@@ -227,7 +234,7 @@ public class DiaryInputFragment extends Fragment {
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("onFailure"," t= " + t + " response: " + response.toString());
+                    Log.d("UPDATE FAILURE"," t= " + t + " response: " + response.request().body());
                 }
             });
         }

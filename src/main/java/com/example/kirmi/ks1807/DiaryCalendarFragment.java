@@ -142,13 +142,15 @@ public class DiaryCalendarFragment extends Fragment {
                 String q3 = getString(R.string.DiaryQ3);
                 String q4 = getString(R.string.DiaryQ4);
                 String q5 = getString(R.string.DiaryQ5);
+                String outcome = "Was this a positive experience for you?";
                 String okButton = "Ok";
                 diaryRecollectButton.setText(okButton);
                 String titleText = "Diary Entry for:\t\t\t" + x.getDay()+"/"+x.getMonth()+"/"+x.getYear();
                 String entryText = q1 + "\n" + x.getEntryOne() +
                         "\n\n" + q3 + "\n" + x.getEntryTwo() +
                         "\n\n" + q4 + "\n" + x.getEntryThree() +
-                        "\n\n" + q5 + "\n" + x.getEntryFour();
+                        "\n\n" + q5 + "\n" + x.getEntryFour() +
+                        "\n\n" + outcome + "\n" + x.getOutcome();
                 diaryRecollectButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

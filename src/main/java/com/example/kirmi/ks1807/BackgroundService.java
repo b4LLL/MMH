@@ -338,7 +338,7 @@ public class BackgroundService extends Service {
                 //Verify if this is before or after.
                 //For tracking the difference of the before and after moods.
                 BeforeMood = Global.moodList[i];
-                Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.imageUri, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
+                Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.imageUri.raw, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
                         String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), Global.moodList[i], Global.UserID, Global.UserPassword);
                 response.enqueue(new Callback<String>() {
                     @Override
