@@ -20,19 +20,18 @@ public class NavBarMain extends AppCompatActivity
     Boolean mBound;
     BackgroundService mService;
     String fragID;
-
+    BottomNavigationView nav;
     @Override
     protected void onCreate(Bundle savedInstanceState)  //when NavBarMain loads: it loads the new HomeFragment
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navbarmain);
         UserID = Global.UserID;
-        BottomNavigationView nav = findViewById(R.id.bottom_nav);
+        nav = findViewById(R.id.bottom_nav);
         nav.setOnNavigationItemSelectedListener(this);
         //Intent intent = new Intent(this, BackgroundService.class);
         getApplicationContext().bindService(new Intent(getApplication().getApplicationContext(), BackgroundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
         //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
-
         //bindService(intent, serviceConnection, BIND_AUTO_CREATE);
     }
 
@@ -43,7 +42,8 @@ public class NavBarMain extends AppCompatActivity
             mService = binder.getService();
             mBound = true;
             Log.d("Service"," mService = " + mService);
-            loadFragment(new HomeFragment());
+            loadFragment(new ProgressFragment());
+            nav.setSelectedItemId(R.id.nav_progress);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -93,7 +93,6 @@ public class NavBarMain extends AppCompatActivity
             Intent intent = new Intent(this, BackgroundService.class);
             bindService(intent, serviceConnection, BIND_AUTO_CREATE);
         }
-        loadFragment(new HomeFragment());
     }
 
     @Override

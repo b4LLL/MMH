@@ -1,6 +1,7 @@
 package com.example.kirmi.ks1807;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -30,6 +32,14 @@ public class ProgressFragment extends Fragment
 
         GraphView graph = (GraphView)view.findViewById(R.id.graph);
 
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(8);
+
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(10);
+
         //Placing the points on the graph at the position with two different lines.
         series = new LineGraphSeries<>(new DataPoint[]
                 {
@@ -37,7 +47,6 @@ public class ProgressFragment extends Fragment
                 new DataPoint(2,5),
                 new DataPoint(3,1),
                 new DataPoint(5,6),
-                new DataPoint(8,3)
         });
 
         series2 = new LineGraphSeries<>(new DataPoint[]
@@ -45,14 +54,17 @@ public class ProgressFragment extends Fragment
                 new DataPoint(0,2),
                 new DataPoint(2,3),
                 new DataPoint(4,6),
-                new DataPoint(6,7),
-                new DataPoint(8,4)
+                new DataPoint(7,7),
         });
 
         //Adding the both lines on the graph.
-        graph.addSeries(series);
-        graph.addSeries(series2);
-
+        //graph.addSeries(series);
+        //graph.addSeries(series2);
+        graph.getSecondScale().addSeries(series);
+        graph.getSecondScale().addSeries(series2);
+        graph.getSecondScale().setMinY(-10);
+        graph.getSecondScale().setMaxY(10);
+        graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.BOTH);
         //Styling the line graph to differentiate between the two.
         series.setColor(Color.WHITE);
         series.setThickness(2);
@@ -71,6 +83,8 @@ public class ProgressFragment extends Fragment
         //Displaying a legend for the graph.
         graph.getLegendRenderer().setVisible(true);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+
+
         return view;
     }
 }

@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.text.format.DateUtils;
-
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.PlayerApi;
@@ -36,13 +35,11 @@ import com.spotify.android.appremote.api.error.SpotifyConnectionTerminatedExcept
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException;
 import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionException;
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
-
-import com.spotify.protocol.client.CallResult;
-import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Uri;
+import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
+import java.util.Queue;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,7 +53,7 @@ public class BackgroundService extends Service {
     private Context t;
     public static final String CLIENT_ID = "74447ee7e0f949029b91c1f4dc4af433";
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
-    public SpotifyAppRemote mSpotifyAppRemote;
+    public SpotifyAppRemote mSpotifyAppRemote = null;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
     String TheMood;
     String BeforeMood;
@@ -65,13 +62,214 @@ public class BackgroundService extends Service {
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
-    Bitmap bm = null;
+
+    Queue<QueueItem> trackQueue;
+
     class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
         }
     }
 
+    private class QueueItem{
+        Boolean pre,post;
+        PlayerState playerState;
+
+        QueueItem(Boolean pre, Boolean post, PlayerState playerState){
+            this.pre = pre;
+            this.post = post;
+            this.playerState = playerState;
+        }
+        Boolean getPre(){return this.pre;}
+        Boolean getPost(){return this.post;}
+        PlayerState getPlayerState(){return this.playerState;}
+        void setPre(Boolean pre){this.pre = pre;}
+        void setPost(Boolean post){this.post = post;}
+        void setPlayerState(PlayerState playerState){this.playerState = playerState;}
+    }
+
+    void pollPlayerState(PlayerApi playerApi){
+        if(playerApi.getPlayerState() == null) {
+            Log.d("Something went wrong", "playerApi.getPlayerState() == null");
+        } else {
+            playerApi.getPlayerState()
+                .setResultCallback(playerState -> {
+                    Log.d("BSS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
+                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
+                    response.enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            if (response.code() == 404) {
+                                Toast.makeText(getApplicationContext(), "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                            } else if (response.body().equals("Yes")) {
+
+                                //this is where all the changes are registered and polling returns the playerState
+                                /*NEEDS TO BE REWORKED WITH NEW QUEUEITEM CLASS ABOVE
+                                *   IF EMPTY:
+                                *   add
+                                *   set item pre:false
+                                *   prompt(pre)
+                                *
+                                *   ELSE
+                                *   add
+                                *   if(item.pre = false)
+                                *       set item post:false
+                                *       prompt(post)
+                                *       pop
+                                *       set item pre:false
+                                *       prompt(pre)
+                                *
+                                *
+                                *
+                                * */
+                                if (processingQueue.size() > 0) {
+                                    finalPrompt(processingQueue.get(0));
+                                    Log.d("FINAL Prompt ", ":\t" + processingQueue.get(0).track.name);
+                                    processingQueue.remove(0);
+                                    processingQueue.add(playerState);
+                                    primaryPrompt(processingQueue.get(0));
+                                    Log.d("START Prompt ", ":\t" + processingQueue.get(0).track.name);
+                                } else {
+                                    processingQueue.add(playerState);
+                                    primaryPrompt(playerState);
+                                    Log.d("INITIAL Prompt ", ":\t" + processingQueue.get(0).track.name);
+                                }
+
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            networkLoginFail(t);
+                            Log.d("Error", " " + t);
+                        }
+                    });
+                })
+                .setErrorCallback(throwable -> {
+                    Log.d("Error", " throwable from pollPlayerState" + throwable);
+                });
+        }
+    }
+
+    public void primaryPrompt(PlayerState playerState){
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
+        String DialogText;
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        View mView = inflater.inflate(R.layout.overlay_spinner, null);
+        TextView title = mView.findViewById(R.id.text_alerttitle);
+        DialogText = "How are you feeling before listening to\n\n" + playerState.track.name + "?";
+        title.setText(DialogText);
+        final Spinner spinner = mView.findViewById(R.id.spinner_over);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, moodEmoticonList);
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        spinner.setAdapter(adapter);
+        Button submit = mView.findViewById(R.id.btn_positiveoverlay);
+        builder.setView(mView);
+        final android.app.AlertDialog dialog = builder.create();
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String selectedMood = spinner.getSelectedItem().toString();
+                Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
+                int i = spinner.getSelectedItemPosition();
+                //Verify if this is before or after.
+                //For tracking the difference of the before and after moods.
+                BeforeMood = Global.moodList[i];
+                Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.imageUri.raw, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
+                        String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), Global.moodList[i], Global.UserID, Global.UserPassword);
+                response.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                        if (response.code() == 404) {
+                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (!response.body().equals("Incorrect UserID or Password. Query not executed.")) {
+                                Global.MoodID = response.body();
+                            } else {
+                                Global.MoodID = "-1";
+                                Toast.makeText(getApplicationContext(),"Error, mood at start of track failed to update",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        networkLoginFail(t);
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        if(Build.VERSION.SDK_INT >= 26) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        }else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+        }
+        dialog.show();
+    }
+
+    public void finalPrompt(PlayerState playerState){
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
+        String DialogText;
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        View mView = inflater.inflate(R.layout.overlay_spinner, null);
+        TextView title = mView.findViewById(R.id.text_alerttitle);
+        DialogText = "How are you feeling now after\n listening to the last \nsong you played:\n" + playerState.track.name + "?";
+        title.setText(DialogText);
+        final Spinner spinner = mView.findViewById(R.id.spinner_over);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, moodEmoticonList);
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        spinner.setAdapter(adapter);
+        Button submit = mView.findViewById(R.id.btn_positiveoverlay);
+        builder.setView(mView);
+        final android.app.AlertDialog dialog = builder.create();
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String selectedMood = spinner.getSelectedItem().toString();
+                Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
+                int i = spinner.getSelectedItemPosition();
+                //Verify if this is before or after.
+                TheMood = Global.moodList[i];
+                if (Global.MoodID.equals(""))
+                    Global.MoodID = "-1";
+                /*Prevents the mood from being added if the user is not logged in.*/
+                Call<String> response = client.TrackEnded(playerState.track.uri, Global.MoodID, TheMood, "-","-", "-", "-",
+                        Global.UserID, Global.UserPassword);
+                response.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.d("Response ", "\nRaw\t" + response.raw());
+                        if (response.body() == null)
+                            Log.d("ERROR", " TrackEnded return code\t" + response.code());
+                        else
+                            Log.d("TrackEnded :"," " + response.body());
+                        if (response.code() == 404) {
+                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                        } else if (response.body().equals("Incorrect UserID or Password. Query not executed.")) {
+                            Toast.makeText(getApplicationContext(),"Error, mood at end of track failed to update", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("Call"," call error\t" + call.toString());
+                        networkLoginFail(t);
+                    }
+                });
+                setUpDiaryPrompt(Global.moodList, BeforeMood, TheMood, Global.CompleteScoreList);
+                dialog.dismiss();
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        if(Build.VERSION.SDK_INT >= 26) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        }else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+        }
+        dialog.show();
+    }
     int[] loadScoreList(String moodList){
         String[][] fullList = getMoods(moodList);
         Global.moodList = fullList[0];
@@ -164,26 +362,6 @@ public class BackgroundService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
-
-    @Override
-    public void onDestroy() {
-        isRunning = false;
-        Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
-        if (mSpotifyAppRemote != null)
-            SpotifyAppRemote.disconnect(mSpotifyAppRemote);
-    }
-
-    public void getTrack(String trackID) {
-        if (!trackID.equals("Dummy")) {
-            Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
-            mSpotifyAppRemote.getPlayerApi().play(trackID);
-        }
-    }
-
-    @Override
     public void onCreate() {
         if(Global.isLogged){
             client = retrofit.create(RestInterface.Ks1807Client.class);
@@ -206,9 +384,9 @@ public class BackgroundService extends Service {
             }
             //Create connection parameters
             connectionParams = new ConnectionParams.Builder(CLIENT_ID)
-                .setRedirectUri(REDIRECT_URI)
-                .showAuthView(true)
-                .build();
+                    .setRedirectUri(REDIRECT_URI)
+                    .showAuthView(true)
+                    .build();
             //Try to connect to spotify
             this.connectSpotify(connectionParams);
 
@@ -233,13 +411,33 @@ public class BackgroundService extends Service {
         }
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+    @Override
+    public void onDestroy() {
+        isRunning = false;
+        Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
+        if (mSpotifyAppRemote != null)
+            SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
+
+    public void getTrack(String trackID) {
+        if (!trackID.equals("Dummy")) {
+            Toast.makeText(getApplicationContext(), trackID, Toast.LENGTH_SHORT).show();
+            mSpotifyAppRemote.getPlayerApi().play(trackID);
+        }
+    }
+
     void connectSpotify(ConnectionParams connectionParams){
         SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
             @Override
             public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                 mSpotifyAppRemote = spotifyAppRemote;
                 Global.mSpotifyAppRemote = spotifyAppRemote;
-                Global.isRunning= true;
+                Global.isRunning = true;
                 Log.d("BackgroundService", "Established connection with Spotify remote.");
             }
             @Override
@@ -269,168 +467,5 @@ public class BackgroundService extends Service {
                     Log.d("Error ", " - > " + error);
             }
         });
-    }
-
-    void pollPlayerState(PlayerApi playerApi){
-        if(playerApi.getPlayerState() == null) {
-            Log.d("Something went wrong", "playerApi.getPlayerState() == null");
-        } else {
-            playerApi.getPlayerState()
-                .setResultCallback(playerState -> {
-                    Log.d("BSS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
-                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
-                    response.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            if (response.code() == 404) {
-                                Toast.makeText(getApplicationContext(), "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                            } else if (response.body().equals("Yes")) {
-                                if (processingQueue.size() > 0) {
-                                    finalPrompt(processingQueue.get(0));
-                                    Log.d("FINAL Prompt ", ":\t" + processingQueue.get(0).track.name);
-                                    processingQueue.remove(0);
-                                    processingQueue.add(playerState);
-                                    primaryPrompt(processingQueue.get(0));
-                                    Log.d("START Prompt ", ":\t" + processingQueue.get(0).track.name);
-                                } else {
-                                    processingQueue.add(playerState);
-                                    primaryPrompt(playerState);
-                                    Log.d("INITIAL Prompt ", ":\t" + processingQueue.get(0).track.name);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            networkLoginFail(t);
-                            Log.d("Error", " " + t);
-                        }
-                    });
-                })
-                .setErrorCallback(throwable -> {
-                    Log.d("Error", " throwable from pollPlayerState" + throwable);
-                });
-        }
-    }
-
-    public void primaryPrompt(PlayerState playerState){
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
-        String DialogText;
-        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        View mView = inflater.inflate(R.layout.overlay_spinner, null);
-        TextView title = mView.findViewById(R.id.text_alerttitle);
-        DialogText = "How are you feeling before listening to\n\n" + playerState.track.name + "?";
-        title.setText(DialogText);
-        final Spinner spinner = mView.findViewById(R.id.spinner_over);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, moodEmoticonList);
-        adapter.setDropDownViewResource(R.layout.spinner_item);
-        spinner.setAdapter(adapter);
-        Button submit = mView.findViewById(R.id.btn_positiveoverlay);
-        builder.setView(mView);
-        final android.app.AlertDialog dialog = builder.create();
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                String selectedMood = spinner.getSelectedItem().toString();
-                Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
-                int i = spinner.getSelectedItemPosition();
-                //Verify if this is before or after.
-                //For tracking the difference of the before and after moods.
-                BeforeMood = Global.moodList[i];
-                Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.imageUri.raw, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
-                        String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), Global.moodList[i], Global.UserID, Global.UserPassword);
-                response.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        Log.d("retrofitclick", "SUCCESS: " + response.raw());
-                        if (response.code() == 404) {
-                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.",Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (!response.body().equals("Incorrect UserID or Password. Query not executed.")) {
-                                Global.MoodID = response.body();
-                            } else {
-                                Global.MoodID = "-1";
-                                Toast.makeText(getApplicationContext(),"Error, mood at start of track failed to update",Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        networkLoginFail(t);
-                    }
-                });
-            }
-        });
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        if(Build.VERSION.SDK_INT >= 26) {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-        }else {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
-        }
-        dialog.show();
-    }
-
-    public void finalPrompt(PlayerState playerState){
-        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
-        String DialogText;
-        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        View mView = inflater.inflate(R.layout.overlay_spinner, null);
-        TextView title = mView.findViewById(R.id.text_alerttitle);
-        DialogText = "How are you feeling now after\n listening to the last \nsong you played:\n" + playerState.track.name + "?";
-        title.setText(DialogText);
-        final Spinner spinner = mView.findViewById(R.id.spinner_over);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, moodEmoticonList);
-        adapter.setDropDownViewResource(R.layout.spinner_item);
-        spinner.setAdapter(adapter);
-        Button submit = mView.findViewById(R.id.btn_positiveoverlay);
-        builder.setView(mView);
-        final android.app.AlertDialog dialog = builder.create();
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                String selectedMood = spinner.getSelectedItem().toString();
-                Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
-                int i = spinner.getSelectedItemPosition();
-                //Verify if this is before or after.
-                TheMood = Global.moodList[i];
-                if (Global.MoodID.equals(""))
-                    Global.MoodID = "-1";
-                /*Prevents the mood from being added if the user is not logged in.*/
-                Call<String> response = client.TrackEnded(playerState.track.uri, Global.MoodID, TheMood, "-","-", "-", "-",
-                        Global.UserID, Global.UserPassword);
-                response.enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        Log.d("Response ", "\nRaw\t" + response.raw());
-                        if (response.body() == null)
-                            Log.d("ERROR", " TrackEnded return code\t" + response.code());
-                        else
-                            Log.d("TrackEnded :"," " + response.body());
-                        if (response.code() == 404) {
-                            Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                        } else if (response.body().equals("Incorrect UserID or Password. Query not executed.")) {
-                            Toast.makeText(getApplicationContext(),"Error, mood at end of track failed to update", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.d("Call"," call error\t" + call.toString());
-                        networkLoginFail(t);
-                    }
-                });
-                setUpDiaryPrompt(Global.moodList, BeforeMood, TheMood, Global.CompleteScoreList);
-            }
-        });
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        if(Build.VERSION.SDK_INT >= 26) {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-        }else {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
-        }
-        dialog.show();
     }
 }
