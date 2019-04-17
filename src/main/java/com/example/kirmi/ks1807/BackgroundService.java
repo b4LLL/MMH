@@ -1,17 +1,23 @@
 package com.example.kirmi.ks1807;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,14 +45,16 @@ import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class BackgroundService extends Service {
+public class BackgroundService extends Service{
     private static final int NOTIFICATION_FOREGROUND_ID = 1;                    //ID for mandatory foreground notification
     private static final String NOTIFICATION_CHANNEL_ID = "MandatoryChannelID"; //Channel ID for mandatory foreground notification
     private final IBinder binder = new LocalBinder();
@@ -58,12 +66,48 @@ public class BackgroundService extends Service {
     String TheMood;
     String BeforeMood;
     public String[] moodEmoticonList;
-    ArrayList<PlayerState> processingQueue = new ArrayList<>();
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
 
-    Queue<QueueItem> trackQueue;
+    Queue<QueueItem> trackQueue = new LinkedList<>();
+    static LinkedBlockingQueue<Dialog> dialogsToShow = new LinkedBlockingQueue<>(3);
+
+    @SuppressLint("HandlerLeak")
+    static Handler messageHandler = new Handler(){
+        public void handleMessage(Message message){
+            super.handleMessage(message);
+            Bundle bundle = message.getData();
+            Integer value = bundle.getInt("key");
+            switch(value){
+                case 1:{
+                    break;
+                }
+                case 2:{
+                    Dialog d = dialogsToShow.peek();
+                    d.show();
+                    d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            dialogsToShow.remove();
+                        }
+                    });
+                    break;
+                }
+                case 3:{
+                    Dialog d = dialogsToShow.peek();
+                    d.show();
+                    d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            dialogsToShow.remove();
+                        }
+                    });
+                    break;
+                }
+            }
+        }
+    };
 
     class LocalBinder extends Binder {
         BackgroundService getService() {
@@ -71,7 +115,7 @@ public class BackgroundService extends Service {
         }
     }
 
-    private class QueueItem{
+    class QueueItem{
         Boolean pre,post;
         PlayerState playerState;
 
@@ -88,6 +132,20 @@ public class BackgroundService extends Service {
         void setPlayerState(PlayerState playerState){this.playerState = playerState;}
     }
 
+    void processQueue(PlayerState playerState){
+        if(trackQueue.size() == 0){
+            trackQueue.add(new QueueItem(true,true, playerState));
+            dialogsToShow.add(primaryPrompt(trackQueue.peek().getPlayerState()));
+            trackQueue.peek().setPre(false);
+        }
+        if(trackQueue.peek().getPre()){
+            dialogsToShow.add(primaryPrompt(trackQueue.peek().getPlayerState()));
+            trackQueue.peek().setPre(false);
+        }else{
+            dialogsToShow.add(finalPrompt(trackQueue.remove().getPlayerState()));
+        }
+    }
+
     void pollPlayerState(PlayerApi playerApi){
         if(playerApi.getPlayerState() == null) {
             Log.d("Something went wrong", "playerApi.getPlayerState() == null");
@@ -102,39 +160,7 @@ public class BackgroundService extends Service {
                             if (response.code() == 404) {
                                 Toast.makeText(getApplicationContext(), "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                             } else if (response.body().equals("Yes")) {
-
-                                //this is where all the changes are registered and polling returns the playerState
-                                /*NEEDS TO BE REWORKED WITH NEW QUEUEITEM CLASS ABOVE
-                                *   IF EMPTY:
-                                *   add
-                                *   set item pre:false
-                                *   prompt(pre)
-                                *
-                                *   ELSE
-                                *   add
-                                *   if(item.pre = false)
-                                *       set item post:false
-                                *       prompt(post)
-                                *       pop
-                                *       set item pre:false
-                                *       prompt(pre)
-                                *
-                                *
-                                *
-                                * */
-                                if (processingQueue.size() > 0) {
-                                    finalPrompt(processingQueue.get(0));
-                                    Log.d("FINAL Prompt ", ":\t" + processingQueue.get(0).track.name);
-                                    processingQueue.remove(0);
-                                    processingQueue.add(playerState);
-                                    primaryPrompt(processingQueue.get(0));
-                                    Log.d("START Prompt ", ":\t" + processingQueue.get(0).track.name);
-                                } else {
-                                    processingQueue.add(playerState);
-                                    primaryPrompt(playerState);
-                                    Log.d("INITIAL Prompt ", ":\t" + processingQueue.get(0).track.name);
-                                }
-
+                                processQueue(playerState);
                             }
                         }
                         @Override
@@ -145,12 +171,12 @@ public class BackgroundService extends Service {
                     });
                 })
                 .setErrorCallback(throwable -> {
-                    Log.d("Error", " throwable from pollPlayerState" + throwable);
+                    Log.d("Error", " throwable from pollPlayerState\t" + throwable);
                 });
         }
     }
 
-    public void primaryPrompt(PlayerState playerState){
+    Dialog primaryPrompt(PlayerState playerState){
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
         String DialogText;
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -165,14 +191,20 @@ public class BackgroundService extends Service {
         Button submit = mView.findViewById(R.id.btn_positiveoverlay);
         builder.setView(mView);
         final android.app.AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        if(Build.VERSION.SDK_INT >= 26) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        }else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+        }
+        //dialog.show();
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String selectedMood = spinner.getSelectedItem().toString();
                 Toast.makeText(getApplicationContext(), "You selected " + selectedMood, Toast.LENGTH_SHORT).show();
                 int i = spinner.getSelectedItemPosition();
-                //Verify if this is before or after.
-                //For tracking the difference of the before and after moods.
                 BeforeMood = Global.moodList[i];
                 Call<String> response = client.TrackStarted(playerState.track.uri, playerState.track.imageUri.raw, playerState.track.name, playerState.track.album.name, playerState.track.artist.name,
                         String.valueOf(DateUtils.formatElapsedTime(((int) playerState.track.duration) / 1000)), Global.moodList[i], Global.UserID, Global.UserPassword);
@@ -199,17 +231,10 @@ public class BackgroundService extends Service {
                 dialog.dismiss();
             }
         });
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        if(Build.VERSION.SDK_INT >= 26) {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-        }else {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
-        }
-        dialog.show();
+        return dialog;
     }
 
-    public void finalPrompt(PlayerState playerState){
+    Dialog finalPrompt(PlayerState playerState){
         final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext(), R.style.overlaytheme);
         String DialogText;
         LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -224,6 +249,14 @@ public class BackgroundService extends Service {
         Button submit = mView.findViewById(R.id.btn_positiveoverlay);
         builder.setView(mView);
         final android.app.AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        if(Build.VERSION.SDK_INT >= 26) {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        }else {
+            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
+        }
+        //dialog.show();
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -261,15 +294,9 @@ public class BackgroundService extends Service {
                 dialog.dismiss();
             }
         });
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        if(Build.VERSION.SDK_INT >= 26) {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-        }else {
-            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
-        }
-        dialog.show();
+        return dialog;
     }
+
     int[] loadScoreList(String moodList){
         String[][] fullList = getMoods(moodList);
         Global.moodList = fullList[0];
@@ -363,7 +390,26 @@ public class BackgroundService extends Service {
 
     @Override
     public void onCreate() {
+
         if(Global.isLogged){
+            new Thread(){
+                public void run() {
+                    /*take from the queue*/
+                    try{
+                        while(true){
+                            Message msg = new Message();
+                            Bundle bundle = new Bundle();
+                            Log.d("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
+                            bundle.putInt("key",dialogsToShow.size());
+                            msg.setData(bundle);
+                            messageHandler.sendMessage(msg);
+                            Thread.sleep(500);
+                        }
+                    }catch  (InterruptedException e){
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }.start();
             client = retrofit.create(RestInterface.Ks1807Client.class);
             isRunning = true;
             t = this;
@@ -396,7 +442,7 @@ public class BackgroundService extends Service {
                     Log.d("message received"," " + intent.getAction());
                     if(Global.mSpotifyAppRemote != null){
                         PlayerApi playerApi = Global.mSpotifyAppRemote.getPlayerApi();
-                        if(playerApi != null){
+                        if(playerApi.getPlayerState() != null){
                             try{
                                 pollPlayerState(playerApi);
                             }catch(Exception e){
