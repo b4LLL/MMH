@@ -137,11 +137,6 @@ public class BackgroundService extends Service{
             trackQueue.add(new QueueItem(true,true, playerState));
             dialogsToShow.add(primaryPrompt(trackQueue.peek().getPlayerState()));
             trackQueue.peek().setPre(false);
-        }
-        if(trackQueue.peek().getPre()){
-            dialogsToShow.add(primaryPrompt(trackQueue.peek().getPlayerState()));
-            trackQueue.peek().setPre(false);
-        }else{
             dialogsToShow.add(finalPrompt(trackQueue.remove().getPlayerState()));
         }
     }
