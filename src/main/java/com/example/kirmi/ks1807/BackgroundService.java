@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,13 +41,9 @@ import com.spotify.android.appremote.api.error.SpotifyDisconnectedException;
 import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionException;
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
 import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Track;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -460,6 +455,9 @@ public class BackgroundService extends Service{
     @Override
     public void onDestroy() {
         isRunning = false;
+        if(dialogsToShow.size() == 1){
+            dialogsToShow.peek().show();
+        }
         Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
         if (mSpotifyAppRemote != null)
             SpotifyAppRemote.disconnect(mSpotifyAppRemote);
