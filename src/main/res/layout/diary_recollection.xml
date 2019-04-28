@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:scrollbars="vertical"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:id="@+id/diaryTitle"
+        android:textSize="22sp"
+        android:textColor="@color/black"
+        android:layout_marginStart="5dp"/>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="25dp" />
+
+    <TextView
+        android:id="@+id/diaryEntry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginStart="5dp"/>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="25dp" />
+
+    <Button
+        android:id="@+id/diaryRecollectButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@android:color/holo_orange_dark"
+        android:textColor="@color/colorPrimary" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="25dp" />
+
+</LinearLayout>
