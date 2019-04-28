@@ -2,5 +2,6 @@
 /src/test
 /src/test
 /src/main/res
+!/src/main/res/layout
 app.iml
 .idea/
