@@ -54,7 +54,7 @@ public class BackgroundService extends Service{
     private static final String NOTIFICATION_CHANNEL_ID = "MandatoryChannelID"; //Channel ID for mandatory foreground notification
     private final IBinder binder = new LocalBinder();
     private Context t;
-    public static final String CLIENT_ID = "74447ee7e0f949029b91c1f4dc4af433";
+    public static final String CLIENT_ID = "9b0634404b05419397a2541e4a3080fe";
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote = null;
     public static boolean isRunning = false;                                    //used by activity to check if it should start the service
@@ -389,7 +389,7 @@ public class BackgroundService extends Service{
                         while(true){
                             Message msg = new Message();
                             Bundle bundle = new Bundle();
-                            Log.d("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
+                            //Log.d("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
                             bundle.putInt("key",dialogsToShow.size());
                             msg.setData(bundle);
                             messageHandler.sendMessage(msg);
