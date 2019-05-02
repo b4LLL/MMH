@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,23 +26,26 @@
                 android:gravity="end"
                 android:orientation="vertical">
 
-
-                <Button
+                <Spinner
+                    android:id="@+id/editSpinner"
+                    android:layout_width="201dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="@drawable/accountsettingsdropdown"
+                    android:popupBackground="@drawable/dropdownback"
+                    android:spinnerMode="dropdown" />
+                <!--<Button
                     android:id="@+id/btn_Options"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="0"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:fontFamily="@font/roboto_medium"
-                    android:text="Edit Settings"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="Edit"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black" />-->
 
-                <Space
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0" />
             </LinearLayout>
 
             <LinearLayout
@@ -54,18 +58,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:orientation="horizontal">
-
-                    <Space
-                        android:layout_width="29dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0" />
-
-                </LinearLayout>
+                    android:orientation="vertical" />
 
                 <Space
                     android:layout_width="match_parent"
-                    android:layout_height="29dp" />
+                    android:layout_height="10dp" />
 
                 <EditText
                     android:id="@+id/editText_EditFirstName"
@@ -201,7 +198,6 @@
                     android:orientation="horizontal">
 
 
-
                     <Space
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
@@ -220,6 +216,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="12dp"
                     android:layout_weight="0" />
+
+                <ImageView
+                    android:id="@+id/imageLock"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_weight="0"
+                    app:srcCompat="@drawable/emoji_1f512" />
 
             </LinearLayout>
 

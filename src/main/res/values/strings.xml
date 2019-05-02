@@ -1,0 +1,146 @@
+<resources>
+    <string-array name="spinner1ques">
+        <item>Never</item>
+        <item>Sometimes</item>
+        <item>Often</item>
+        <item>Almost always</item>
+    </string-array>
+
+    <string-array name="profileoptions">
+        <item>Edit</item>
+        <item>Change Password</item>
+    </string-array>
+    
+    <string-array name="trackalertoptions">
+        <item>Once per track</item>
+        <item>Once every 15 minutes</item>
+        <item>Once per hour</item>
+        <item>Once per 24 hours</item>
+        <item>Never</item>
+    </string-array>
+
+    <string-array name="editOptions">
+        <item>Options..</item>
+        <item>Edit Information</item>
+        <item>Change Password</item>
+    </string-array>
+
+    <string-array name="diaryq2options">
+        <item>Positive</item>
+        <item>Negative</item>
+    </string-array>
+
+    <string name="app_name">KS1807</string>
+    <string name="LandingCaption">Music for Mental Health</string>
+    <string name="LoginCaption">Login to your account below</string>
+    <string name="SpotifyCaption">Have a Spotify Account? Login with the button below</string>
+    <string name="RegisterCaption">Don\'t have an account? Register below</string>
+    <string name="RegisterButtonCaption">Register</string>
+    <string name="SpotifyButtonCaption">Login with Spotify</string>
+    <string name="LoginButtonCaption">Login</string>
+    <string name="EditUserNameHintCaption">User Name</string>
+    <string name="EditPasswordHintCaption">Password</string>
+    <string name="LandingPageLogoDescription">Landing Page Logo</string>
+    <string name="RegisterPageCaption">Create an Account</string>
+    <string name="FNameCaption">First Name</string>
+    <string name="BackButtonCaption">Back</string>
+    <string name="LNameCaption">Last Name</string>
+    <string name="EmailCaption">Email</string>
+    <string name="Age_Caption">Age</string>
+    <string name="Gender_Caption">Gender</string>
+    <string name="MaleCaption">Male</string>
+    <string name="FemaleCaption">Female</string>
+    <string name="OtherCaption">Other</string>
+    <string name="Submit_Caption">Submit</string>
+    <string name="Logout_Caption">Logout</string>
+    <string name="WelcomeUserDefaultCaption">Welcome to Music for Mental Health</string>
+    <string name="MusicNotListenedCaption">You have not listened to any music yet</string>
+    <string name="MusicHistory_Caption">The last music track you listened to was:</string>
+    <string name="TrackName_Caption">Name</string>
+    <string name="TrackGenre_Caption">Genre</string>
+    <string name="TrackArtist_Caption">Artist</string>
+    <string name="TrackLength_Caption">Length</string>
+    <string name="MoodBefore_Caption">Your mood before listening</string>
+    <string name="MoodAfter_Caption">Your mood after listening</string>
+    <string name="ChangePassword_Caption">Change Password</string>
+    <string name="ChangeUserDetails_Caption">Change Details</string>
+    <string name="ChangePasswordPage_Caption">Please specify your old password and the new password</string>
+    <string name="OldPassword_Caption">Old Password</string>
+    <string name="NewPassword_Caption">Confirm Password</string>
+    <string name="NewPasswordAgain_Caption">Enter your new password again</string>
+    <string name="EditPageCaption">Edit your current information below</string>
+    <string name="PreferredUserName_Caption">Preferred User Name</string>
+    <string name="Username_Caption">Username</string>
+    <string name="Next_Caption">Next</string>
+    <string name="PreferredApp_Caption">Preferred Music App</string>
+    <string name="GeneralMoodQuestion_Caption">What is your mood in general?</string>
+    <string name="MoodExamples_Caption">Happy, Sad, Frustrated, etc</string>
+    <string name="MusicMoodQuestion_Caption">How do you feel in general when you listen to music?</string>
+    <string name="MusicImproveQuestion_Caption">Do you think that listening to music will improve your mood?</string>
+    <string name="Yes_Caption">Yes</string>
+    <string name="No_Caption">No</string>
+    <string name="PlaylistPage_Caption">Welcome to your playlist</string>
+    <string name="PlayList_Caption">Playlists</string>
+    <string name="AddPlaylist_Caption">Add Playlist</string>
+    <string name="DeletePlaylist_Caption">Delete Playlist</string>
+    <string name="ViewPlaylists_Caption">View Playlists</string>
+    <string name="ThePlaylistWelcome_Caption">The following tracks belong to this playlist</string>
+    <string name="PlayListNName_Caption">Playlist Name</string>
+    <string name="AddToPlayList_Caption">Add Track to this Playlist</string>
+    <string name="Settings_Caption">Settings</string>
+    <string name="RecommendationsSetting_Caption">Automatically Make Music Recommendations</string>
+    <string name="MoodFrequencyAlertSettings_Caption">How often would you like to receive alerts?</string>
+    <string name="AlertFrequencyEveryTrack_Caption">Per Track</string>
+    <string name="AlertFrequencyFifteenMinutes_Caption">15 Minutes</string>
+    <string name="Every_Caption">Every...</string>
+    <string name="AlertFrequencyHour_Caption">Hour</string>
+    <string name="AccountDetailsHeading_Caption">Which of your account details do you want to view or change?</string>
+    <string name="AccountDetails_Caption">Account Details</string>
+    <string name="ChangeSettings_Caption">Change Settings</string>
+    <string name="Play_Caption">Play</string>
+    <string name="Pause_Caption">Pause</string>
+    <string name="Skip_Caption">Skip</string>
+    <string name="PasswordAgain_Caption">Enter your password again</string>
+    <string name="RegistrationSubmit_Caption">Register Now</string>
+    <string name="RegisterSecondPage_Caption">Your music</string>
+    <string name="EditProfilePicture_Caption">Edit your profile picture</string>
+    <string name="Profile_Caption">Profile</string>
+    <string name="Home_Caption">Home</string>
+    <string name="Library_Caption">Your Library</string>
+    <string name="YourProfile_Caption">Your Profile</string>
+    <string name="Edit_Caption">Edit</string>
+    <string name="View_Caption">View</string>
+    <string name="ViewProfile_Caption">View/Edit Profile</string>
+    <string name="nav_diary_title">Dig Deeper</string>
+    <string name="nav_resource_title">Resources</string>
+    <string name="nav_progress_title">Progress</string>
+    <string name="nav_settings_title">Settings</string>
+    <string name="moremoodques">Want to tell us more about your mood?</string>
+    <string name="researchques">Want to help with our research?</string>
+    <string name="resources1"><a href="https://www.lifeline.org.au/get-help/online-services/crisis-chat">1. <u>In crisis? Talk to somebody right now</u></a></string>
+    <string name="resourceq2"><a href="https://www.beyondblue.org.au/personal-best/pillar/in-focus/depression-vs-sadness">2. <u>What\'s the differece between depression and sadness?</u></a></string>
+    <string name="resourcesq3"><a href="https://www.beyondblue.org.au/personal-best/pillar/wellbeing/why-listening-to-music-makes-you-feel-good">3. <u>How does music help?</u></a></string>
+    <string name="resourcesq4"><a href="https://theconversation.com/sad-music-and-depression-does-it-help-66123">4. <u>Can music ever be harmful?</u></a></string>
+    <string name="resourcesq5"><a href="https://www.beyondblue.org.au/personal-best/pillar/supporting-yourself/exercise-your-way-to-good-mental-health">5. <u>How does exercise help?</u></a></string>
+    <string name="resourcesq6"><a href="https://greatergood.berkeley.edu/article/item/three_ways_mindfulness_reduces_depression">6. <u>What is mindfulness and how does it help?</u></a></string>
+    <string name="resourcesq7">7. Other people\'s stories:</string>
+    <string name="resourcesq70"><a href="https://www.glamourmagazine.co.uk/gallery/celebrities-talking-about-depression-anxiety-and-mental-health">-> <u>Celebrities talk about depression and anxiety</u></a></string>
+    <string name="resourcesq71"><a href="">-> <u>Want to share your story about depression or anxiety and what has helped you?</u></a></string>
+   <string name="resources8"><a href="https://headspace.org.au/headspace-centres/">8. <u>Where can I get help near me?</u></a></string>
+    <string name="resourcesq9">9. Where can I get more information?</string>
+    <string name="beyoundBluelink"><a href="https://www.beyondblue.org.au/">-> <u>Beyond Blue</u></a></string>
+    <string name="headspacelink"><a href="https://headspace.org.au/">-> <u>Headspace</u></a></string>
+    <string name="lifelineLink"><a href="https://www.lifeline.org.au/">-> <u>Lifeline</u></a></string>
+    <string name="blackDogLink"><a href="https://www.blackdoginstitute.org.au/">-> <u>Black Dog Institute</u></a></string>
+    <string name="DateOfBirth_Caption">DD/MM/YYYY</string>
+    <string name="Password_Caption" >••••••••</string>
+    <string name="DiaryQ1">1. Did the music trigger any particular thoughts or memories? If yes, record them here.</string>
+    <string name="Diaryq1whylink"><u>Why does this matter?</u></string>
+    <string name="whyLinkDialogCap">Our thoughts have a big influence on our feelings. Want to know more?</string>
+    <string name="DiaryQ2">2. Was this a positive or negative thought?</string>
+    <string name="DiaryQ2NegativeThoughtCap">Sometimes we get so used to the beliefs and thoughts in our minds that we forget there are other ways to look at a situation. Want to know more about challenging negative thoughts?</string>
+    <string name="DiaryQ3">3. Where were you when listening to this song?</string>
+    <string name="DiaryQ4">4. Who were you with when listening to this song?</string>
+    <string name="DiaryQ5">5. What were you doing when listening to this song?</string>
+    <string name="nohistory">No music played</string>
+</resources>

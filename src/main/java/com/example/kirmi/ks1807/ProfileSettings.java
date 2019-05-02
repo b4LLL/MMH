@@ -14,12 +14,16 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,9 +42,11 @@ public class ProfileSettings extends Fragment
     private RadioGroup gender;
     private RadioButton genderMale, genderFemale, genderOther;
     private EditText firstN, lastN, editemail, editdob, oldpass, newpass, newpassagain;
-    private Button options, btnUpdate, changePassword;
+    private Button btnUpdate, changePassword;
     private LinearLayout userdetails, updatepass;
     private String[] UserDetails;
+    private ImageView imgLock;
+    private Spinner editSpinner;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -51,6 +57,12 @@ public class ProfileSettings extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.activity_profile_settingstab, container, false);
+        editSpinner = view.findViewById(R.id.editSpinner);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getActivity(),R.array.editOptions,R.layout.spinner_item);
+        spinnerAdapter.setDropDownViewResource(R.layout.spinner_item);
+        editSpinner.setAdapter(spinnerAdapter);
+
+
 
         UserID = Global.UserID;
         userdetails = (LinearLayout)view.findViewById(R.id.user_details);
@@ -75,6 +87,8 @@ public class ProfileSettings extends Fragment
         newpassagain = (EditText)view.findViewById(R.id.EditTextNewPasswordAgain);
 
         changePassword = (Button) view.findViewById(R.id.btnchangepass);
+
+        imgLock = view.findViewById(R.id.imageLock);
 
         client = retrofit.create(RestInterface.Ks1807Client.class);
 
@@ -134,193 +148,157 @@ public class ProfileSettings extends Fragment
             }
         });
 
-        if (userdetails.getVisibility() != View.VISIBLE)
-        {
+        if (userdetails.getVisibility() != View.VISIBLE){
             userdetails.setVisibility(View.VISIBLE);
             updatepass.setVisibility(View.GONE);
         }
 
-        //Getting the selection from the options dropdown.
-        options = (Button)view.findViewById(R.id.btn_Options);
-        options.setOnClickListener(new View.OnClickListener()
-        {
+        editSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view)
-            {
-                // Showing the popup menu with the two different options edit and change password
-                Context wrapper = new ContextThemeWrapper(getActivity(), R.style.popUpOptions);
-                PopupMenu popup = new PopupMenu(wrapper, options);
-                popup.getMenuInflater().inflate(R.menu.profileoptions, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position)
                 {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem)
-                    {
-                        //Once a menu item is selected, doing relevant tasks to the menu item.
-                        switch (menuItem.getItemId())
-                        {
-                            case R.id.option_edit:
-                                /*Setting some elements not relevant to the edit section to be
-                                invisible and some relevant section to be visible*/
-                                options.setVisibility(View.VISIBLE);
-                                userdetails.setVisibility(View.VISIBLE);
-                                updatepass.setVisibility(View.GONE);
-                                btnUpdate.setVisibility(View.VISIBLE);
-
+                    case 0:
+                        setProfileBackFromEdit();
+                        break;
+                    case 1:
+                        Log.d("onItemSelected","\tposition\t" + position + "\tid\t" + id + "parent.getSelectedItem()\t" + parent.getSelectedItem());
+                        //options.setVisibility(View.VISIBLE);
+                        userdetails.setVisibility(View.VISIBLE);
+                        updatepass.setVisibility(View.GONE);
+                        btnUpdate.setVisibility(View.VISIBLE);
+                        imgLock.setImageResource(R.drawable.emoji_1f513);
                                 /*Since the text fields have been disabled at the start of the page,
                                 fields should be enabled for the user to edit.*/
-                                enableAllFields();
+                        enableAllFields();
 
-                                //Changing the image according the screen design once user is on edit page
-                                if (genderMale.isChecked())
-                                {
-                                    genderMale.setBackgroundResource(R.drawable.settingseditmaleselected);
-                                    genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
-                                    genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
-                                }
-
-                                if (genderFemale.isChecked())
-                                {
-                                    genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
-                                    genderFemale.setBackgroundResource(R.drawable.settingseditfemaleselected);
-                                    genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
-                                }
-
-                                if (genderOther.isChecked())
-                                {
-                                    genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
-                                    genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
-                                    genderOther.setBackgroundResource(R.drawable.settingseditotherselected);
-                                }
-
-                                //Setting the correct images when a button is selected
-                                genderMale.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view)
-                                    {
-                                        genderMale.setBackgroundResource(R.drawable.settingseditmaleselected);
-                                        genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
-                                        genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
-                                    }
-                                });
-                                genderFemale.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view)
-                                    {
-                                        genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
-                                        genderFemale.setBackgroundResource(R.drawable.settingseditfemaleselected);
-                                        genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
-                                    }
-                                });
-                                genderOther.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view)
-                                    {
-                                        genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
-                                        genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
-                                        genderOther.setBackgroundResource(R.drawable.settingseditotherselected);
-                                    }
-                                });
-
-                                /*On click of the update button, validate the inputs from the user
-                                and update details in the database.*/
-                                btnUpdate.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view)
-                                    {
-                                        if (ValidateForm())
-                                        {
-                                            String UserPassword = Global.UserPassword;
-
-                                            Call<String> response = client.GetUserDetails(UserID, UserPassword);
-                                            response.enqueue(new Callback<String>()
-                                            {
-                                                @Override
-                                                public void onResponse(Call<String> call, Response<String> response)
-                                                {
-                                                    Log.d("retrofitclick", "SUCCESS: " + response.raw());
-
-                                                    if(response.code() == 404)
-                                                    {
-                                                        Toast.makeText(getContext(),
-                                                                "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    else
-                                                    {
-                                                        if(response.body().equals("Incorrect UserID or Password. Query not executed."))
-                                                            Toast.makeText(getActivity(), "Failed to get details from server", Toast.LENGTH_SHORT).show();
-                                                        else
-                                                        {
-                                                            String UsersInformation = response.body();
-                                                            UserDetails = UsersInformation.split("\n");
-                                                            UserDetails[0] = UserDetails[0].replace("FirstName: ", "");
-                                                            UserDetails[1] = UserDetails[1].replace("LastName: ", "");
-                                                            UserDetails[2] = UserDetails[2].replace("EmailAddress: ", "");
-                                                            UserDetails[3] = UserDetails[3].replace("DateOfBirth: ", "");
-                                                            UserDetails[4] = UserDetails[4].replace("Gender: ", "");
-
-                                                            //Function to show all the details within respective text element.
-                                                            DisplayUserDetails(UserDetails);
-                                                        }
-                                                    }
-                                                }
-                                                @Override
-                                                public void onFailure(Call<String> call, Throwable t)
-                                                {
-                                                    fail_LoginNetwork();
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
-
-                                /*If the back button is selected then all the fields are disabled,
-                                the fields are updated to what is in the database since the fields
-                                are the same ones being used as the normal view of the activity*/
-                                return true;
-
-                                //The following is run if the change password menu item is selected.
-                                case R.id.option_changepass:
-                                userdetails.setVisibility(View.GONE);
-                                options.setVisibility(View.VISIBLE);
-                                //Setting the fields and buttons relevant to change user password.
-                                updatepass.setVisibility(View.VISIBLE);
-
-                                //If the back button is selected then display the content of the normal profile page.
-
-                                /*Validating the user input to change password once the button is
-                                clicked and taking the user back to the main profile*/
-                                changePassword.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view)
-                                    {
-                                        if (ValidateChangePasswordForm())
-                                        {
-                                            Toast.makeText(getActivity(),
-                                                    "Successfully changed password", Toast.LENGTH_SHORT).show();
-                                            setProfileBackFromChangePass();
-                                        }
-
-                                    }
-                                });
-                                return true;
-                            default:
-                                return false;
+                        //Changing the image according the screen design once user is on edit page
+                        if (genderMale.isChecked()) {
+                            genderMale.setBackgroundResource(R.drawable.settingseditmaleselected);
+                            genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
+                            genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
                         }
-                    }
-                });
-                //Used to actually show the menu items with the popup.
-                popup.show();
+
+                        if (genderFemale.isChecked()){
+                            genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
+                            genderFemale.setBackgroundResource(R.drawable.settingseditfemaleselected);
+                            genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
+                        }
+
+                        if (genderOther.isChecked()){
+                            genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
+                            genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
+                            genderOther.setBackgroundResource(R.drawable.settingseditotherselected);
+                        }
+
+                        //Setting the correct images when a button is selected
+                        genderMale.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view)
+                            {
+                                genderMale.setBackgroundResource(R.drawable.settingseditmaleselected);
+                                genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
+                                genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
+                            }
+                        });
+                        genderFemale.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view)
+                            {
+                                genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
+                                genderFemale.setBackgroundResource(R.drawable.settingseditfemaleselected);
+                                genderOther.setBackgroundResource(R.drawable.settingseditothernormal);
+                            }
+                        });
+                        genderOther.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view)
+                            {
+                                genderMale.setBackgroundResource(R.drawable.settingseditmalenormal);
+                                genderFemale.setBackgroundResource(R.drawable.settingseditfemalenormal);
+                                genderOther.setBackgroundResource(R.drawable.settingseditotherselected);
+                            }
+                        });
+                        btnUpdate.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view)
+                            {
+                                if (ValidateForm())
+                                {
+                                    String UserPassword = Global.UserPassword;
+                                    imgLock.setImageResource(R.drawable.emoji_1f512);
+                                    Call<String> response = client.GetUserDetails(UserID, UserPassword);
+                                    response.enqueue(new Callback<String>()
+                                    {
+                                        @Override
+                                        public void onResponse(Call<String> call, Response<String> response)
+                                        {
+                                            Log.d("retrofitclick", "SUCCESS: " + response.raw());
+
+                                            if(response.code() == 404)
+                                            {
+                                                Toast.makeText(getContext(),
+                                                        "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                            {
+                                                if(response.body().equals("Incorrect UserID or Password. Query not executed."))
+                                                    Toast.makeText(getActivity(), "Failed to get details from server", Toast.LENGTH_SHORT).show();
+                                                else
+                                                {
+                                                    String UsersInformation = response.body();
+                                                    UserDetails = UsersInformation.split("\n");
+                                                    UserDetails[0] = UserDetails[0].replace("FirstName: ", "");
+                                                    UserDetails[1] = UserDetails[1].replace("LastName: ", "");
+                                                    UserDetails[2] = UserDetails[2].replace("EmailAddress: ", "");
+                                                    UserDetails[3] = UserDetails[3].replace("DateOfBirth: ", "");
+                                                    UserDetails[4] = UserDetails[4].replace("Gender: ", "");
+
+                                                    //Function to show all the details within respective text element.
+                                                    DisplayUserDetails(UserDetails);
+                                                }
+                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(Call<String> call, Throwable t)
+                                        {
+                                            fail_LoginNetwork();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        break;
+                        //The following is run if the change password menu item is selected.
+                    case 2:
+                        Log.d("onItemSelected","\tposition\t" + position + "\tid\t" + id + "parent.getSelectedItem()\t" + parent.getSelectedItem());
+                        userdetails.setVisibility(View.GONE);
+                        updatepass.setVisibility(View.VISIBLE);
+                        changePassword.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View view)
+                            {
+                                if (ValidateChangePasswordForm())
+                                {
+                                    Toast.makeText(getActivity(),
+                                            "Successfully changed password", Toast.LENGTH_SHORT).show();
+                                    setProfileBackFromChangePass();
+                                }
+
+                            }
+                        });
+                        break;
+                    default:
+                        Log.d("Error","HELP");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
-
-        /*If the user chooses to sign out then this takes them to the login page and sets the user
-        ID as empty as the user is no longer logged in*/
 
         return view;
     }
@@ -381,15 +359,15 @@ public class ProfileSettings extends Fragment
     //Function used to set the profile back to normal after coming back from editing the user details.
     public void setProfileBackFromEdit()
     {
-        options.setVisibility(View.VISIBLE);
         btnUpdate.setVisibility(View.INVISIBLE);
+        imgLock.setImageResource(R.drawable.emoji_1f512);
         disableAllFields();
     }
 
     //Function used to set the profile back to normal after coming back from changing password.
     public void setProfileBackFromChangePass()
     {
-        options.setVisibility(View.VISIBLE);
+        //options.setVisibility(View.VISIBLE);
         updatepass.setVisibility(View.GONE);
         userdetails.setVisibility(View.VISIBLE);
         disableAllFields();
@@ -418,6 +396,7 @@ public class ProfileSettings extends Fragment
         genderFemale.setEnabled(true);
         genderMale.setEnabled(true);
         genderOther.setEnabled(true);
+
     }
 
     //Function that disables all fields and radio buttons so that the user cannot edit and only view the details
