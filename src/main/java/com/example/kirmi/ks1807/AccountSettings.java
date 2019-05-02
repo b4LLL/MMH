@@ -2,6 +2,7 @@ package com.example.kirmi.ks1807;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +25,7 @@ public class AccountSettings extends Fragment
     String UserID = "";
     Spinner alertsSpinner;
     RadioButton yes, no;
-    Button submit;
+    Button submit, signout;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
 
@@ -80,7 +81,44 @@ public class AccountSettings extends Fragment
         });
 
         client = retrofit.create(RestInterface.Ks1807Client.class);
+        signout = (Button)view.findViewById(R.id.btn_signout);
+        signout.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                alertDialogBuilder.setTitle("Confirm logout");
+                alertDialogBuilder
+                        .setMessage("Are you sure that you want to logout?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes",new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog,int id)
+                            {
+                                Global.UserID = "";
+                                if(BackgroundService.isRunning) //confirm this
+                                {
+                                    new BackgroundServiceStarter().onEnd(getContext(), new Intent());
+                                }
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
+                                Global.isLogged = false;
 
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("No",new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog,int id)
+                            {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
         //Showing the user's current account settings
         ShowUserSettings(view);
         return view;

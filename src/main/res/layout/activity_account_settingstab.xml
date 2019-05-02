@@ -113,5 +113,12 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="29dp" />
+
+        <Button
+            android:id="@+id/btn_signout"
+            android:layout_width="108dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/signoutbtn" />
     </LinearLayout>
 </ScrollView>

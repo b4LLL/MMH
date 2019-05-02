@@ -77,17 +77,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_YoutubeLogin" />
 
-    <Button
-        android:id="@+id/btn_connect"
-        android:layout_width="143dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/connect"
-        android:onClick="button_connect"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_FacebookLogin"
-        app:layout_constraintVertical_bias="0.906" />
 </android.support.constraint.ConstraintLayout>

@@ -38,7 +38,7 @@ public class ProfileSettings extends Fragment
     private RadioGroup gender;
     private RadioButton genderMale, genderFemale, genderOther;
     private EditText firstN, lastN, editemail, editdob, oldpass, newpass, newpassagain;
-    private Button options, editback, changepassback, btnUpdate, signout, changePassword;
+    private Button options, btnUpdate, changePassword;
     private LinearLayout userdetails, updatepass;
     private String[] UserDetails;
     Retrofit retrofit = RestInterface.getClient();
@@ -66,7 +66,6 @@ public class ProfileSettings extends Fragment
         genderOther = (RadioButton)view.findViewById(R.id.RadioButton_EditOther);
 
         gender.setEnabled(false);
-        //editback = (Button)view.findViewById(R.id.btn_profileeditsettingback);
         btnUpdate = (Button)view.findViewById(R.id.btn_updateprofile);
 
         updatepass = (LinearLayout)view.findViewById(R.id.changepasscontent);
@@ -75,7 +74,6 @@ public class ProfileSettings extends Fragment
         newpass = (EditText) view.findViewById(R.id.EditText_NewPassword);
         newpassagain = (EditText)view.findViewById(R.id.EditTextNewPasswordAgain);
 
-        changepassback = (Button)view.findViewById(R.id.btn_profilechangepasssettingback);
         changePassword = (Button) view.findViewById(R.id.btnchangepass);
 
         client = retrofit.create(RestInterface.Ks1807Client.class);
@@ -164,10 +162,9 @@ public class ProfileSettings extends Fragment
                             case R.id.option_edit:
                                 /*Setting some elements not relevant to the edit section to be
                                 invisible and some relevant section to be visible*/
-                                options.setVisibility(View.INVISIBLE);
-                                signout.setVisibility(View.INVISIBLE);
+                                options.setVisibility(View.VISIBLE);
+                                userdetails.setVisibility(View.VISIBLE);
                                 updatepass.setVisibility(View.GONE);
-                                editback.setVisibility(View.VISIBLE);
                                 btnUpdate.setVisibility(View.VISIBLE);
 
                                 /*Since the text fields have been disabled at the start of the page,
@@ -284,115 +281,16 @@ public class ProfileSettings extends Fragment
                                 /*If the back button is selected then all the fields are disabled,
                                 the fields are updated to what is in the database since the fields
                                 are the same ones being used as the normal view of the activity*/
-                                editback.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view)
-                                    {
-
-                                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                                        alertDialogBuilder.setTitle("Confirm exit");
-                                        alertDialogBuilder
-                                                .setMessage("Are you sure you wish to go back? All changes will be discarded.")
-                                                .setCancelable(false)
-                                                .setPositiveButton("Yes",new DialogInterface.OnClickListener()
-                                                {
-                                                    public void onClick(DialogInterface dialog,int id)
-                                                    {
-                                                        setProfileBackFromEdit();
-                                                        String UserPassword = Global.UserPassword;
-
-                                                        Call<String> response = client.GetUserDetails(UserID, UserPassword);
-                                                        response.enqueue(new Callback<String>()
-                                                        {
-                                                            @Override
-                                                            public void onResponse(Call<String> call, Response<String> response)
-                                                            {
-                                                                Log.d("retrofitclick", "SUCCESS: " + response.raw());
-
-                                                                if(response.code() == 404)
-                                                                {
-                                                                    Toast.makeText(getContext(),
-                                                                            "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                                else
-                                                                {
-                                                                    if(response.body().equals("Incorrect UserID or Password. Query not executed."))
-                                                                        Toast.makeText(getActivity(), "Failed to get details from server",
-                                                                                Toast.LENGTH_SHORT).show();
-                                                                    else
-                                                                    {
-                                                                        String UsersInformation = response.body();
-                                                                        UserDetails = UsersInformation.split("\n");
-                                                                        UserDetails[0] = UserDetails[0].replace("FirstName: ", "");
-                                                                        UserDetails[1] = UserDetails[1].replace("LastName: ", "");
-                                                                        UserDetails[2] = UserDetails[2].replace("EmailAddress: ", "");
-                                                                        UserDetails[3] = UserDetails[3].replace("DateOfBirth: ", "");
-                                                                        UserDetails[4] = UserDetails[4].replace("Gender: ", "");
-
-                                                                        //Function to show all the details within respective text element.
-                                                                        DisplayUserDetails(UserDetails);
-                                                                    }
-                                                                }
-                                                            }
-                                                            @Override
-                                                            public void onFailure(Call<String> call, Throwable t)
-                                                            {
-                                                                fail_LoginNetwork();
-                                                            }
-                                                        });
-                                                    }
-                                                })
-                                                .setNegativeButton("No",new DialogInterface.OnClickListener()
-                                                {
-                                                    public void onClick(DialogInterface dialog,int id)
-                                                    {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-                                        AlertDialog alertDialog = alertDialogBuilder.create();
-                                        alertDialog.show();
-                                    }
-                                });
                                 return true;
 
                                 //The following is run if the change password menu item is selected.
                                 case R.id.option_changepass:
                                 userdetails.setVisibility(View.GONE);
-                                options.setVisibility(View.INVISIBLE);
-
+                                options.setVisibility(View.VISIBLE);
                                 //Setting the fields and buttons relevant to change user password.
-                                changepassback.setVisibility(View.VISIBLE);
                                 updatepass.setVisibility(View.VISIBLE);
 
                                 //If the back button is selected then display the content of the normal profile page.
-                                changepassback.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View view) {
-                                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                                        alertDialogBuilder.setTitle("Confirm exit");
-                                        alertDialogBuilder
-                                                .setMessage("Are you sure you wish to go back? All changes will be discarded.")
-                                                .setCancelable(false)
-                                                .setPositiveButton("Yes",new DialogInterface.OnClickListener()
-                                                {
-                                                    public void onClick(DialogInterface dialog,int id)
-                                                    {
-                                                        setProfileBackFromChangePass();
-                                                    }
-                                                })
-                                                .setNegativeButton("No",new DialogInterface.OnClickListener()
-                                                {
-                                                    public void onClick(DialogInterface dialog,int id)
-                                                    {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-                                        AlertDialog alertDialog = alertDialogBuilder.create();
-                                        alertDialog.show();
-                                    }
-                                });
 
                                 /*Validating the user input to change password once the button is
                                 clicked and taking the user back to the main profile*/
@@ -423,44 +321,7 @@ public class ProfileSettings extends Fragment
 
         /*If the user chooses to sign out then this takes them to the login page and sets the user
         ID as empty as the user is no longer logged in*/
-        signout = (Button)view.findViewById(R.id.btn_signout);
-        signout.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                alertDialogBuilder.setTitle("Confirm logout");
-                alertDialogBuilder
-                        .setMessage("Are you sure that you want to logout?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes",new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog,int id)
-                            {
-                                Global.UserID = "";
-                                if(BackgroundService.isRunning) //confirm this
-                                {
-                                    new BackgroundServiceStarter().onEnd(getContext(), new Intent());
-                                }
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
-                                Global.isLogged = false;
-                                
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("No",new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog,int id)
-                            {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-            }
-        });
+
         return view;
     }
 
@@ -521,8 +382,6 @@ public class ProfileSettings extends Fragment
     public void setProfileBackFromEdit()
     {
         options.setVisibility(View.VISIBLE);
-        signout.setVisibility(View.VISIBLE);
-        editback.setVisibility(View.INVISIBLE);
         btnUpdate.setVisibility(View.INVISIBLE);
         disableAllFields();
     }
@@ -532,7 +391,6 @@ public class ProfileSettings extends Fragment
     {
         options.setVisibility(View.VISIBLE);
         updatepass.setVisibility(View.GONE);
-        changepassback.setVisibility(View.INVISIBLE);
         userdetails.setVisibility(View.VISIBLE);
         disableAllFields();
     }

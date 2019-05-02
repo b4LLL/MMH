@@ -23,20 +23,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="end"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
 
                 <Button
                     android:id="@+id/btn_Options"
-                    android:layout_width="150dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="0"
-                    android:text="Edit Settings"
-                    android:fontFamily="@font/roboto_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/black"
+                    android:layout_weight="0"
                     android:background="@android:drawable/btn_dropdown"
-                    />
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="Edit Settings"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black" />
 
                 <Space
                     android:layout_width="30dp"
@@ -200,12 +200,7 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/btn_signout"
-                        android:layout_width="108dp"
-                        android:layout_height="36dp"
-                        android:layout_gravity="right"
-                        android:background="@drawable/signoutbtn" />
+
 
                     <Space
                         android:layout_width="50dp"
@@ -239,21 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="23dp"
                     android:layout_weight="0"
-                    android:orientation="horizontal">
-
-                    <Space
-                        android:layout_width="29dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0" />
-
-                    <Button
-                        android:id="@+id/btn_profilechangepasssettingback"
-                        android:layout_width="24dp"
-                        android:layout_height="22dp"
-                        android:layout_weight="0"
-                        android:background="@drawable/back"
-                        android:visibility="invisible" />
-                </LinearLayout>
+                    android:orientation="horizontal"/>
 
                 <Space
                     android:layout_width="match_parent"

@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     String TheEmailAddress;
     String ThePassword;
     String UserID = "";
+    public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
 
     // write a function to check if the background service is running
     // also check if Spotify is already installed -> the function should be called on the "Login" button click
@@ -36,10 +37,17 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //checking here if the App has permission to write over other apps
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //checking here if the App has permission to write over other apps
             if (!Settings.canDrawOverlays(getApplicationContext())) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
                 startActivity(intent);
+            }
+        }*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }
         setContentView(R.layout.activity_main);

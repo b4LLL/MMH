@@ -42,12 +42,6 @@ public class OtherPlatforms extends AppCompatActivity
         }
     }
 
-    public void button_connect(View view)
-    {
-        Intent intent = new Intent(OtherPlatforms.this, NavBarMain.class);
-        startActivity(intent);
-    }
-
     public void button_LoginSpotify(View view)
     {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(BackgroundService.CLIENT_ID,
