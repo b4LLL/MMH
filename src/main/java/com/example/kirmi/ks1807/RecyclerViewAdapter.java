@@ -16,7 +16,7 @@ import com.spotify.protocol.client.CallResult;
 
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements AsyncInterface {
 
     private List<TrackDetails> Tracks;
     private Context context;
@@ -28,6 +28,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.context = context;
         this.mService = service;
         this.mBound = isBound;
+        }
+
+    @Override
+    public void processedTrackList(List<TrackDetails> listItems) {
+
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,6 +51,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             play = itemView.findViewById(R.id.buttonPlay);
         }
     }   //object holding track information
+
+
 
     @NonNull
     @Override
@@ -66,8 +73,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.aftermood.setText("Mood after: ");
         holder.moodBeforeEmote.setText(track.getMoodBeforeEmote());
         holder.moodAfterEmote.setText(track.getMoodAfterEmote());
-
-        if(mBound && Global.isRunning && (track.getStringURI() != null)){ //something going wrong with NULL here ?
+        if(mBound && Global.isRunning && (track.getStringURI() != null)){
             Global.mSpotifyAppRemote.getImagesApi().getImage(track.getStringURI()).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
                 @Override
                 public void onResult(Bitmap bitmap) {
@@ -91,7 +97,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
 
     @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
     public int getItemCount() {
         return Tracks.size();
     }
 }
+
+/*    */

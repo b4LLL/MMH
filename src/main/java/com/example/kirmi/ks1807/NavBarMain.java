@@ -43,7 +43,7 @@ public class NavBarMain extends AppCompatActivity
             mBound = true;
             Log.d("Service"," mService = " + mService);
             loadFragment(new ProgressFragment());
-            nav.setSelectedItemId(R.id.nav_progress);
+            nav.setSelectedItemId(R.id.nav_home);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {

@@ -8,7 +8,8 @@ public class TrackDetails
     private String title, artist, album, length, moodBefore, moodAfter, moodBeforeEmote, moodAfterEmote;
     private ImageUri spotifyURI;
 
-    TrackDetails(String spotifyID, String spotifyStringURI, String title, String album, String artist, String length, String moodBefore, String moodAfter) {
+    TrackDetails(String spotifyID, String spotifyStringURI, String title, String album,     //change spotifyURI to drawable
+                 String artist, String length, String moodBefore, String moodAfter) {
         this.spotifyTrackID = spotifyID;
         this.title =  "Title:  " + title;
         this.artist = "Artist: " + artist;
@@ -18,7 +19,6 @@ public class TrackDetails
         this.moodAfter = moodBefore;
         if(!(spotifyStringURI.equals("null"))){
             this.spotifyURI = new ImageUri(spotifyStringURI);
-            Log.d("URI"," \t->\t" + this.spotifyURI.raw);
         }else
             this.spotifyURI = null;
     }
