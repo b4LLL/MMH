@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ public class NavBarMain extends AppCompatActivity
         //bindService(intent, serviceConnection, BIND_AUTO_CREATE);
     }
 
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -42,8 +44,7 @@ public class NavBarMain extends AppCompatActivity
             mService = binder.getService();
             mBound = true;
             Log.d("Service"," mService = " + mService);
-            loadFragment(new ProgressFragment());
-            nav.setSelectedItemId(R.id.nav_home);
+
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -52,6 +53,11 @@ public class NavBarMain extends AppCompatActivity
         }
     };
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadFragment(new HomeFragment());
+    }
     private boolean loadFragment(Fragment fragment)
     {
         if(Global.isLogged){
@@ -59,6 +65,7 @@ public class NavBarMain extends AppCompatActivity
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.main_container, fragment, fragID)
+                        .attach(fragment)
                         .commit();
                 if(fragment.getClass() == HomeFragment.class){  //bind service to the homefragment
                     ((HomeFragment) fragment).setService(mService);
@@ -68,6 +75,7 @@ public class NavBarMain extends AppCompatActivity
         }
         return false;
     }
+
 
     @Override
     public void onBackPressed() {

@@ -38,6 +38,7 @@ public class HomeFragment extends Fragment implements AsyncInterface
     public void processedTrackList(List<TrackDetails> listItems) {
         adapter = new RecyclerViewAdapter(listItems, context, mService, true);
         recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Nullable

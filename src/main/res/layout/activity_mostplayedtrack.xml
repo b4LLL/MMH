@@ -116,7 +116,8 @@
                 android:layout_marginBottom="23dp"
                 android:contentDescription="Play!"
                 android:scaleType="centerInside"
-                app:srcCompat="@android:drawable/ic_media_play" />
+                android:src="@android:drawable/ic_media_play"
+                />
 
             <TextView
                 android:id="@+id/moodBeforeEmote"

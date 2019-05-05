@@ -75,6 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.moodAfterEmote.setText(track.getMoodAfterEmote());
         if(mBound && Global.isRunning && (track.getStringURI() != null)){
             Global.mSpotifyAppRemote.getImagesApi().getImage(track.getStringURI()).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+
                 @Override
                 public void onResult(Bitmap bitmap) {
                     Drawable d = new BitmapDrawable(context.getResources(), bitmap);
