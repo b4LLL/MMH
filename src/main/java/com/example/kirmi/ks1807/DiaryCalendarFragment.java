@@ -52,12 +52,12 @@ public class DiaryCalendarFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         dateToday = new Date();
         cal = Calendar.getInstance();
         cal.setTime(dateToday);
         dateData = new DateData(currentYear = cal.get(Calendar.YEAR),currentMonth = cal.get(Calendar.MONTH) + 1,currentDay = cal.get(Calendar.DAY_OF_MONTH));
         getCalendar(Global.UserID);
-        super.onCreate(savedInstanceState);
     }
 
     @Override

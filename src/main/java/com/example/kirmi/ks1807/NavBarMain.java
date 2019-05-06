@@ -1,8 +1,10 @@
 package com.example.kirmi.ks1807;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -34,6 +36,13 @@ public class NavBarMain extends AppCompatActivity
         getApplicationContext().bindService(new Intent(getApplication().getApplicationContext(), BackgroundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
         //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
         //bindService(intent, serviceConnection, BIND_AUTO_CREATE);
+        BroadcastReceiver connectionReciever = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadFragment(new HomeFragment());
+            }
+        };
+        registerReceiver(connectionReciever, new IntentFilter("spotifyConnected"));
     }
 
 
@@ -44,7 +53,6 @@ public class NavBarMain extends AppCompatActivity
             mService = binder.getService();
             mBound = true;
             Log.d("Service"," mService = " + mService);
-
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -56,9 +64,8 @@ public class NavBarMain extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        loadFragment(new HomeFragment());
     }
-    private boolean loadFragment(Fragment fragment)
+    boolean loadFragment(Fragment fragment)
     {
         if(Global.isLogged){
             if(fragment != null){

@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }
+
         setContentView(R.layout.activity_main);
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void button_Register(View view){
-        Intent intent = new Intent(MainActivity.this, Register.class);
+        Intent intent = new Intent(this, Register.class);
         startActivity(intent);
     }
 

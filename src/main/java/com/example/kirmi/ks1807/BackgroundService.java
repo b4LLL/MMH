@@ -64,7 +64,6 @@ public class BackgroundService extends Service{
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     ConnectionParams connectionParams;
-
     Queue<QueueItem> trackQueue = new LinkedList<>();
     static LinkedBlockingQueue<Dialog> dialogsToShow = new LinkedBlockingQueue<>(3);
 
@@ -188,7 +187,7 @@ public class BackgroundService extends Service{
         }else {
             dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_PHONE);
         }
-        //dialog.show();
+        dialog.show();
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -382,24 +381,7 @@ public class BackgroundService extends Service{
     public void onCreate() {
 
         if(Global.isLogged){
-            new Thread(){
-                public void run() {
-                    /*take from the queue*/
-                    try{
-                        while(true){
-                            Message msg = new Message();
-                            Bundle bundle = new Bundle();
-                            //Log.d("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
-                            bundle.putInt("key",dialogsToShow.size());
-                            msg.setData(bundle);
-                            messageHandler.sendMessage(msg);
-                            Thread.sleep(500);
-                        }
-                    }catch  (InterruptedException e){
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }.start();
+
             client = retrofit.create(RestInterface.Ks1807Client.class);
             isRunning = true;
             t = this;
@@ -444,6 +426,24 @@ public class BackgroundService extends Service{
             };
             registerReceiver(broadcastReceiver, new IntentFilter("playerStateChange"));
             this.loadMoodArray();
+            new Thread(){
+                public void run() {
+                    /*take from the queue*/
+                    try{
+                        while(true){
+                            Message msg = new Message();
+                            Bundle bundle = new Bundle();
+                            //Log.d("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
+                            bundle.putInt("key",dialogsToShow.size());
+                            msg.setData(bundle);
+                            messageHandler.sendMessage(msg);
+                            Thread.sleep(500);
+                        }
+                    }catch  (InterruptedException e){
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }.start();
         }
     }
 
@@ -478,6 +478,7 @@ public class BackgroundService extends Service{
                 Global.mSpotifyAppRemote = spotifyAppRemote;
                 Global.isRunning = true;
                 Log.d("BackgroundService", "Established connection with Spotify remote.");
+                sendBroadcast(new Intent("spotifyConnected"));
             }
             @Override
             public void onFailure(Throwable error) {

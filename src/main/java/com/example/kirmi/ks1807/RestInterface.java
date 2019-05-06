@@ -1,8 +1,5 @@
 package com.example.kirmi.ks1807;
 
-import com.spotify.protocol.types.ImageUri;
-import com.spotify.protocol.types.Uri;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;

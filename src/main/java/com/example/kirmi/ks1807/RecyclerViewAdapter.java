@@ -64,7 +64,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //this sets up each ViewHolder in the HomeFragment.RecyclerView screen
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        final TrackDetails track = Tracks.get(position);
+        TrackDetails track = Tracks.get(position);
         holder.tracktitle.setText(track.getTitle());
         holder.artist.setText(track.getArtist());
         holder.album.setText(track.getAlbum());
