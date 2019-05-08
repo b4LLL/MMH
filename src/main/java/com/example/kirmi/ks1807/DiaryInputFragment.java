@@ -67,7 +67,7 @@ public class DiaryInputFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("onFailure", " -> getDiaryEntry t= " + t);
+                Log.i("onFailure", " -> getDiaryEntry t= " + t);
             }
         });
     }
@@ -81,21 +81,21 @@ public class DiaryInputFragment extends Fragment {
         response.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("CheckDiaryDate", " " + response.body() + "\n" + response.code());
+                Log.i("CheckDiaryDate", " " + response.body() + "\n" + response.code());
                 if (response.code() != 204) {
-                    Log.d("CheckDiaryDate", " " + response.body());
+                    Log.i("CheckDiaryDate", " " + response.body());
                     currentDiaryID = response.body();
                     getDiaryEntry(currentDiaryID);
                     submitInfo.setText(update);
                 } else {
-                    Log.d("CheckDiaryDate ", "" + response.body() + "\nNo Diary Entry Found");
+                    Log.i("CheckDiaryDate ", "" + response.body() + "\nNo Diary Entry Found");
                     submitInfo.setText(submit);
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("onFailure", " -> CheckDiaryDate t= " + t + " response: " + response.toString());
+                Log.i("onFailure", " -> CheckDiaryDate t= " + t + " response: " + response.toString());
             }
         });
     }
@@ -204,14 +204,14 @@ public class DiaryInputFragment extends Fragment {
             response.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    Log.d("RETRO", " " + response.raw());
+                    Log.i("RETRO", " " + response.raw());
                     if(response.code() == 404)
-                        Log.d("404", " " + response.body());
+                        Log.i("404", " " + response.body());
                     else{
                         if(response.body().equals("-1"))
-                            Log.d("response.code()", " " + response.body() + "\nresponse.code() " + response.code());
+                            Log.i("response.code()", " " + response.body() + "\nresponse.code() " + response.code());
                         else{
-                            Log.d("Successful response"," " + response.body());
+                            Log.i("Successful response"," " + response.body());
                             updateEntry = true;
                             submitInfo.setText(update);
                             Toast.makeText(getContext(), "Answer submitted", Toast.LENGTH_LONG).show();
@@ -221,7 +221,7 @@ public class DiaryInputFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("INSERT FAILURE"," t= " + t + " response: " + response.toString());
+                    Log.i("INSERT FAILURE"," t= " + t + " response: " + response.toString());
                 }
             });
         } else { //if it is only updating
@@ -229,12 +229,12 @@ public class DiaryInputFragment extends Fragment {
             response.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
-                    Log.d("Response", " " + response.body() + "\tcode " + response.code() + "\n" + currentDiaryID);
+                    Log.i("Response", " " + response.body() + "\tcode " + response.code() + "\n" + currentDiaryID);
                     Toast.makeText(getContext(), "Answers updated", Toast.LENGTH_LONG).show();
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("UPDATE FAILURE"," t= " + t + " response: " + response.request().body());
+                    Log.i("UPDATE FAILURE"," t= " + t + " response: " + response.request().body());
                 }
             });
         }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -33,7 +34,8 @@ public class NavBarMain extends AppCompatActivity
         nav = findViewById(R.id.bottom_nav);
         nav.setOnNavigationItemSelectedListener(this);
         //Intent intent = new Intent(this, BackgroundService.class);
-        getApplicationContext().bindService(new Intent(getApplication().getApplicationContext(), BackgroundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
+
+        //getApplicationContext().bindService(new Intent(getApplication().getApplicationContext(), BackgroundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
         //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
         //bindService(intent, serviceConnection, BIND_AUTO_CREATE);
         BroadcastReceiver connectionReciever = new BroadcastReceiver() {
@@ -52,7 +54,7 @@ public class NavBarMain extends AppCompatActivity
             BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            Log.d("Service"," mService = " + mService);
+            Log.i("Service"," mService = " + mService);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -61,10 +63,6 @@ public class NavBarMain extends AppCompatActivity
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
     boolean loadFragment(Fragment fragment)
     {
         if(Global.isLogged){
@@ -83,11 +81,10 @@ public class NavBarMain extends AppCompatActivity
         return false;
     }
 
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
-        Log.d("OBP >>> "," isLogged: " + Global.isLogged + " isInstalled: " + Global.isRunning);
+        Log.i("OBP >>> "," isLogged: " + Global.isLogged + " isInstalled: " + Global.isRunning);
     }
 
     @Override

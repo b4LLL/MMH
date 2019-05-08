@@ -99,7 +99,7 @@ public class AccountSettings extends Fragment
                                 Global.UserID = "";
                                 if(BackgroundService.isRunning) //confirm this
                                 {
-                                    new BackgroundServiceStarter().onEnd(getContext(), new Intent());
+                                    //new BackgroundServiceStarter().onEnd(getContext(), new Intent());
                                 }
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
@@ -157,7 +157,7 @@ public class AccountSettings extends Fragment
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                 if(response.code() == 404)
                 {
@@ -190,7 +190,7 @@ public class AccountSettings extends Fragment
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                 if(response.code() == 404)
                 {

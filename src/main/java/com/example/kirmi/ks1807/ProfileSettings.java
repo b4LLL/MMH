@@ -115,7 +115,7 @@ public class ProfileSettings extends Fragment
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                 if(response.code() == 404)
                 {
@@ -162,7 +162,7 @@ public class ProfileSettings extends Fragment
                         setProfileBackFromEdit();
                         break;
                     case 1:
-                        Log.d("onItemSelected","\tposition\t" + position + "\tid\t" + id + "parent.getSelectedItem()\t" + parent.getSelectedItem());
+                        Log.i("onItemSelected","\tposition\t" + position + "\tid\t" + id + "parent.getSelectedItem()\t" + parent.getSelectedItem());
                         //options.setVisibility(View.VISIBLE);
                         userdetails.setVisibility(View.VISIBLE);
                         updatepass.setVisibility(View.GONE);
@@ -234,7 +234,7 @@ public class ProfileSettings extends Fragment
                                         @Override
                                         public void onResponse(Call<String> call, Response<String> response)
                                         {
-                                            Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                                            Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                                             if(response.code() == 404)
                                             {
@@ -272,7 +272,7 @@ public class ProfileSettings extends Fragment
                         break;
                         //The following is run if the change password menu item is selected.
                     case 2:
-                        Log.d("onItemSelected","\tposition\t" + position + "\tid\t" + id + "parent.getSelectedItem()\t" + parent.getSelectedItem());
+                        Log.i("onItemSelected","\tposition\t" + position + "\tid\t" + id + "parent.getSelectedItem()\t" + parent.getSelectedItem());
                         userdetails.setVisibility(View.GONE);
                         updatepass.setVisibility(View.VISIBLE);
                         changePassword.setOnClickListener(new View.OnClickListener(){
@@ -290,7 +290,7 @@ public class ProfileSettings extends Fragment
                         });
                         break;
                     default:
-                        Log.d("Error","HELP");
+                        Log.i("Error","HELP");
                 }
             }
 
@@ -580,7 +580,7 @@ public class ProfileSettings extends Fragment
                 @Override
                 public void onResponse(Call<String> call, Response<String> response)
                 {
-                    Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                    Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                     if(response.code() == 404)
                     {
@@ -766,7 +766,7 @@ public class ProfileSettings extends Fragment
                 @Override
                 public void onResponse(Call<String> call, Response<String> response)
                 {
-                    Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                    Log.i("retrofitclick", "SUCCESS: " + response.raw());
                     if(response.body().equals("Incorrect UserID or Password. Query not executed."))
                         Toast.makeText(getActivity(), "Failed to update the server", Toast.LENGTH_SHORT).show();
                     else
@@ -817,7 +817,7 @@ public class ProfileSettings extends Fragment
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                 if(response.code() == 404)
                 {

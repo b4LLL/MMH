@@ -106,7 +106,7 @@ public class DiaryCalendarFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("getCalendar Called","\terror\t" + t.toString());
+                Log.i("getCalendar Called","\terror\t" + t.toString());
             }
         });
     }
@@ -130,7 +130,7 @@ public class DiaryCalendarFragment extends Fragment {
     void searchMarkedDates(DateData date){
         for (ReturnedDiaryEntry x : returnedDiaryList) {
             if(date.getDay() == x.getDay()) {
-                Log.d("FOUND", "\nmonth\t" + x.getMonth() + "\ndate\t" + x.getDay() + "\ne1\t" + x.getEntryOne());
+                Log.i("FOUND", "\nmonth\t" + x.getMonth() + "\ndate\t" + x.getDay() + "\ne1\t" + x.getEntryOne());
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = inflater.inflate(R.layout.diary_recollection,null);
                 PopupWindow popupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT,true);

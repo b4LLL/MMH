@@ -247,7 +247,7 @@ public class Register extends AppCompatActivity
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
                 if(response.body().equals("Incorrect UserID or Password. Query not executed."))
                     Toast.makeText(context, "Failed to get details from server",
                             Toast.LENGTH_SHORT).show();
@@ -597,7 +597,7 @@ public class Register extends AppCompatActivity
                 @Override
                 public void onResponse(Call<String> call, Response<String> response)
                 {
-                    Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                    Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                     if(response.code() == 404)
                     {
@@ -651,7 +651,7 @@ public class Register extends AppCompatActivity
                 @Override
                 public void onResponse(Call<String> call, Response<String> response)
                 {
-                    Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                    Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                     if(response.code() == 404)
                     {
@@ -717,7 +717,7 @@ public class Register extends AppCompatActivity
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                 if(response.code() == 404)
                 {

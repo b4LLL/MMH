@@ -20,7 +20,7 @@
         <!-- The app's background service -->
         <service
             android:name=".BackgroundService"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.myapp.spotifyService" />
             </intent-filter>
@@ -47,12 +47,6 @@
         </activity>
 
         <!-- Activity which starts the app's background service -->
-        <receiver android:name=".BackgroundServiceStarter">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="com.spotify.music.active" />
-            </intent-filter>
-        </receiver>
 
         <!-- The app's starting activity -->
         <activity

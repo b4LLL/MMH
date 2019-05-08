@@ -3,6 +3,8 @@ package com.example.kirmi.ks1807;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,9 +32,23 @@ public class HomeFragment extends Fragment implements AsyncInterface
     private List<TrackDetails> listItems;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
-    Context context = this.getContext();
+    Context context;
     public BackgroundService mService;
     TrackAsync asyncTask = new TrackAsync();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = this.getContext();
+        Intent i = new Intent(context, BackgroundService.class);
+        if(Build.VERSION.SDK_INT >= 26){
+            context.startForegroundService(i);
+            Log.i("startService","\tForegroundService\n");
+        }else{
+            context.startService(i);
+            Log.i("startService","\tBackgroundService\n");
+        }
+    }
 
     @Override
     public void processedTrackList(List<TrackDetails> listItems) {
@@ -47,10 +63,8 @@ public class HomeFragment extends Fragment implements AsyncInterface
     {
 
         View view = inflater.inflate(R.layout.activity_homefrag, null);     //cant do much about warning since no Parent... unless set to mainAct ?
-        Log.d("HomeFrag","\tonCreateView\t!");
+        Log.i("HomeFrag","\tonCreateView\t!");
         //run service
-        if(!BackgroundService.isRunning)
-            new BackgroundServiceStarter();//.onReceive(context, new Intent());
         UserID = Global.UserID;
         password = Global.UserPassword;
         client = retrofit.create(RestInterface.Ks1807Client.class);
@@ -79,7 +93,7 @@ public class HomeFragment extends Fragment implements AsyncInterface
         {
             @Override
             public void onResponse(Call<String> call, Response<String> response){
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
                 if(response.code() == 404){
                     Toast.makeText(getContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                 }else{
@@ -99,7 +113,7 @@ public class HomeFragment extends Fragment implements AsyncInterface
             }
             @Override
             public void onFailure(Call<String> call, Throwable t){
-                Log.d("Throwable ","" + t);
+                Log.i("Throwable ","" + t);
                 fail_LoginNetwork();
             }
         });
@@ -114,7 +128,7 @@ public class HomeFragment extends Fragment implements AsyncInterface
 
     @Override
     public void onResume() {
-        Log.d("HomeFrag","\tresumed\t!");
+        Log.i("HomeFrag","\tresumed\t!");
         super.onResume();
     }
 

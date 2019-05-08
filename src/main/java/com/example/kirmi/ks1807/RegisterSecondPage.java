@@ -95,7 +95,7 @@ public class RegisterSecondPage extends AppCompatActivity
             @Override
             public void onResponse(Call<String> call, Response<String> response)
             {
-                Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                 if(response.code() == 404)
                 {
@@ -185,7 +185,7 @@ public class RegisterSecondPage extends AppCompatActivity
              @Override
              public void onResponse(Call<String> call, Response<String> response)
              {
-                 Log.d("retrofitclick", "SUCCESS: " + response.raw());
+                 Log.i("retrofitclick", "SUCCESS: " + response.raw());
 
                  if(response.code() == 404)
                  {

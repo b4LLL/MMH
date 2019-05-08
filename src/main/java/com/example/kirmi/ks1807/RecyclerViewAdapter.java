@@ -89,10 +89,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 public void onClick(View v) {
                     if(mBound && Global.isRunning){
                         mService.getTrack(track.spotifyTrackID);
-                        Log.d("onClick","\nmBound:\t" + mBound + "\tGlobal.isRunning:\t" + Global.isRunning);
+                        Log.i("onClick","\nmBound:\t" + mBound + "\tGlobal.isRunning:\t" + Global.isRunning);
                     }
                     else
-                        Log.d("onClick","\tUnbound\nmBound:\t" + mBound + "\tGlobal.isRunning:\t" + Global.isRunning);
+                        Log.i("onClick","\tUnbound\nmBound:\t" + mBound + "\tGlobal.isRunning:\t" + Global.isRunning);
                 }
             });
         }

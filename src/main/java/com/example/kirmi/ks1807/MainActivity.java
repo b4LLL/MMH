@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
-        Log.d("onCreate", "Called");
+        Log.i("onCreate", "Called");
         client = retrofit.create(RestInterface.Ks1807Client.class); // an implementation of the interface
         Password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onResponse(Call<String> call, Response<String> response)
                 {
-                    Log.d("retrofit", "SUCCESS: " + response);
+                    Log.i("retrofit", "SUCCESS: " + response);
                     if(response.code() == 404)  //is the code actually an integer and not a string?
                         Toast.makeText(getApplicationContext(),"404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
                     else{
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onFailure(Call<String> call, Throwable t)
                 {
-                    Log.d("Error is ", "t = " + t);
+                    Log.i("Error is ", "t = " + t);
                     showAlert(4);
                 }
             });
