@@ -15,11 +15,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="android.support.multidex.MultiDexApplication" >
 
         <!-- The app's background service -->
         <service
             android:name=".BackgroundService"
+            android:stopWithTask="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.myapp.spotifyService" />
@@ -45,8 +47,6 @@
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
-
-        <!-- Activity which starts the app's background service -->
 
         <!-- The app's starting activity -->
         <activity

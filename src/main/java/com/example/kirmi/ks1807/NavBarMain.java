@@ -25,6 +25,8 @@ public class NavBarMain extends AppCompatActivity
     BackgroundService mService;
     String fragID;
     BottomNavigationView nav;
+    public BroadcastReceiver spotifyListener;
+    Integer selectedItem;
     @Override
     protected void onCreate(Bundle savedInstanceState)  //when NavBarMain loads: it loads the new HomeFragment
     {
@@ -34,17 +36,27 @@ public class NavBarMain extends AppCompatActivity
         nav = findViewById(R.id.bottom_nav);
         nav.setOnNavigationItemSelectedListener(this);
         //Intent intent = new Intent(this, BackgroundService.class);
-
-        //getApplicationContext().bindService(new Intent(getApplication().getApplicationContext(), BackgroundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
+        Intent i = new Intent(getApplicationContext(), BackgroundService.class);
+        if((mService != null) && mService.isRunning){
+            if(Build.VERSION.SDK_INT >= 26){
+                getApplicationContext().startForegroundService(i);
+                Log.i("startService","\tForegroundService\n");
+            }else{
+                getApplicationContext().startService(i);
+                Log.i("startService","\tBackgroundService\n");
+            }
+        }
+        Intent intent = new Intent(getApplication().getApplicationContext(), BackgroundService.class);
+        getApplicationContext().bindService(intent ,serviceConnection, Context.BIND_AUTO_CREATE);
         //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
         //bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-        BroadcastReceiver connectionReciever = new BroadcastReceiver() {
+        this.spotifyListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 loadFragment(new HomeFragment());
             }
         };
-        registerReceiver(connectionReciever, new IntentFilter("spotifyConnected"));
+        registerReceiver(this.spotifyListener, new IntentFilter("spotifyConnected"));
     }
 
 
@@ -72,13 +84,14 @@ public class NavBarMain extends AppCompatActivity
                         .replace(R.id.main_container, fragment, fragID)
                         .attach(fragment)
                         .commit();
-                if(fragment.getClass() == HomeFragment.class){  //bind service to the homefragment
-                    ((HomeFragment) fragment).setService(mService);
-                }
                 return true;
             }
         }
         return false;
+    }
+
+    public BackgroundService getService(){
+        return mService;
     }
 
     @Override
@@ -89,28 +102,33 @@ public class NavBarMain extends AppCompatActivity
 
     @Override
     public void onStop(){
-        unbindService(serviceConnection);
         super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(Global.isRunning)
+            unregisterReceiver(this.spotifyListener);
     }
 
     @Override
     public void onResume(){
         super.onResume();
         if(!Global.isLogged){
+            unbindService(serviceConnection);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-            unbindService(serviceConnection);
             this.finish();
-        } else {
-            Intent intent = new Intent(this, BackgroundService.class);
-            bindService(intent, serviceConnection, BIND_AUTO_CREATE);
-        }
+        }else if (Global.isRunning)
+            registerReceiver(this.spotifyListener, new IntentFilter("spotifyConnected"));
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
         Fragment fragment = null;
+        selectedItem = item.getItemId();
         switch(item.getItemId())
         {
             case R.id.nav_home:

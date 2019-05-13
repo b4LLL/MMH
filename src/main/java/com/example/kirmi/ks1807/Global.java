@@ -24,6 +24,8 @@ public class Global
 
     static Boolean isRunning = false;
 
+    static Boolean spotifyConnected = false;
+
     static Boolean bgsReceiverRunning = false;
 
     static String[] moodList;

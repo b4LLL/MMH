@@ -97,9 +97,11 @@ public class AccountSettings extends Fragment
                             public void onClick(DialogInterface dialog,int id)
                             {
                                 Global.UserID = "";
-                                if(BackgroundService.isRunning) //confirm this
+                                BackgroundService mService = ((NavBarMain)getActivity()).getService();
+
+                                if(mService.isRunning) //confirm this
                                 {
-                                    //new BackgroundServiceStarter().onEnd(getContext(), new Intent());
+                                    mService.onDestroy();
                                 }
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.

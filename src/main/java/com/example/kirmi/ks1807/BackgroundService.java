@@ -60,7 +60,7 @@ public class BackgroundService extends Service{
     public static final String CLIENT_ID = "9b0634404b05419397a2541e4a3080fe";
     public static final String REDIRECT_URI = "com.example.kirmi.ks1807://callback";
     public SpotifyAppRemote mSpotifyAppRemote = null;
-    public static boolean isRunning = false;                                    //used by activity to check if it should start the service
+    public boolean isRunning = false;                                    //used by activity to check if it should start the service
     String TheMood;
     String BeforeMood;
     public String[] moodEmoticonList;
@@ -144,7 +144,7 @@ public class BackgroundService extends Service{
         } else {
             playerApi.getPlayerState()
                 .setResultCallback(playerState -> {
-                    Log.i("BSS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
+                    Log.i("BS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
                     Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
                     response.enqueue(new Callback<String>() {
                         @Override
@@ -289,7 +289,6 @@ public class BackgroundService extends Service{
         return dialog;
     }
 
-
     String[][] getMoods(String MoodList) {
         //Begin code to get the scores from the Mood List.
         //Split the incoming string by comma then get its size.
@@ -413,9 +412,16 @@ public class BackgroundService extends Service{
         if(dialogsToShow.size() == 1){
             dialogsToShow.peek().show();
         }
-        Toast.makeText(this, "Service Killed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Service Killed", Toast.LENGTH_LONG).show();
         if (mSpotifyAppRemote != null)
             SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+        stopSelf();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopSelf();
     }
 
     public void getTrack(String trackID) {

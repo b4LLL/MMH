@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -31,30 +33,38 @@ public class MainActivity extends AppCompatActivity
     String UserID = "";
     public static int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 5469;
 
-    // write a function to check if the background service is running
-    // also check if Spotify is already installed -> the function should be called on the "Login" button click
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE){
+            Log.i("resultCode","\t"+resultCode);
+            finishActivity(ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
+            //startActivity(intent);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //checking here if the App has permission to write over other apps
-            if (!Settings.canDrawOverlays(getApplicationContext())) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-            }
-        }*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getPackageName()));
+                Log.i("MAIN","\tSTARTING REQUEST");
                 startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+            }else{
+                Toast.makeText(this,"Please allow overlay permission in App Settings",Toast.LENGTH_LONG).show();
+                finish();
             }
-        }
 
+        }
         setContentView(R.layout.activity_main);
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);
-        Log.i("onCreate", "Called");
+
         client = retrofit.create(RestInterface.Ks1807Client.class); // an implementation of the interface
         Password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -194,4 +204,9 @@ public class MainActivity extends AppCompatActivity
         alertDialog.show();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //finish();
+    }
 }

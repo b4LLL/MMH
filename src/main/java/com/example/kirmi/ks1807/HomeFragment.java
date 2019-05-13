@@ -3,8 +3,6 @@ package com.example.kirmi.ks1807;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,7 +27,6 @@ public class HomeFragment extends Fragment implements AsyncInterface
     String password = "";
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
-    private List<TrackDetails> listItems;
     Retrofit retrofit = RestInterface.getClient();
     RestInterface.Ks1807Client client;
     Context context;
@@ -39,22 +36,20 @@ public class HomeFragment extends Fragment implements AsyncInterface
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this.getContext();
-        Intent i = new Intent(context, BackgroundService.class);
-        if(Build.VERSION.SDK_INT >= 26){
-            context.startForegroundService(i);
-            Log.i("startService","\tForegroundService\n");
-        }else{
-            context.startService(i);
-            Log.i("startService","\tBackgroundService\n");
-        }
+        mService = ((NavBarMain)getActivity()).getService();
     }
 
     @Override
     public void processedTrackList(List<TrackDetails> listItems) {
-        adapter = new RecyclerViewAdapter(listItems, context, mService, true);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        mService = ((NavBarMain)getActivity()).getService();
+        if(this.mService!=null){
+            adapter = new RecyclerViewAdapter(listItems, context, mService, true);
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }else {
+            Log.i("delegate.PTL", "\tmSERVICE NULL");
+            Toast.makeText(getContext(), "\"ERROR: delegate.PTL: mSERVICE NULL", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Nullable
@@ -123,6 +118,7 @@ public class HomeFragment extends Fragment implements AsyncInterface
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.context));
         recyclerView.setAdapter(adapter);
+        setRetainInstance(true);
         return view;
     }
 
@@ -132,8 +128,14 @@ public class HomeFragment extends Fragment implements AsyncInterface
         super.onResume();
     }
 
-    public void setService(BackgroundService service){
-        this.mService = service;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
     void fail_LoginNetwork(){
