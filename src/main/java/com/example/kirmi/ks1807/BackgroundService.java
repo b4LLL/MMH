@@ -27,6 +27,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.text.format.DateUtils;
+
+import androidx.annotation.NonNull;
+
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.PlayerApi;
@@ -40,6 +43,8 @@ import com.spotify.android.appremote.api.error.SpotifyConnectionTerminatedExcept
 import com.spotify.android.appremote.api.error.SpotifyDisconnectedException;
 import com.spotify.android.appremote.api.error.UnsupportedFeatureVersionException;
 import com.spotify.android.appremote.api.error.UserNotAuthorizedException;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.client.ErrorCallback;
 import com.spotify.protocol.types.PlayerState;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -140,28 +145,37 @@ public class BackgroundService extends Service{
             Log.i("Something went wrong", "playerApi.getPlayerState() == null");
         } else {
             playerApi.getPlayerState()
-                .setResultCallback(playerState -> {
-                    Log.i("BS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
-                    Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
-                    response.enqueue(new Callback<String>() {
-                        @Override
-                        public void onResponse(Call<String> call, Response<String> response) {
-                            if (response.code() == 404) {
-                                Toast.makeText(getApplicationContext(), "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
-                            } else if (response.body().equals("Yes")) {
-                                processQueue(playerState);
-                            }
+                    .setResultCallback(new CallResult.ResultCallback<PlayerState>() {
+                    @Override
+                    public void onResult(PlayerState playerState) {
+                        if(playerState.track.name == null) {    //error with spotify API
+                            Log.e("ERROR", "onResult: TRACK IS NULL. URI\t" + playerState.track.uri);
+                        }else
+                            Log.i("BS\t", " signal received" + "\nTrack.name\t\t" + playerState.track.name + "\nTrack.Artists\t" + playerState.track.artist.name);
+                            Call<String> response = client.CheckMoodEntry(Global.UserID, Global.UserPassword);
+                            response.enqueue(new Callback<String>() {
+                                @Override
+                                public void onResponse(Call<String> call, Response<String> response) {
+                                    if (response.code() == 404) {
+                                        Toast.makeText(getApplicationContext(), "404 Error. Server did not return a response.", Toast.LENGTH_SHORT).show();
+                                    } else if (response.body().equals("Yes")) {
+                                        processQueue(playerState);
+                                    }
+                                }
+                                @Override
+                                public void onFailure(Call<String> call, Throwable t) {
+                                    networkLoginFail(t);
+                                    Log.i("Error", " " + t);
+                                }
+                            });
                         }
+                     })
+                    .setErrorCallback(new ErrorCallback() {
                         @Override
-                        public void onFailure(Call<String> call, Throwable t) {
-                            networkLoginFail(t);
-                            Log.i("Error", " " + t);
+                        public void onError(Throwable throwable) {
+                            Log.i("ERROR", "onError: \t" + throwable);
                         }
                     });
-                })
-                .setErrorCallback(throwable -> {
-                    Log.i("Error", " throwable from pollPlayerState\t" + throwable);
-                });
         }
     }
 
@@ -362,13 +376,7 @@ public class BackgroundService extends Service{
                     Log.i("TAG","\tAction:\t"+action);
                     if(Global.mSpotifyAppRemote != null){
                         PlayerApi playerApi = Global.mSpotifyAppRemote.getPlayerApi();
-                        if(playerApi.getPlayerState() != null){
-                            try{
-                                pollPlayerState(playerApi);
-                            }catch(Exception e){
-                                Log.i("Exception " , "\t" + e.getMessage());
-                            }
-                        }
+                        pollPlayerState(playerApi);
                     }
                 }
             };
