@@ -5,9 +5,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
@@ -19,7 +17,6 @@ import android.os.IBinder;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -387,11 +384,11 @@ public class BackgroundService extends Service{
                         while(true){
                             Message msg = new Message();
                             Bundle bundle = new Bundle();
-                            //Log.i("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
+                            Log.i("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
                             bundle.putInt("key",dialogsToShow.size());
                             msg.setData(bundle);
                             messageHandler.sendMessage(msg);
-                            Thread.sleep(500);
+                            Thread.sleep(1000);
                         }
                     }catch  (InterruptedException e){
                         Thread.currentThread().interrupt();

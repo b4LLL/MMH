@@ -2,18 +2,15 @@ package com.example.kirmi.ks1807;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import okhttp3.Response;
-
 import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
-import static com.spotify.sdk.android.authentication.LoginActivity.RESPONSE_KEY;
 
 public class OtherPlatforms extends AppCompatActivity
 {

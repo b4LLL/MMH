@@ -1,22 +1,18 @@
 package com.example.kirmi.ks1807;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
-import android.support.text.emoji.TypefaceEmojiSpan;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringDef;
+import androidx.emoji.text.TypefaceEmojiSpan;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -25,7 +21,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.zip.Inflater;
 
 import retrofit2.Call;
 import retrofit2.Callback;
