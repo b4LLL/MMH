@@ -1,6 +1,8 @@
 package com.example.kirmi.ks1807;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -15,6 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.lang.annotation.Target;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,27 +45,46 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE){
             Log.i("resultCode","\t"+resultCode);
             finishActivity(ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
-            //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
-            //startActivity(intent);
+        }
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
+        startActivity(intent);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    void checkOverlayM() {
+        if (!Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            Log.i("MAIN", "\tVERSION_CODES.M STARTING REQUEST");
+            startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    void checkOverlayO(){
+        AppOpsManager appOpsMgr = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOpsMgr.checkOpNoThrow("android:system_alert_window", android.os.Process.myUid(), getPackageName());
+        if (mode == 0){
+            Log.i("CHECK", "OK android:system_alert_window: mode=" + mode);
+        }else if (mode == 3){
+            Log.i("CHECK", "FAIL android:system_alert_window: mode=" + mode);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            Log.i("MAIN", "\tVERSION_CODES.O STARTING REQUEST");
+            startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                Log.i("MAIN","\tSTARTING REQUEST");
-                startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE);
-            }else{
-                Toast.makeText(this,"Please allow overlay permission in App Settings",Toast.LENGTH_LONG).show();
-                finish();
-            }
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.M)
+            checkOverlayM();
 
-        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            checkOverlayO();
+
         setContentView(R.layout.activity_main);
         EmailAddress = findViewById(R.id.EditText_UserName);
         Password = findViewById(R.id.EditText_Password);

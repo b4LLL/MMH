@@ -59,7 +59,6 @@ public class NavBarMain extends AppCompatActivity
         registerReceiver(this.spotifyListener, new IntentFilter("spotifyConnected"));
     }
 
-
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
