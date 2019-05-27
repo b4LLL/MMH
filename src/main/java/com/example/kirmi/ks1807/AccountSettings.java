@@ -89,34 +89,31 @@ public class AccountSettings extends Fragment
             {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                 alertDialogBuilder.setTitle("Confirm logout");
-                alertDialogBuilder
-                        .setMessage("Are you sure that you want to logout?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes",new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog,int id)
-                            {
-                                Global.UserID = "";
-                                BackgroundService mService = ((NavBarMain)getActivity()).getService();
+                alertDialogBuilder.setMessage("Are you sure that you want to logout?");
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Global.UserID = "";
+                        //BackgroundService mService = ((NavBarMain) getActivity()).getService();
+                        if (Global.isBGSrunning){ //confirm this
+                            Log.i("ACCOUNT", "\t\tonClick: BGS is Running");
+                            Intent intent = new Intent(getActivity(), BackgroundService.class);
+                            Global.isLogged = false;
+                            getActivity().getApplicationContext().unbindService(((NavBarMain) getActivity()).serviceConnection); // try
+                            getActivity().getApplicationContext().stopService(intent);
+                        }
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
+                        startActivity(intent);
+                        getActivity().finish();
 
-                                if(mService.isRunning) //confirm this
-                                {
-                                    mService.onDestroy();
-                                }
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
-                                Global.isLogged = false;
-
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("No",new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog,int id)
-                            {
-                                dialog.cancel();
-                            }
-                        });
+                    }
+                });
+                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
             }

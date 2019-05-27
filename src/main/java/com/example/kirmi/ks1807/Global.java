@@ -22,6 +22,8 @@ public class Global
 
     static Boolean isLogged = false;
 
+    static Boolean isBGSrunning = false;
+
     static Boolean isRunning = false;
 
     static Boolean spotifyConnected = false;

@@ -21,7 +21,7 @@
         <!-- The app's background service -->
         <service
             android:name=".BackgroundService"
-            android:stopWithTask="true"
+            android:stopWithTask="false"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.myapp.spotifyService" />

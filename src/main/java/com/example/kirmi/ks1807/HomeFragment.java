@@ -112,7 +112,6 @@ public class HomeFragment extends Fragment implements AsyncInterface
                 fail_LoginNetwork();
             }
         });
-
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
