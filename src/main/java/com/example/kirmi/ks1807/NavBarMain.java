@@ -51,10 +51,11 @@ public class NavBarMain extends AppCompatActivity
                 getApplicationContext().startService(i);
                 Log.i("startService", "\tBackgroundService\n");
             }
+            Intent intent = new Intent(getApplication().getApplicationContext(), BackgroundService.class);
+            getApplicationContext().bindService(intent ,serviceConnection, Context.BIND_AUTO_CREATE);
         }
         //bind it once connected
-        Intent intent = new Intent(getApplication().getApplicationContext(), BackgroundService.class);
-        getApplicationContext().bindService(intent ,serviceConnection, Context.BIND_AUTO_CREATE);
+
         //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
         this.spotifyListener = new BroadcastReceiver() {
             @Override
@@ -74,7 +75,6 @@ public class NavBarMain extends AppCompatActivity
             BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
             mService = binder.getService();
             mBound = true;
-            //Log.i("Service"," {Service = " + mService);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -115,7 +115,6 @@ public class NavBarMain extends AppCompatActivity
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
-        Log.i("OBP >>> "," isLogged: " + Global.isLogged + " isInstalled: " + Global.isRunning);
     }
 
     @Override
