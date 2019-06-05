@@ -15,12 +15,14 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
-public class NavBarMain extends AppCompatActivity
+public class NavBarMain extends FragmentActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener
 {
     String UserID = "";
@@ -30,6 +32,22 @@ public class NavBarMain extends AppCompatActivity
     BottomNavigationView nav;
     public BroadcastReceiver spotifyListener;
     Integer selectedItem;
+
+    public ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            Log.i("NBM", "onServiceConnected: \t\t" + mService);
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+            mService = null;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState)  //when NavBarMain loads: it loads the new HomeFragment
     {
@@ -46,52 +64,35 @@ public class NavBarMain extends AppCompatActivity
             if (Build.VERSION.SDK_INT >= 26) {
                 getApplicationContext().startForegroundService(i);
                 Log.i("startService", "\tForegroundService\n");
-//            Global.isBound = true;
             } else {
                 getApplicationContext().startService(i);
                 Log.i("startService", "\tBackgroundService\n");
             }
-            Intent intent = new Intent(getApplication().getApplicationContext(), BackgroundService.class);
-            getApplicationContext().bindService(intent ,serviceConnection, Context.BIND_AUTO_CREATE);
         }
         //bind it once connected
-
+        Intent intent = new Intent(getApplication().getApplicationContext(), BackgroundService.class);
+        getApplicationContext().bindService(intent ,serviceConnection, Context.BIND_AUTO_CREATE);
         //https://stackoverflow.com/questions/16703162/how-to-prevent-bound-service-from-being-destroyed-while-activitys-runtime-chang
         this.spotifyListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                unregisterReceiver(spotifyListener);
-                spotifyListener = null;
                 loadFragment(new HomeFragment());
                 progressBar.setVisibility(View.GONE);
+                unregisterReceiver(spotifyListener);
             }
         };
         registerReceiver(this.spotifyListener, new IntentFilter("spotifyConnected"));
     }
-
-    public ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBound = false;
-            mService = null;
-        }
-    };
 
     boolean loadFragment(Fragment fragment)
     {
         if(Global.isLogged){
             if(fragment != null){
                 getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_container, fragment, fragID)
-                        .attach(fragment)
-                        .commit();
+                    .beginTransaction()
+                    .replace(R.id.main_container, fragment, fragID)
+                    .attach(fragment)
+                    .commit();
                 return true;
             }
         }
@@ -104,7 +105,11 @@ public class NavBarMain extends AppCompatActivity
         Log.i("NBM", "onDestroy: ");
         if(spotifyListener != null){
             Log.i("NBM", "unegisteringListener: ");
-            unregisterReceiver(spotifyListener);
+            try{
+                unregisterReceiver(spotifyListener);
+            }catch (Exception e){
+                Log.i("NBM", "unegisteringListener: " + e.toString());
+            }
         }
     }
 
@@ -120,6 +125,8 @@ public class NavBarMain extends AppCompatActivity
     @Override
     public void onResume(){
         Log.i("NBM","onResume:");
+        if(mService != null)
+            Log.i("MSERVICE", "onResume: \t\t" + mService);
         super.onResume();
         if(!Global.isLogged){
             Intent intent = new Intent(this, MainActivity.class);

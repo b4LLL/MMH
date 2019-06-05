@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.LabelFormatter;
 import com.jjoe64.graphview.LegendRenderer;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -32,57 +35,64 @@ public class ProgressFragment extends Fragment
         GraphView graph = (GraphView)view.findViewById(R.id.graph);
 
         graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(8);
+        graph.getViewport().setMinX(-10);
+        graph.getViewport().setMaxX(0);
 
         graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setMinY(0);
+        graph.getViewport().setMinY(-10);
         graph.getViewport().setMaxY(10);
 
+        graph.getViewport().setScalable(false);
+        graph.getViewport().setScalableY(false);
+
         //Placing the points on the graph at the position with two different lines.
-        series = new LineGraphSeries<>(new DataPoint[]
-                {
-                new DataPoint(0,0),
-                new DataPoint(2,5),
-                new DataPoint(3,1),
-                new DataPoint(5,6),
+        // Mood
+        series = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(-10,4),
+                new DataPoint(-8,-8),
+                new DataPoint(-6,-5),
+                new DataPoint(-4,0),
+                new DataPoint(-2,4),
+                new DataPoint(0,6),
         });
 
-        series2 = new LineGraphSeries<>(new DataPoint[]
-                {
-                new DataPoint(0,2),
-                new DataPoint(2,3),
-                new DataPoint(4,6),
-                new DataPoint(7,7),
+        // #Tracks
+        series2 = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(-10,6),
+                new DataPoint(-8,4),
+                new DataPoint(-6,5),
+                new DataPoint(-4,0),
+                new DataPoint(-2,4),
+                new DataPoint(0,9),
         });
 
         //Adding the both lines on the graph.
-        //graph.addSeries(series);
-        //graph.addSeries(series2);
-        graph.getSecondScale().addSeries(series);
-        graph.getSecondScale().addSeries(series2);
-        graph.getSecondScale().setMinY(-10);
-        graph.getSecondScale().setMaxY(10);
+        graph.addSeries(series);
+        graph.addSeries(series2);
+        //graph.getSecondScale().addSeries(series);
+        //graph.getSecondScale().addSeries(series2);
+        //graph.getSecondScale().setMinY(-10);
+        //graph.getSecondScale().setMaxY(10);
         graph.getGridLabelRenderer().setGridStyle(GridLabelRenderer.GridStyle.BOTH);
         //Styling the line graph to differentiate between the two.
-        series.setColor(Color.WHITE);
-        series.setThickness(2);
-        series.setDrawBackground(true);
-        series.setBackgroundColor(Color.argb(90, 255, 255, 255));
-        series.setDrawDataPoints(true);
-        series.setTitle("Mood");
 
+        //White is Mood
+        series.setColor(Color.WHITE);
+        series.setThickness(3);
+        series.setDrawBackground(false);
+        series.setDrawDataPoints(true);
+        series.setTitle("Average Mood");
+
+        //Blue is No of tracks
         series2.setColor(Color.BLUE);
-        series2.setThickness(2);
-        series2.setDrawBackground(true);
-        series2.setBackgroundColor(Color.argb(90, 73, 130, 203));
+        series2.setThickness(3);
+        series2.setDrawBackground(false);
         series2.setDrawDataPoints(true);
         series2.setTitle("No of Tracks");
 
         //Displaying a legend for the graph.
         graph.getLegendRenderer().setVisible(true);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-
 
         return view;
     }

@@ -1,6 +1,5 @@
 package com.example.kirmi.ks1807;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -69,6 +68,8 @@ public class BackgroundService extends Service{
     Queue<QueueItem> trackQueue = new LinkedList<>();
     static LinkedBlockingQueue<Dialog> dialogsToShow = new LinkedBlockingQueue<>(3);
     public BroadcastReceiver spotifyReceiver;
+    QueueHandler messageHandler = new QueueHandler();
+
     class QueueItem{
         Boolean pre,post;
         PlayerState playerState;
@@ -85,9 +86,7 @@ public class BackgroundService extends Service{
         void setPost(Boolean post){this.post = post;}
         void setPlayerState(PlayerState playerState){this.playerState = playerState;}
     }
-
-    @SuppressLint("HandlerLeak")
-    static Handler messageHandler = new Handler(){
+    private static class QueueHandler extends Handler{
         public void handleMessage(Message message){
             super.handleMessage(message);
             Bundle bundle = message.getData();
@@ -119,13 +118,33 @@ public class BackgroundService extends Service{
                 }
             }
         }
-    };
-
+    }
     class LocalBinder extends Binder {
         BackgroundService getService() {
             return BackgroundService.this;
         }
     }
+
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try{
+                while(Global.isLogged){
+                    Message msg = new Message();
+                    Bundle bundle = new Bundle();
+                    //Log.i("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
+                    bundle.putInt("key",dialogsToShow.size());
+                    msg.setData(bundle);
+                    messageHandler.sendMessage(msg);
+                    Thread.sleep(1000);
+                }
+            }catch  (InterruptedException e){
+                Thread.currentThread().interrupt();
+                Log.e("BGS", "run: " + e);
+
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -146,7 +165,6 @@ public class BackgroundService extends Service{
             startForeground(NOTIFICATION_FOREGROUND_ID, builder.build());
             Log.i("BGS", "onCreate:\t BGS created.");
         }
-        Log.i("BGS", "Global.isLogged");
         client = retrofit.create(RestInterface.Ks1807Client.class);
         isBGSrunning = true;
         Global.isBGSrunning = true;
@@ -156,7 +174,6 @@ public class BackgroundService extends Service{
         Log.i("BGS", "onStartCommand: ");
         t = this;
         Toast.makeText(this, "Background Service Created", Toast.LENGTH_SHORT).show();
-        //Create connection parameters
         connectionParams = new ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI)
                 .showAuthView(true)
@@ -183,30 +200,7 @@ public class BackgroundService extends Service{
         return START_STICKY;
     }
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            try{
-                while(Global.isLogged){
-                    Message msg = new Message();
-                    Bundle bundle = new Bundle();
-                    Log.i("THREAD","\ntrackQueue.size\t" + trackQueue.size() + "\tdialoguesToShow.size()\t"+dialogsToShow.size());
-                    bundle.putInt("key",dialogsToShow.size());
-                    msg.setData(bundle);
-                    messageHandler.sendMessage(msg);
-                    Thread.sleep(1000);
-                }
-            }catch  (InterruptedException e){
-                Thread.currentThread().interrupt();
-            }
-        }
-    };
 
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
     void connectSpotify(ConnectionParams connectionParams){
         SpotifyAppRemote.connect(this, connectionParams, new Connector.ConnectionListener() {
             @Override
@@ -248,9 +242,7 @@ public class BackgroundService extends Service{
     @Override
     public void onDestroy() {
         Log.i("BGS","\tonDestroy: ");
-        /*if(dialogsToShow.size() == 1){
-            dialogsToShow.peek().show();
-        }*/
+        isBGSrunning = false;
         Global.isBGSrunning = false;
         Global.isLogged = false;
         if (mSpotifyAppRemote.isConnected()) {
@@ -268,9 +260,13 @@ public class BackgroundService extends Service{
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         Log.i("BGS", "\tonTaskRemoved: ");
-        this.onDestroy();
+        onDestroy();
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
     public void getTrack(String trackID) {
         Log.i("getTrack", "getTrack: \t"+trackID);
         mSpotifyAppRemote.getPlayerApi().play(trackID);

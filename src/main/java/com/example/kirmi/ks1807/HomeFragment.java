@@ -36,7 +36,6 @@ public class HomeFragment extends Fragment implements AsyncInterface
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mService = ((NavBarMain)getActivity()).getService();
     }
 
     @Override

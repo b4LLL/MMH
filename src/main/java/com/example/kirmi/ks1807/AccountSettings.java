@@ -97,16 +97,33 @@ public class AccountSettings extends Fragment
                         //BackgroundService mService = ((NavBarMain) getActivity()).getService();
                         if (Global.isBGSrunning){ //confirm this
                             Log.i("ACCOUNT", "\t\tonClick: BGS is Running");
-                            Intent intent = new Intent(getActivity(), BackgroundService.class);
+                            Intent intent = new Intent(getContext().getApplicationContext(), BackgroundService.class);
                             Global.isLogged = false;
-                            getActivity().getApplicationContext().unbindService(((NavBarMain) getActivity()).serviceConnection); // try
-                            getActivity().getApplicationContext().stopService(intent);
+                            try{
+                                getActivity().getApplicationContext().unbindService(((NavBarMain) getActivity()).serviceConnection); // try
+                                Log.i("ACCOUNT", "\t\tonClick: Unbinding");
+                            }catch(Exception e){
+                                Log.e("ACCOUNT", "\t\tonClick: " + e.toString());
+                            }
+                            try{
+                                //getActivity().getApplicationContext().stopService(intent);
+                                getActivity().stopService(intent);
+                                Log.i("ACCOUNT", "\t\tonClick: ACTIVITY CONTEXT");
+                            }catch(Exception e){
+                                Log.e("ACCOUNT", "\t\tonClick: ACTIVITY CONTEXT " + e.toString());
+                            }
+                            try{
+                                //getActivity().getApplicationContext().stopService(intent);
+                                getActivity().getApplicationContext().stopService(intent);
+                                Log.i("ACCOUNT", "\t\tonClick: APPLICATION CONTEXT STOPSERVICE");
+                            }catch(Exception e){
+                                Log.e("ACCOUNT", "\t\tonClick: APPLICATION CONTEXT STOPSERVICE" + e.toString());
+                            }
                         }
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);   //create new mainActivity as own new Task and clear the backstack.
                         startActivity(intent);
                         getActivity().finish();
-
                     }
                 });
                 alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {

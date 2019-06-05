@@ -12,7 +12,7 @@ import java.util.List;
 
 public class TrackAsync extends AsyncTask<String, Integer, List<TrackDetails>> {
 
-    AsyncInterface delegate = null;
+    public AsyncInterface delegate = null;
 
     @Override
     protected void onPreExecute() {
