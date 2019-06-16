@@ -15,7 +15,7 @@ class RestInterface{
         //http://137.154.147.62/MMH_API/webresources/
         //120.154.3.238
         //"http://58.173.109.195:8080/MMH_API/webresources/";
-        final String BASE_URL = "http://120.154.3.238:8080/MMH_API/webresources/";     // URL for the API endpoints -> glassfish -->
+        final String BASE_URL = "http://120.154.44.107:8080/MMH_API/webresources/";     // URL for the API endpoints -> glassfish -->
             if (retrofit == null){                                              // simple straight forward instantiation of an object
             Retrofit.Builder builder = new Retrofit.Builder()                   // Retrofit.Builder is a class -> Builder() is the constructor
                 .baseUrl(BASE_URL)                                              // sets the baseUrl (API base URL)
