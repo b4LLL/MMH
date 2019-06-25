@@ -66,7 +66,7 @@ public class OtherPlatforms extends AppCompatActivity
                     break;
                 // Other cases, not sure what they are.
                 default:
-                    Toast.makeText(this, "Default response, should not happen", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Connection cancelled", Toast.LENGTH_SHORT).show();
             }
         }
     }

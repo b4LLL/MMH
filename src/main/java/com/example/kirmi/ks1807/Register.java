@@ -254,7 +254,7 @@ public class Register extends AppCompatActivity
                 else
                 {
                     String UsersInformation = response.body();
-                    String [] UserDetails = UsersInformation.split("\n");
+                    String []UserDetails = UsersInformation.split("\n");
                     String TheFirstName = UserDetails[0].replace("FirstName: ", "");
                     String TheLastName = UserDetails[1].replace("LastName: ", "");
                     String TheEmail = UserDetails[2].replace("EmailAddress: ", "");
